@@ -31,14 +31,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
-        getIt<NavigationService>()
-            .pushReplacementNamed(RouteName.bottomNavScreen);
+        getIt<NavigationService>().pushReplacementNamed(
+          RouteName.bottomNavScreen,
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign up failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Sign up failed: $e')));
       }
     } finally {
       if (mounted) {
@@ -58,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
@@ -69,9 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             builder: (context, constraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -84,17 +83,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Color(0XFFDF178A),
                             ],
                           ),
-      
+
                           30.verticalSpace,
-      
+
                           TextWidget(
                             text: 'Create Account',
                             fontSize: 32.sp,
                             fontWeight: FontWeight.w800,
                           ),
-      
+
                           16.verticalSpace,
-      
+
                           TextWidget(
                             text:
                                 'Join our community and start learning together',
@@ -102,9 +101,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fontWeight: FontWeight.w600,
                             textalign: TextAlign.center,
                           ),
-      
+
                           24.verticalSpace,
-      
+
                           const Row(
                             children: [
                               TextWidget(
@@ -113,20 +112,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ],
                           ),
-      
-                          16.verticalSpace,
-      
+
+                          8.verticalSpace,
+
                           CustomTextFormField(
                             controller: fullNameController,
                             hintText: "Enter your username",
                             svgIcon: SvgImageRenderWidget(
-                              svgImagePath: AssetsSource
-                                  .authAssetsSource.authPersonIcon,
-                              height: 20.h,
-                              width: 20.w,
+                              svgImagePath:
+                                  AssetsSource.authAssetsSource.authPersonIcon,
+                              height: 18.h,
+                              width: 18.w,
                             ),
                           ),
-      
+
                           24.verticalSpace,
                           const Row(
                             children: [
@@ -136,22 +135,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ],
                           ),
-      
+
                           8.verticalSpace,
-      
+
                           CustomTextFormField(
                             controller: fullNameController,
                             hintText: "Enter your name",
                             svgIcon: SvgImageRenderWidget(
-                              svgImagePath: AssetsSource
-                                  .authAssetsSource.authPersonIcon,
-                             height: 20.h,
-                              width: 20.w,
+                              svgImagePath:
+                                  AssetsSource.authAssetsSource.authPersonIcon,
+                              height: 18.h,
+                              width: 18.w,
                             ),
                           ),
-      
+
                           24.verticalSpace,
-      
+
                           const Row(
                             children: [
                               TextWidget(
@@ -160,23 +159,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ],
                           ),
-      
+
                           8.verticalSpace,
-      
+
                           CustomTextFormField(
                             controller: emailController,
                             hintText: "Enter your email",
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
                                   AssetsSource.authAssetsSource.mailIcon,
-                            height: 20.h,
-                              width: 20.w,
+                              height: 16.h,
+                              width: 16.w,
                             ),
                           ),
-      
+
                           24.verticalSpace,
-      
-                          
+
                           const Row(
                             children: [
                               TextWidget(
@@ -185,9 +183,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ],
                           ),
-      
+
                           8.verticalSpace,
-      
+
                           CustomTextFormField(
                             controller: passwordController,
                             isPassword: true,
@@ -195,25 +193,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
                                   AssetsSource.authAssetsSource.lockIcon,
+                              height: 18.h,
+                              width: 18.w,
                             ),
                           ),
-      
+
                           24.verticalSpace,
-      
+
                           CommonButton(
                             text: isLoading
                                 ? "Creating Account..."
                                 : "Create Account",
                             onTap: isLoading ? () {} : _handleSignUp,
-                            color: const [
-                              Color(0XFFB046FD),
-                              Color(0XFFDF178A),
-                            ],
+                            color: const [Color(0XFFB046FD), Color(0XFFDF178A)],
                             isLoading: isLoading,
                           ),
-      
+
                           32.verticalSpace,
-      
+
                           TextWidget(
                             text: 'Already have an account ? Sign In',
                             color: const Color(0XFF4A5566),
@@ -221,11 +218,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             highlightText: 'Sign In',
                             highlightColor: const Color(0XFF9810FA),
                             highlightFontWeight: FontWeight.w500,
-                            onHighlightTap: () =>
-                                getIt<NavigationService>()
-                                    .pushNamed(RouteName.loginScreen),
+                            onHighlightTap: () => getIt<NavigationService>()
+                                .pushNamed(RouteName.loginScreen),
                           ),
-      
+
                           // 40.verticalSpace,
                         ],
                       ),

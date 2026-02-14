@@ -67,10 +67,11 @@ class InitialSplashScreen extends StatelessWidget {
             ),
             32.verticalSpace,
             GestureDetector(
+               behavior: HitTestBehavior.opaque,
               onTap: () => getIt<NavigationService>().pushReplacementNamed(
                 RouteName.loginScreen,
               ),
-              child: TextWidget(text: 'Skip', fontWeight: FontWeight.w600),
+              child: TextWidget(text: 'Skip', fontSize: 18.sp ,fontWeight: .w600),
             ),
           ],
         ),

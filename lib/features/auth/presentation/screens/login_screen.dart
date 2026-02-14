@@ -84,8 +84,8 @@ class LoginScreen extends StatelessWidget {
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
                                   AssetsSource.authAssetsSource.authPersonIcon,
-                              height: 20.h,
-                              width: 20.w,
+                              height: 18.h,
+                              width: 18.w,
                             ),
                           ),
 
@@ -109,6 +109,8 @@ class LoginScreen extends StatelessWidget {
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
                                   AssetsSource.authAssetsSource.lockIcon,
+                                   height: 18.h,
+                              width: 18.w,
                             ),
                           ),
 
