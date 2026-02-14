@@ -21,35 +21,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  
+
   bool isLoading = false;
 
   Future<void> _handleSignUp() async {
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     try {
-      // Your sign up logic here
-      await Future.delayed(Duration(seconds: 2)); // Simulate API call
-      
-      // Navigate or show success
+      await Future.delayed(const Duration(seconds: 2));
+
       if (mounted) {
-        // Success navigation
+        getIt<NavigationService>()
+            .pushReplacementNamed(RouteName.bottomNavScreen);
       }
     } catch (e) {
-      // Handle error
       if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Sign up failed: $e')),
         );
       }
     } finally {
       if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
+        setState(() => isLoading = false);
       }
     }
   }
@@ -64,102 +57,183 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFFFFFFF),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 40.h),
-                LogoContainer(
-                  gradienColor: [Color(0XFFB046FD), Color(0XFFDF178A)],
-                ),
-                40.verticalSpace,
-                TextWidget(
-                  text: 'Create Account',
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.w800,
-                ),
-                16.verticalSpace,
-                TextWidget(
-                  text: 'Join our community and start leaning together',
-                  color: Color(0XFF4A5566),
-                  fontWeight: FontWeight.w600,
-                ),
-                24.verticalSpace,
-                Row(
-                  children: [
-                    TextWidget(text: "Full Name", fontWeight: FontWeight.w600),
-                  ],
-                ),
-                16.verticalSpace,
-                CustomTextFormField(
-                  controller: fullNameController,
-                  hintText: "Enter your name",
-                  svgIcon: SvgImageRenderWidget(
-                    svgImagePath: AssetsSource.authAssetsSource.authPersonIcon,
-                    height: 14.74.h,
-                    width: 17.61.w,
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          LogoContainer(
+                            gradienColor: const [
+                              Color(0XFFB046FD),
+                              Color(0XFFDF178A),
+                            ],
+                          ),
+      
+                          30.verticalSpace,
+      
+                          TextWidget(
+                            text: 'Create Account',
+                            fontSize: 32.sp,
+                            fontWeight: FontWeight.w800,
+                          ),
+      
+                          16.verticalSpace,
+      
+                          TextWidget(
+                            text:
+                                'Join our community and start learning together',
+                            color: const Color(0XFF4A5566),
+                            fontWeight: FontWeight.w600,
+                            textalign: TextAlign.center,
+                          ),
+      
+                          24.verticalSpace,
+      
+                          const Row(
+                            children: [
+                              TextWidget(
+                                text: "Username",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+      
+                          16.verticalSpace,
+      
+                          CustomTextFormField(
+                            controller: fullNameController,
+                            hintText: "Enter your username",
+                            svgIcon: SvgImageRenderWidget(
+                              svgImagePath: AssetsSource
+                                  .authAssetsSource.authPersonIcon,
+                              height: 20.h,
+                              width: 20.w,
+                            ),
+                          ),
+      
+                          24.verticalSpace,
+                          const Row(
+                            children: [
+                              TextWidget(
+                                text: "Full Name",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+      
+                          8.verticalSpace,
+      
+                          CustomTextFormField(
+                            controller: fullNameController,
+                            hintText: "Enter your name",
+                            svgIcon: SvgImageRenderWidget(
+                              svgImagePath: AssetsSource
+                                  .authAssetsSource.authPersonIcon,
+                             height: 20.h,
+                              width: 20.w,
+                            ),
+                          ),
+      
+                          24.verticalSpace,
+      
+                          const Row(
+                            children: [
+                              TextWidget(
+                                text: "Email",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+      
+                          8.verticalSpace,
+      
+                          CustomTextFormField(
+                            controller: emailController,
+                            hintText: "Enter your email",
+                            svgIcon: SvgImageRenderWidget(
+                              svgImagePath:
+                                  AssetsSource.authAssetsSource.mailIcon,
+                            height: 20.h,
+                              width: 20.w,
+                            ),
+                          ),
+      
+                          24.verticalSpace,
+      
+                          
+                          const Row(
+                            children: [
+                              TextWidget(
+                                text: "Password",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ],
+                          ),
+      
+                          8.verticalSpace,
+      
+                          CustomTextFormField(
+                            controller: passwordController,
+                            isPassword: true,
+                            hintText: "Enter your password",
+                            svgIcon: SvgImageRenderWidget(
+                              svgImagePath:
+                                  AssetsSource.authAssetsSource.lockIcon,
+                            ),
+                          ),
+      
+                          24.verticalSpace,
+      
+                          CommonButton(
+                            text: isLoading
+                                ? "Creating Account..."
+                                : "Create Account",
+                            onTap: isLoading ? () {} : _handleSignUp,
+                            color: const [
+                              Color(0XFFB046FD),
+                              Color(0XFFDF178A),
+                            ],
+                            isLoading: isLoading,
+                          ),
+      
+                          32.verticalSpace,
+      
+                          TextWidget(
+                            text: 'Already have an account ? Sign In',
+                            color: const Color(0XFF4A5566),
+                            fontSize: 16.sp,
+                            highlightText: 'Sign In',
+                            highlightColor: const Color(0XFF9810FA),
+                            highlightFontWeight: FontWeight.w500,
+                            onHighlightTap: () =>
+                                getIt<NavigationService>()
+                                    .pushNamed(RouteName.loginScreen),
+                          ),
+      
+                          // 40.verticalSpace,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                24.verticalSpace,
-                Row(
-                  children: [
-                    TextWidget(text: "Email", fontWeight: FontWeight.w600),
-                  ],
-                ),
-                16.verticalSpace,
-                CustomTextFormField(
-                  controller: emailController,
-                  hintText: "Enter your email",
-                  svgIcon: SvgImageRenderWidget(
-                    svgImagePath: AssetsSource.authAssetsSource.mailIcon,
-                    height: 14.74.h,
-                    width: 17.61.w,
-                  ),
-                ),
-                24.verticalSpace,
-                Row(
-                  children: [
-                    TextWidget(text: "Password", fontWeight: FontWeight.w600),
-                  ],
-                ),
-                16.verticalSpace,
-                CustomTextFormField(
-                  controller: passwordController,
-                  isPassword: true,
-                  hintText: "Enter your password",
-                  svgIcon: SvgImageRenderWidget(
-                    svgImagePath: AssetsSource.authAssetsSource.lockIcon,
-                    height: 18.36.h,
-                    width: 16.73.w,
-                  ),
-                ),
-                16.verticalSpace,
-                CommonButton(
-                  text: isLoading ? "Creating Account..." : "Create Account",
-                  onTap: isLoading ? () {} : _handleSignUp,
-                  color: [Color(0XFFB046FD), Color(0XFFDF178A)],
-                  isLoading: isLoading, // You'll need to add this to CommonButton
-                ),
-                32.verticalSpace,
-                TextWidget(
-                  text: 'Already have an account ? Sign In',
-                  color: Color(0XFF4A5566),
-                  fontSize: 16.sp,
-                  highlightText: 'Sign In',
-                  highlightColor: Color(0XFF9810FA),
-                  highlightFontWeight: FontWeight.w500,
-                  onHighlightTap: () => getIt<NavigationService>().pushNamed(
-                    RouteName.loginScreen,
-                  ),
-                ),
-                40.verticalSpace,
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
