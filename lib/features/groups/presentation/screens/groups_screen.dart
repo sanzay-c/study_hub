@@ -111,7 +111,8 @@ class GroupCardList extends StatelessWidget {
 
   Widget _buildGroupCard(Map<String, dynamic> group, BuildContext context) {
     return GestureDetector(
-      onTap: () => getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
+      onTap: () =>
+          getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
       child: Container(
         decoration: BoxDecoration(
           color: getColorByTheme(
@@ -121,7 +122,7 @@ class GroupCardList extends StatelessWidget {
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -147,7 +148,7 @@ class GroupCardList extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-      
+
             Padding(
               padding: EdgeInsets.all(16.w),
               child: Column(
@@ -160,7 +161,7 @@ class GroupCardList extends StatelessWidget {
                     letterSpacing: -0.6,
                   ),
                   8.verticalSpace,
-      
+
                   TextWidget(
                     text: group['description'],
                     color: getColorByTheme(
@@ -168,9 +169,9 @@ class GroupCardList extends StatelessWidget {
                       colorClass: AppColors.subTextColor,
                     ),
                   ),
-      
+
                   16.verticalSpace,
-      
+
                   Row(
                     children: [
                       SvgImageRenderWidget(
@@ -187,19 +188,25 @@ class GroupCardList extends StatelessWidget {
                           colorClass: AppColors.subTextColor,
                         ),
                       ),
-      
+
                       const Spacer(),
-      
+
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 8.h,
                         ),
                         decoration: BoxDecoration(
-                          color: getColorByTheme(context: context, colorClass: AppColors.containerInput),
+                          color: getColorByTheme(
+                            context: context,
+                            colorClass: AppColors.containerInput,
+                          ),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: TextWidget(text:group['category'], fontSize: 14.sp,)
+                        child: TextWidget(
+                          text: group['category'],
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ],
                   ),

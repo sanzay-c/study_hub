@@ -8,7 +8,8 @@ class NoInternetPage extends StatefulWidget {
   State<NoInternetPage> createState() => _NoInternetPageState();
 }
 
-class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProviderStateMixin {
+class _NoInternetPageState extends State<NoInternetPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
@@ -21,13 +22,15 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
       duration: const Duration(milliseconds: 1000),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.repeat(reverse: true);
   }
@@ -53,7 +56,7 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
               borderRadius: BorderRadius.circular(32.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
@@ -76,11 +79,11 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF6366F1).withOpacity(0.2),
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
-                        )
-                      ]
+                        ),
+                      ],
                     ),
                     child: Icon(
                       Icons.wifi_off_rounded,
@@ -90,7 +93,7 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
                   ),
                 ),
                 SizedBox(height: 32.h),
-                
+
                 // Title
                 Text(
                   'No Internet\nConnection',
@@ -103,7 +106,7 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
                   ),
                 ),
                 SizedBox(height: 16.h),
-                
+
                 // Subtitle
                 Text(
                   'Whoops! Looks like you\'re offline. Check your connection and give it another shot!',
@@ -115,7 +118,7 @@ class _NoInternetPageState extends State<NoInternetPage> with SingleTickerProvid
                   ),
                 ),
                 SizedBox(height: 40.h),
-                
+
                 // Button
                 PrimaryGradientButton(
                   text: 'Try Again',
@@ -138,7 +141,12 @@ class PrimaryGradientButton extends StatefulWidget {
   final IconData? icon;
   final VoidCallback onTap;
 
-  const PrimaryGradientButton({super.key, required this.text, this.icon, required this.onTap});
+  const PrimaryGradientButton({
+    super.key,
+    required this.text,
+    this.icon,
+    required this.onTap,
+  });
 
   @override
   State<PrimaryGradientButton> createState() => _PrimaryGradientButtonState();
@@ -151,7 +159,7 @@ class _PrimaryGradientButtonState extends State<PrimaryGradientButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) => setState(() => _scale = 0.92), // Press garda sano hune
-      onTapUp: (_) => setState(() => _scale = 1.0),   // Chodda normal hune
+      onTapUp: (_) => setState(() => _scale = 1.0), // Chodda normal hune
       onTapCancel: () => setState(() => _scale = 1.0),
       onTap: widget.onTap,
       child: AnimatedScale(
@@ -168,7 +176,7 @@ class _PrimaryGradientButtonState extends State<PrimaryGradientButton> {
             borderRadius: BorderRadius.circular(30.r),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withOpacity(0.3),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -183,7 +191,11 @@ class _PrimaryGradientButtonState extends State<PrimaryGradientButton> {
               ],
               Text(
                 widget.text,
-                style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

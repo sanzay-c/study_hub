@@ -56,7 +56,10 @@ class FileCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: getColorByTheme(context: context, colorClass: AppColors.containerColor),
+        color: getColorByTheme(
+          context: context,
+          colorClass: AppColors.containerColor,
+        ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           width: 1.w,
@@ -67,7 +70,7 @@ class FileCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -171,7 +174,14 @@ class FileCard extends StatelessWidget {
   }
 
   Widget _buildMetaItem(String text, BuildContext context) {
-    return TextWidget(text: text, fontSize: 14.sp, color: getColorByTheme(context: context, colorClass: AppColors.subTextColor),);
+    return TextWidget(
+      text: text,
+      fontSize: 14.sp,
+      color: getColorByTheme(
+        context: context,
+        colorClass: AppColors.subTextColor,
+      ),
+    );
   }
 
   Widget _buildDot(BuildContext context) {
@@ -180,8 +190,11 @@ class FileCard extends StatelessWidget {
       child: Container(
         width: 3.w,
         height: 3.w,
-        decoration:  BoxDecoration(
-          color: getColorByTheme(context: context, colorClass: AppColors.appIconColor),
+        decoration: BoxDecoration(
+          color: getColorByTheme(
+            context: context,
+            colorClass: AppColors.appIconColor,
+          ),
           shape: BoxShape.circle,
         ),
       ),

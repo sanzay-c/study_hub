@@ -49,7 +49,7 @@ class _SplashCircleState extends State<SplashCircle> with SingleTickerProviderSt
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: widget.color.first.withOpacity(0.3),
+              color: widget.color.first.withValues(alpha: 0.3),
               blurRadius: 20,
               spreadRadius: 5,
             ),

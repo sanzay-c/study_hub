@@ -60,7 +60,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
               borderRadius: BorderRadius.circular(32.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
@@ -82,7 +82,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF6366F1).withOpacity(0.2),
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -96,7 +96,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                     ),
                   ),
                 ),
-                
+
                 32.verticalSpace,
 
                 TextWidget(
@@ -125,9 +125,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                 PrimaryGradientButton(
                   text: 'Try Again',
                   icon: Icons.refresh_rounded,
-                  onTap: () {
-                   
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -178,7 +176,7 @@ class _PrimaryGradientButtonState extends State<PrimaryGradientButton> {
             borderRadius: BorderRadius.circular(30.r),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withOpacity(0.3),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),

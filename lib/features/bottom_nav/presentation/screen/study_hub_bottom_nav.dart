@@ -46,7 +46,7 @@ class StudyHubBottomNav extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   offset: const Offset(0, -2),
                   blurRadius: 8,
                 ),
@@ -102,8 +102,8 @@ class _BottomNavItem extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12.r),
-          splashColor: const Color(0xFF526DFF).withOpacity(0.1),
-          highlightColor: const Color(0xFF526DFF).withOpacity(0.05),
+          splashColor: const Color(0xFF526DFF).withValues(alpha: 0.1),
+          highlightColor: const Color(0xFF526DFF).withValues(alpha: 0.05),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 8.h),
             child: Column(

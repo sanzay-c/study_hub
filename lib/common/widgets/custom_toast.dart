@@ -130,6 +130,7 @@ class _ToastContentState extends State<_ToastContent>
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: _backgroundColor.withOpacity(0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
@@ -141,7 +142,7 @@ class _ToastContentState extends State<_ToastContent>
             Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+               color: Colors.white.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -168,7 +169,7 @@ class _ToastContentState extends State<_ToastContent>
                   Text(
                     widget.message,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.95),
+                     color: Colors.white.withValues(alpha: 0.95),
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w400,
                     ),

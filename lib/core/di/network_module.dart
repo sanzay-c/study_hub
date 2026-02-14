@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/core/config/env_config.dart';
@@ -17,15 +19,15 @@ abstract class NetworkModule {
         ..interceptors.add(
           InterceptorsWrapper(
             onRequest: (options, handler) {
-              print("Request: ${options.method} ${options.path}");
+              log("Request: ${options.method} ${options.path}");
               return handler.next(options);
             },
             onResponse: (response, handler) {
-              print("Response: ${response.statusCode}");
+              log("Response: ${response.statusCode}");
               return handler.next(response);
             },
             onError: (DioException e, handler) {
-              print("Error: ${e.message}");
+              log("Error: ${e.message}");
               return handler.next(e);
             },
           ),
