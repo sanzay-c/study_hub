@@ -1,122 +1,116 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/common_button.dart';
 import 'package:study_hub/common/widgets/custom_text_form_field.dart';
+import 'package:study_hub/common/widgets/custom_toast.dart';
 import 'package:study_hub/common/widgets/logo_container.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
+import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
+import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  bool isLoading = false;
-
-  Future<void> _handleSignUp() async {
-    setState(() => isLoading = true);
-
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        getIt<NavigationService>().pushReplacementNamed(
-          RouteName.bottomNavScreen,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Sign up failed: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    fullNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.success) {
+          CustomToast.show(
+            context,
+            message: 'Account created successfully! Welcome aboard 🎉',
+            type: ToastType.success,
+          );
+          Future.delayed(const Duration(milliseconds: 500), () {
+            getIt<NavigationService>().pushReplacementNamed(
+              RouteName.bottomNavScreen,
+            );
+          });
+        } else if (state.status == AuthStatus.error &&
+            state.submitError != null) {
+          CustomToast.show(
+            context,
+            message: state.submitError!,
+            type: ToastType.error,
+          );
+        }
       },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
-        resizeToAvoidBottomInset: true,
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: getColorByTheme(
+            context: context,
+            colorClass: AppColors.backgroundColor,
+          ),
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                left: 24.w,
+                right: 24.w,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20.h),
+
+                      LogoContainer(
+                        gradienColor: const [
+                          Color(0XFFB046FD),
+                          Color(0XFFDF178A),
+                        ],
+                      ),
+
+                      30.verticalSpace,
+
+                      TextWidget(
+                        text: 'Create Account',
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+
+                      16.verticalSpace,
+
+                      TextWidget(
+                        text: 'Join our community and start learning together',
+                        color: const Color(0XFF4A5566),
+                        fontWeight: FontWeight.w600,
+                        textalign: TextAlign.center,
+                      ),
+
+                      24.verticalSpace,
+
+                      const Row(
                         children: [
-                          LogoContainer(
-                            gradienColor: const [
-                              Color(0XFFB046FD),
-                              Color(0XFFDF178A),
-                            ],
-                          ),
-
-                          30.verticalSpace,
-
                           TextWidget(
-                            text: 'Create Account',
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.w800,
-                          ),
-
-                          16.verticalSpace,
-
-                          TextWidget(
-                            text:
-                                'Join our community and start learning together',
-                            color: const Color(0XFF4A5566),
+                            text: "Username",
                             fontWeight: FontWeight.w600,
-                            textalign: TextAlign.center,
                           ),
+                        ],
+                      ),
 
-                          24.verticalSpace,
+                      8.verticalSpace,
 
-                          const Row(
-                            children: [
-                              TextWidget(
-                                text: "Username",
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
-                          ),
-
-                          8.verticalSpace,
-
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           CustomTextFormField(
-                            controller: fullNameController,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(
+                                UsernameChanged(value),
+                              );
+                            },
+                            initialValue: state.username, 
                             hintText: "Enter your username",
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
@@ -125,21 +119,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               width: 18.w,
                             ),
                           ),
+                          if (state.usernameError != null) ...[
+                            4.verticalSpace,
+                            TextWidget(
+                              text: state.usernameError!,
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ],
+                        ],
+                      ),
 
-                          24.verticalSpace,
-                          const Row(
-                            children: [
-                              TextWidget(
-                                text: "Full Name",
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
+                      24.verticalSpace,
+
+                      const Row(
+                        children: [
+                          TextWidget(
+                            text: "Full Name",
+                            fontWeight: FontWeight.w600,
                           ),
+                        ],
+                      ),
 
-                          8.verticalSpace,
+                      8.verticalSpace,
 
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           CustomTextFormField(
-                            controller: fullNameController,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(
+                                FullnameChanged(value),
+                              );
+                            },
+                            initialValue: state.fullname,
                             hintText: "Enter your name",
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
@@ -148,22 +161,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               width: 18.w,
                             ),
                           ),
+                          if (state.fullnameError != null) ...[
+                            4.verticalSpace,
+                            TextWidget(
+                              text: state.fullnameError!,
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ],
+                        ],
+                      ),
 
-                          24.verticalSpace,
+                      24.verticalSpace,
 
-                          const Row(
-                            children: [
-                              TextWidget(
-                                text: "Email",
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
+                      const Row(
+                        children: [
+                          TextWidget(
+                            text: "Email",
+                            fontWeight: FontWeight.w600,
                           ),
+                        ],
+                      ),
 
-                          8.verticalSpace,
+                      8.verticalSpace,
 
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           CustomTextFormField(
-                            controller: emailController,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(EmailChanged(value));
+                            },
+                            initialValue: state.email,
                             hintText: "Enter your email",
                             svgIcon: SvgImageRenderWidget(
                               svgImagePath:
@@ -172,22 +201,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               width: 16.w,
                             ),
                           ),
+                          if (state.emailError != null) ...[
+                            4.verticalSpace,
+                            TextWidget(
+                              text: state.emailError!,
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ],
+                        ],
+                      ),
 
-                          24.verticalSpace,
+                      24.verticalSpace,
 
-                          const Row(
-                            children: [
-                              TextWidget(
-                                text: "Password",
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
+                      const Row(
+                        children: [
+                          TextWidget(
+                            text: "Password",
+                            fontWeight: FontWeight.w600,
                           ),
+                        ],
+                      ),
 
-                          8.verticalSpace,
+                      8.verticalSpace,
 
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           CustomTextFormField(
-                            controller: passwordController,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(
+                                PasswordChanged(value),
+                              );
+                            },
+                            initialValue: state.password,
                             isPassword: true,
                             hintText: "Enter your password",
                             svgIcon: SvgImageRenderWidget(
@@ -197,39 +244,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               width: 18.w,
                             ),
                           ),
-
-                          24.verticalSpace,
-
-                          CommonButton(
-                            text: isLoading
-                                ? "Creating Account..."
-                                : "Create Account",
-                            onTap: isLoading ? () {} : _handleSignUp,
-                            color: const [Color(0XFFB046FD), Color(0XFFDF178A)],
-                            isLoading: isLoading,
-                          ),
-
-                          32.verticalSpace,
-
-                          TextWidget(
-                            text: 'Already have an account ? Sign In',
-                            color: const Color(0XFF4A5566),
-                            fontSize: 16.sp,
-                            highlightText: 'Sign In',
-                            highlightColor: const Color(0XFF9810FA),
-                            highlightFontWeight: FontWeight.w500,
-                            onHighlightTap: () => getIt<NavigationService>()
-                                .pushNamed(RouteName.loginScreen),
-                          ),
-
-                          // 40.verticalSpace,
+                          if (state.passwordError != null) ...[
+                            4.verticalSpace,
+                            TextWidget(
+                              text: state.passwordError!,
+                              color: Colors.red,
+                              fontSize: 12.sp,
+                            ),
+                          ],
                         ],
                       ),
-                    ),
-                  ),
-                ),
-              );
-            },
+
+                      24.verticalSpace,
+
+                      CommonButton(
+                        text: state.status == AuthStatus.loading
+                            ? "Creating Account..."
+                            : "Create Account",
+                        onTap: state.status == AuthStatus.loading
+                            ? () {}
+                            : () {
+                                context.read<AuthBloc>().add(
+                                  const SignUpSubmitted(),
+                                );
+                              },
+                        color: const [Color(0XFFB046FD), Color(0XFFDF178A)],
+                        isLoading: state.status == AuthStatus.loading,
+                      ),
+
+                      32.verticalSpace,
+
+                      TextWidget(
+                        text: 'Already have an account ? Sign In',
+                        color: const Color(0XFF4A5566),
+                        fontSize: 16.sp,
+                        highlightText: 'Sign In',
+                        highlightColor: const Color(0XFF9810FA),
+                        highlightFontWeight: FontWeight.w500,
+                        onHighlightTap: () => getIt<NavigationService>()
+                            .pushNamed(RouteName.loginScreen),
+                      ),
+
+                      SizedBox(height: 40.h),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ),

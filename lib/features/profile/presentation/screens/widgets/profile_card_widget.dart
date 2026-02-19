@@ -6,7 +6,8 @@ import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 
 class ProfileCardWidget extends StatelessWidget {
-  final String name;
+  final String username;
+  final String fullname;
   final String bio;
   final int followers;
   final int following;
@@ -17,7 +18,8 @@ class ProfileCardWidget extends StatelessWidget {
 
   const ProfileCardWidget({
     super.key,
-    required this.name,
+    required this.username,
+    required this.fullname,
     required this.bio,
     required this.followers,
     required this.following,
@@ -53,10 +55,16 @@ class ProfileCardWidget extends StatelessWidget {
             _buildProfileAvatar(context),
             16.verticalSpace,
             TextWidget(
-              text: name,
+              text: username,
               fontSize: 22.sp,
               letterSpacing: 0.5,
               fontWeight: FontWeight.w800,
+            ),
+            8.verticalSpace,
+            TextWidget(
+              text: fullname,
+              letterSpacing: 0.5,
+              fontWeight: FontWeight.w700,
             ),
             8.verticalSpace,
             TextWidget(

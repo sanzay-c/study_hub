@@ -6,6 +6,7 @@ import 'package:study_hub/core/global_data/global_theme/bloc/theme_bloc.dart';
 import 'package:study_hub/core/network/internet/cubit/connectivity_cubit.dart';
 import 'package:study_hub/core/network/internet/screens/widget/connectivity_wrapper.dart';
 import 'package:study_hub/core/routing/router_config.dart';
+import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
 
 class MyApp extends StatelessWidget {
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
             //   ),
             // ),
             BlocProvider(create: (_) => getIt<ThemeBloc>()),
+            BlocProvider(create: (_) => getIt<AuthBloc>()),
             BlocProvider(create: (_) => getIt<ConnectivityCubit>()),
             BlocProvider(create: (_) => getIt<MainBottomNavBloc>()),
           ],

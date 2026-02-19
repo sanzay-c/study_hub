@@ -9,7 +9,7 @@ void main() async {
   await EnvConfig.initialize(Environment.prod);
   await configureDependencies();
   runApp(const MyApp());
-  
+
   
   
   // Add these lines to style system UI to show the battery section transparent

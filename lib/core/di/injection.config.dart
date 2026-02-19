@@ -18,6 +18,24 @@ import 'package:study_hub/core/global_data/global_theme/bloc/theme_bloc.dart'
 import 'package:study_hub/core/network/internet/cubit/connectivity_cubit.dart'
     as _i504;
 import 'package:study_hub/core/routing/navigation_service.dart' as _i848;
+import 'package:study_hub/core/services/local/auth_database.dart' as _i274;
+import 'package:study_hub/core/services/local/database/daos/auth_dao.dart'
+    as _i284;
+import 'package:study_hub/features/auth/data/datasource/auth_datasource.dart'
+    as _i230;
+import 'package:study_hub/features/auth/data/datasource/auth_local_datasource.dart'
+    as _i394;
+import 'package:study_hub/features/auth/data/repo_impl/auth_repo_impl.dart'
+    as _i658;
+import 'package:study_hub/features/auth/domain/repo/auth_repo.dart' as _i481;
+import 'package:study_hub/features/auth/domain/usecase/login_usecasse.dart'
+    as _i1006;
+import 'package:study_hub/features/auth/domain/usecase/logout_usecase.dart'
+    as _i558;
+import 'package:study_hub/features/auth/domain/usecase/signup_usecase.dart'
+    as _i188;
+import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
+    as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
 
@@ -33,7 +51,40 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i504.ConnectivityCubit>(() => _i504.ConnectivityCubit());
     gh.factory<_i73.MainBottomNavBloc>(() => _i73.MainBottomNavBloc());
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio);
+    gh.lazySingleton<_i274.AppDatabase>(() => networkModule.database);
     gh.lazySingleton<_i848.NavigationService>(() => _i848.NavigationService());
+    gh.lazySingleton<_i284.AuthDao>(
+      () => networkModule.authDao(gh<_i274.AppDatabase>()),
+    );
+    gh.lazySingleton<_i230.AuthDatasource>(
+      () => _i230.AuthDatasource(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i394.AuthLocalDataSource>(
+      () => _i394.AuthLocalDataSourceImpl(gh<_i284.AuthDao>()),
+    );
+    gh.lazySingleton<_i481.AuthRepo>(
+      () => _i658.AuthRepoImpl(
+        gh<_i230.AuthDatasource>(),
+        gh<_i394.AuthLocalDataSource>(),
+      ),
+    );
+    gh.factory<_i1006.LoginUsecase>(
+      () => _i1006.LoginUsecase(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i558.LogoutUsecase>(
+      () => _i558.LogoutUsecase(gh<_i481.AuthRepo>()),
+    );
+    gh.lazySingleton<_i188.SignupUsecase>(
+      () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i553.AuthBloc>(
+      () => _i553.AuthBloc(
+        gh<_i188.SignupUsecase>(),
+        gh<_i1006.LoginUsecase>(),
+        gh<_i481.AuthRepo>(),
+        gh<_i558.LogoutUsecase>(),
+      ),
+    );
     return this;
   }
 }

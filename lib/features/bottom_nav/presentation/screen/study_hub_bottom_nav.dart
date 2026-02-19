@@ -27,62 +27,119 @@ class StudyHubBottomNav extends StatelessWidget {
     return BlocBuilder<MainBottomNavBloc, MainBottomNavState>(
       builder: (context, state) {
         final selectedSlug = (state as BottomNavInitial).currentSlug;
+
+        final currentIndex =
+            bottomNavModel.indexWhere((item) => item.slug == selectedSlug);
+
+        final isDesktop = MediaQuery.of(context).size.width >= 600;
+
         return Scaffold(
-          body: _screenMap[selectedSlug] ?? const SizedBox.shrink(),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: getColorByTheme(
-                context: context,
-                colorClass: AppColors.bottomNav,
-              ),
-              border: Border(
-                top: BorderSide(
-                  color: getColorByTheme(
-                    context: context,
-                    colorClass: AppColors.bottomNavBorder,
-                  ),
-                  width: 1.w,
-                ),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  offset: const Offset(0, -2),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: bottomNavModel.map((item) {
-                    final isSelected = selectedSlug == item.slug;
-                    return _BottomNavItem(
-                      item: item,
-                      isSelected: isSelected,
-                      onTap: () {
-                        if (!isSelected) {
-                          context.read<MainBottomNavBloc>().add(
-                            NavSlugChanged(item.slug),
-                          );
-                        }
+          body: isDesktop
+              ? Row(
+                  children: [
+                    /// 🔵 NavigationRail (Tablet / Web)
+                    NavigationRail(
+                      selectedIndex: currentIndex < 0 ? 0 : currentIndex,
+                      onDestinationSelected: (index) {
+                        final item = bottomNavModel[index];
+                        context
+                            .read<MainBottomNavBloc>()
+                            .add(NavSlugChanged(item.slug));
                       },
-                    );
-                  }).toList(),
+                      labelType: NavigationRailLabelType.all,
+                      backgroundColor: getColorByTheme(
+                        context: context,
+                        colorClass: AppColors.bottomNav,
+                      ),
+                      destinations: bottomNavModel.map((item) {
+                        return NavigationRailDestination(
+                          icon: SvgImageRenderWidget(
+                            height: 20.h,
+                            width: 20.w,
+                            svgImagePath: item.inactiveImage,
+                            applyColorFilter: false,
+                          ),
+                          selectedIcon: SvgImageRenderWidget(
+                            height: 20.h,
+                            width: 20.w,
+                            svgImagePath: item.activeImage,
+                            applyColorFilter: false,
+                          ),
+                          label: Text(
+                            item.label,
+                            style: TextStyle(fontSize: 12.sp),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    Expanded(
+                      child:
+                          _screenMap[selectedSlug] ?? const SizedBox.shrink(),
+                    ),
+                  ],
+                )
+              : _screenMap[selectedSlug] ?? const SizedBox.shrink(),
+
+          ///Bottom Nav (Mobile Only)
+          bottomNavigationBar: isDesktop
+              ? null
+              : Container(
+                  decoration: BoxDecoration(
+                    color: getColorByTheme(
+                      context: context,
+                      colorClass: AppColors.bottomNav,
+                    ),
+                    border: Border(
+                      top: BorderSide(
+                        color: getColorByTheme(
+                          context: context,
+                          colorClass: AppColors.bottomNavBorder,
+                        ),
+                        width: 1.w,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        offset: const Offset(0, -2),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.w, vertical: 12.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: bottomNavModel.map((item) {
+                          final isSelected = selectedSlug == item.slug;
+
+                          return _BottomNavItem(
+                            item: item,
+                            isSelected: isSelected,
+                            onTap: () {
+                              if (!isSelected) {
+                                context
+                                    .read<MainBottomNavBloc>()
+                                    .add(NavSlugChanged(item.slug));
+                              }
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         );
       },
     );
   }
 }
 
+/// 🔵 Bottom Nav Item (Mobile)
 class _BottomNavItem extends StatelessWidget {
   final dynamic item;
   final bool isSelected;
@@ -108,30 +165,33 @@ class _BottomNavItem extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 8.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgImageRenderWidget(
                   height: 18.h,
                   width: 18.w,
-                  svgImagePath: isSelected
-                      ? item.activeImage
-                      : item.inactiveImage,
+                  svgImagePath:
+                      isSelected ? item.activeImage : item.inactiveImage,
                   applyColorFilter: false,
                 ),
                 SizedBox(height: 6.h),
                 Text(
                   item.label,
                   style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
                     fontSize: 12.sp,
                     height: 1.2,
                     foreground: isSelected
                         ? (Paint()
-                            ..shader = const LinearGradient(
-                              colors: [Color(0xFF526DFF), Color(0xFF8B32FB)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(const Rect.fromLTWH(0, 0, 100, 20)))
+                          ..shader = const LinearGradient(
+                            colors: [
+                              Color(0xFF526DFF),
+                              Color(0xFF8B32FB)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(
+                              const Rect.fromLTWH(0, 0, 100, 20)))
                         : (Paint()..color = const Color(0xFF4A5566)),
                   ),
                   textAlign: TextAlign.center,

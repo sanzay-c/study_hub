@@ -16,3 +16,10 @@ final class NavSlugChanged extends MainBottomNavEvent {
   @override
   List<Object> get props => [slug];
 }
+
+class NavReset extends MainBottomNavEvent {
+  const NavReset();
+
+  @override
+  List<Object> get props => [];
+}

@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  final TextEditingController controller;
+  final String? initialValue; 
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged; 
   final String? hintText;
   final Widget? svgIcon;
   final bool isPassword;
 
   const CustomTextFormField({
     super.key,
-    required this.controller,
+    this.initialValue, 
+    this.controller,
+    this.onChanged, 
     this.hintText,
     this.svgIcon,
     this.isPassword = false,
@@ -25,7 +29,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.controller,
+      controller: widget.controller, // controller is not needed now
+      initialValue: widget.initialValue,
+      onChanged: widget.onChanged,
       obscureText: widget.isPassword ? _isObscured : false,
       style: TextStyle(fontSize: 18.sp),
       decoration: InputDecoration(
@@ -40,7 +46,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           child: widget.svgIcon,
         ),
         prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-        
+
         // Add suffix icon for password toggle
         suffixIcon: widget.isPassword
             ? IconButton(

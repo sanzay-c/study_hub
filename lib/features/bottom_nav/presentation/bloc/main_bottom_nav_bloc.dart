@@ -14,5 +14,10 @@ class MainBottomNavBloc extends Bloc<MainBottomNavEvent, MainBottomNavState> {
     on<NavSlugChanged>((event, emit) {
       emit((state as BottomNavInitial).copyWith(currentSlug: event.slug));
     });
+
+    on<NavReset>((event, emit) {
+      // This emits the initial state, which defaults currentSlug back to 'Groups'
+      emit(const BottomNavInitial()); 
+    });
   }
 }
