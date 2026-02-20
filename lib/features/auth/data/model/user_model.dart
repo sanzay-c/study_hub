@@ -5,7 +5,7 @@ import 'package:study_hub/features/auth/domain/entities/user.dart' as entity;
 
 part 'user_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class UserModel {
   @JsonKey(name: '_id')
   final String id;
@@ -13,13 +13,10 @@ class UserModel {
   final String username;
   final String email;
 
-  @JsonKey(name: 'fullname')
   final String fullname;
   
-  @JsonKey(name: 'avatar_path')
   final String? avatarPath;
   
-  @JsonKey(name: 'last_seen')
   final DateTime? lastSeen;
 
   const UserModel({

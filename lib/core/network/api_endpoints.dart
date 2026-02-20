@@ -12,4 +12,11 @@ class ApiEndpoints {
   static const String requestReset = "/api/auth/request_reset/";
   static const String verifyOTP = "/api/auth/verify_otp/";
   static const String resetPassword = "/api/auth/reset_password/";
-} 
+
+  // stats following, followers Groups summary
+  static const String userStats = "/api/auth/me/stats/";
+  static String userStatsId(String userId) => "/api/auth/users/$userId/stats/";
+
+  // uploading an image
+  static const String uploadAvatar = "/api/auth/upload_avatar/";
+}

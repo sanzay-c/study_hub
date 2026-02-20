@@ -5,35 +5,31 @@ import 'package:injectable/injectable.dart';
 import 'package:study_hub/core/config/env_config.dart';
 import 'package:study_hub/core/services/local/auth_database.dart';
 import 'package:study_hub/core/services/local/database/daos/auth_dao.dart';
+import 'package:study_hub/core/network/auth_interceptor.dart';
 
 @module 
 abstract class NetworkModule {
-  @lazySingleton // Register Dio as singleton
-  Dio get dio =>
+  @lazySingleton 
+  Dio dio(AuthDao authDao) =>
       Dio(
-          BaseOptions(
-            baseUrl: EnvConfig.apiBaseUrl,
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
-            headers: {"Content-Type": "application/json",  "Accept": "application/json",},
+        BaseOptions(
+          baseUrl: EnvConfig.apiBaseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        ),
+      )
+        ..interceptors.addAll([
+          AuthInterceptor(authDao), // Add our new token interceptor
+          LogInterceptor(
+            requestBody: true,
+            responseBody: true,
+            logPrint: (obj) => log(obj.toString()),
           ),
-        )
-        ..interceptors.add(
-          InterceptorsWrapper(
-            onRequest: (options, handler) {
-              log("Request: ${options.method} ${options.path}");
-              return handler.next(options);
-            },
-            onResponse: (response, handler) {
-              log("Response: ${response.statusCode}");
-              return handler.next(response);
-            },
-            onError: (DioException e, handler) {
-              log("Error: ${e.message}");
-              return handler.next(e);
-            },
-          ),
-        );
+        ]);
 
   @lazySingleton
   AppDatabase get database => AppDatabase();

@@ -74,15 +74,11 @@ class AuthDatasource {
     }
   }
 
+
   Future<void> logout() async {
     try {
-      // Token is automatically added by AuthInterceptor
       await _dio.post(ApiEndpoints.logout);
-      // No need to check status or parse response
-      // Just fire and forget
     } catch (e) {
-      // Even if API fails, we still logout locally
-      // So we just log the error but don't throw
       log('⚠️ Server logout failed: $e');
     }
   }

@@ -15,6 +15,7 @@ class ProfileCardWidget extends StatelessWidget {
   final String? avatarUrl;
   final VoidCallback? onEditProfile;
   final VoidCallback? onCameraIconTap;
+  final Widget? avatarWidget;
 
   const ProfileCardWidget({
     super.key,
@@ -27,6 +28,7 @@ class ProfileCardWidget extends StatelessWidget {
     this.avatarUrl,
     this.onEditProfile,
     this.onCameraIconTap,
+    this.avatarWidget,
   });
 
   @override
@@ -103,17 +105,25 @@ class ProfileCardWidget extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.black,
+              color: getColorByTheme(context: context, colorClass: AppColors.containerBorderColor),
               style: BorderStyle.solid,
               width: 1.w,
             ),
           ),
-          child: CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.white10,
-            backgroundImage: avatarUrl != null
-                ? NetworkImage(avatarUrl!)
-                : null,
+          child: ClipOval( // ClipOval use garda image circle vitra ramrari bascha
+            child: avatarWidget ?? (avatarUrl != null 
+                ? Image.network(
+                    avatarUrl!, 
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return SvgImageRenderWidget(
+                        svgImagePath: AssetsSource.appIcons.userPersonIcon,
+                      );
+                    },
+                  )
+                : SvgImageRenderWidget(
+                    svgImagePath: AssetsSource.appIcons.userPersonIcon,
+                  )), 
           ),
         ),
         Positioned(
@@ -136,6 +146,10 @@ class ProfileCardWidget extends StatelessWidget {
                       colorClass: AppColors.gr0XFF8B32FB,
                     ),
                   ],
+                ),
+                border: Border.all(
+                  color: getColorByTheme(context: context, colorClass: AppColors.containerBorderColor),
+                  width: 2.w,
                 ),
                 shape: BoxShape.circle,
               ),

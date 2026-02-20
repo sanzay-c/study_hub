@@ -8,6 +8,7 @@ import 'package:study_hub/core/network/internet/screens/widget/connectivity_wrap
 import 'package:study_hub/core/routing/router_config.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
+import 'package:study_hub/features/user_stats/presentation/bloc/user_stats_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
             // ),
             BlocProvider(create: (_) => getIt<ThemeBloc>()),
             BlocProvider(create: (_) => getIt<AuthBloc>()),
+            BlocProvider(create: (_) => getIt<UserStatsBloc>()),
             BlocProvider(create: (_) => getIt<ConnectivityCubit>()),
             BlocProvider(create: (_) => getIt<MainBottomNavBloc>()),
           ],

@@ -38,6 +38,16 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
+import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
+    as _i199;
+import 'package:study_hub/features/user_stats/data/repo_impl/user_stats_repository_impl.dart'
+    as _i282;
+import 'package:study_hub/features/user_stats/domain/repo/user_stats_repository.dart'
+    as _i117;
+import 'package:study_hub/features/user_stats/domain/usecase/get_user_stats_usecase.dart'
+    as _i1067;
+import 'package:study_hub/features/user_stats/presentation/bloc/user_stats_bloc.dart'
+    as _i566;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -50,17 +60,24 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i447.ThemeBloc>(() => _i447.ThemeBloc());
     gh.factory<_i504.ConnectivityCubit>(() => _i504.ConnectivityCubit());
     gh.factory<_i73.MainBottomNavBloc>(() => _i73.MainBottomNavBloc());
-    gh.lazySingleton<_i361.Dio>(() => networkModule.dio);
     gh.lazySingleton<_i274.AppDatabase>(() => networkModule.database);
     gh.lazySingleton<_i848.NavigationService>(() => _i848.NavigationService());
     gh.lazySingleton<_i284.AuthDao>(
       () => networkModule.authDao(gh<_i274.AppDatabase>()),
     );
+    gh.lazySingleton<_i361.Dio>(() => networkModule.dio(gh<_i284.AuthDao>()));
+    gh.lazySingleton<_i394.AuthLocalDataSource>(
+      () => _i394.AuthLocalDataSourceImpl(gh<_i284.AuthDao>()),
+    );
+    gh.lazySingleton<_i199.UserStatsRemoteDataSource>(
+      () => _i199.UserStatsRemoteDataSourceImpl(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i230.AuthDatasource>(
       () => _i230.AuthDatasource(gh<_i361.Dio>()),
     );
-    gh.lazySingleton<_i394.AuthLocalDataSource>(
-      () => _i394.AuthLocalDataSourceImpl(gh<_i284.AuthDao>()),
+    gh.lazySingleton<_i117.UserStatsRepository>(
+      () =>
+          _i282.UserStatsRepositoryImpl(gh<_i199.UserStatsRemoteDataSource>()),
     );
     gh.lazySingleton<_i481.AuthRepo>(
       () => _i658.AuthRepoImpl(
@@ -77,6 +94,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
     );
+    gh.lazySingleton<_i1067.GetUserStatsUseCase>(
+      () => _i1067.GetUserStatsUseCase(gh<_i117.UserStatsRepository>()),
+    );
     gh.factory<_i553.AuthBloc>(
       () => _i553.AuthBloc(
         gh<_i188.SignupUsecase>(),
@@ -84,6 +104,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i481.AuthRepo>(),
         gh<_i558.LogoutUsecase>(),
       ),
+    );
+    gh.factory<_i566.UserStatsBloc>(
+      () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
     );
     return this;
   }
