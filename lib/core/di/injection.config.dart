@@ -38,6 +38,8 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
+import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart'
+    as _i970;
 import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
     as _i199;
 import 'package:study_hub/features/user_stats/data/repo_impl/user_stats_repository_impl.dart'
@@ -90,6 +92,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i558.LogoutUsecase>(
       () => _i558.LogoutUsecase(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i970.UploadAvatarCubit>(
+      () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
     );
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),

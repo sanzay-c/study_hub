@@ -20,4 +20,6 @@ abstract class AuthRepo {
   Future<User?> getCurrentUser();
 
   Future<bool> isAuthenticated();
+
+  Future<User> updateAvatar(String filePath);
 }

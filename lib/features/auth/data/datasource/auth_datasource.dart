@@ -5,6 +5,8 @@ import 'package:injectable/injectable.dart';
 import 'package:study_hub/core/network/api_endpoints.dart';
 import 'package:study_hub/features/auth/data/model/auth_response_model.dart';
 import 'package:study_hub/features/auth/data/model/signup_model.dart';
+import 'package:study_hub/features/auth/data/model/user_model.dart';
+
 
 @lazySingleton
 class AuthDatasource {
@@ -74,6 +76,27 @@ class AuthDatasource {
     }
   }
 
+  Future<UserModel> uploadAvatar(String filePath) async {
+    try {
+      final fileName = filePath.split('/').last;
+      final formData = FormData.fromMap({
+        "avatar": await MultipartFile.fromFile(filePath, filename: fileName),
+      });
+
+      final response = await _dio.post(
+        ApiEndpoints.uploadAvatar,
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UserModel.fromJson(response.data);
+      } else {
+        throw Exception("Failed to upload avatar: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
 
   Future<void> logout() async {
     try {

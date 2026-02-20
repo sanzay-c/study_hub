@@ -82,4 +82,18 @@ class AuthRepoImpl implements AuthRepo {
     await authDatasource.logout();
     await authLocalDataSource.clearCache();
   }
+
+  @override
+  Future<User> updateAvatar(String filePath) async {
+    try {
+      final updatedUserModel = await authDatasource.uploadAvatar(filePath);
+      
+      // Update local cache
+      await authLocalDataSource.cacheUser(updatedUserModel);
+      
+      return updatedUserModel.toEntity();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

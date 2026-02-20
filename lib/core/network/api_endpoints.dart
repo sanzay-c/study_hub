@@ -17,6 +17,6 @@ class ApiEndpoints {
   static const String userStats = "/api/auth/me/stats/";
   static String userStatsId(String userId) => "/api/auth/users/$userId/stats/";
 
-  // uploading an image
+  // upload avatar
   static const String uploadAvatar = "/api/auth/upload_avatar/";
 }

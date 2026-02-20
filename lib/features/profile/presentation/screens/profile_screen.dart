@@ -16,44 +16,95 @@ import 'package:study_hub/features/profile/presentation/screens/widgets/appearan
 import 'package:study_hub/features/profile/presentation/screens/widgets/logout_card_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/profile_card_widget.dart';
 import 'package:study_hub/core/config/env_config.dart';
+import 'package:study_hub/features/profile/presentation/screens/widgets/select_img_bottom_sheet.dart';
+import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart';
+import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_state.dart';
 import 'package:study_hub/features/user_stats/presentation/bloc/user_stats_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  void _showImageSourceActionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: getColorByTheme(
+        context: context,
+        colorClass: AppColors.backgroundColor,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (bottomSheetContext) => SelectImgBottomSheet()
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          getIt<UserStatsBloc>()..add(const UserStatsFetched()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              getIt<UserStatsBloc>()..add(const UserStatsFetched()),
+        ),
+        BlocProvider(create: (context) => getIt<UploadAvatarCubit>()),
+      ],
       child: Scaffold(
         backgroundColor: getColorByTheme(
           context: context,
           colorClass: AppColors.backgroundColor,
         ),
         appBar: const StudyHubAppBar(title: "Profile"),
-        body: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state.status == AuthStatus.initial) {
-              CustomToast.show(
-                context,
-                message: 'Logout Successfull! See you soon 👋',
-                type: ToastType.success,
-                duration: const Duration(seconds: 3),
-              );
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state.status == AuthStatus.initial) {
+                  CustomToast.show(
+                    context,
+                    message: 'Logout Successfull! See you soon 👋',
+                    type: ToastType.success,
+                    duration: const Duration(seconds: 3),
+                  );
 
-              getIt<NavigationService>().pushReplacementNamed(
-                RouteName.loginScreen,
-              );
-            } else if (state.status == AuthStatus.error &&
-                state.submitError != null) {
-              CustomToast.show(
-                context,
-                message: state.submitError!,
-                type: ToastType.error,
-              );
-            }
-          },
+                  getIt<NavigationService>().pushReplacementNamed(
+                    RouteName.loginScreen,
+                  );
+                } else if (state.status == AuthStatus.error &&
+                    state.submitError != null) {
+                  CustomToast.show(
+                    context,
+                    message: state.submitError!,
+                    type: ToastType.error,
+                  );
+                }
+              },
+            ),
+            BlocListener<UploadAvatarCubit, UploadAvatarState>(
+              listener: (context, state) {
+                if (state is UploadAvatarLoading) {
+                  CustomToast.show(
+                    context,
+                    message: "Uploading image...",
+                    type: ToastType.info,
+                  );
+                } else if (state is UploadAvatarSuccess) {
+                  CustomToast.show(
+                    context,
+                    message: "Profile picture updated! 📸",
+                    type: ToastType.success,
+                  );
+                  // Refresh global user state because repo has new data
+                  context.read<AuthBloc>().add(const AuthCheckRequested());
+                } else if (state is UploadAvatarError) {
+                  CustomToast.show(
+                    context,
+                    message: state.message,
+                    type: ToastType.error,
+                  );
+                }
+              },
+            ),
+          ],
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: SingleChildScrollView(
@@ -69,15 +120,17 @@ class ProfileScreen extends StatelessWidget {
 
                           // Construct full avatar URL safely
                           String? avatarUrl = user?.avatarPath;
-                          if (avatarUrl != null && avatarUrl.isNotEmpty && !avatarUrl.startsWith('http')) {
+                          if (avatarUrl != null &&
+                              avatarUrl.isNotEmpty &&
+                              !avatarUrl.startsWith('http')) {
                             final baseUrl = EnvConfig.apiBaseUrl;
-                            final cleanBase = baseUrl.endsWith('/') 
-                                ? baseUrl.substring(0, baseUrl.length - 1) 
+                            final cleanBase = baseUrl.endsWith('/')
+                                ? baseUrl.substring(0, baseUrl.length - 1)
                                 : baseUrl;
-                            final cleanPath = avatarUrl.startsWith('/') 
-                                ? avatarUrl 
+                            final cleanPath = avatarUrl.startsWith('/')
+                                ? avatarUrl
                                 : '/$avatarUrl';
-                            
+
                             // Added '/media' prefix based on your backend structure
                             avatarUrl = "$cleanBase/media$cleanPath";
                             debugPrint("📸 Profile Image URL: $avatarUrl");
@@ -92,7 +145,9 @@ class ProfileScreen extends StatelessWidget {
                             following: stats?.following ?? 0,
                             groups: stats?.groups?.total ?? 0,
                             onEditProfile: () {},
-                            onCameraIconTap: () {},
+                            onCameraIconTap: () {
+                              _showImageSourceActionSheet(context);
+                            },
                           );
                         },
                       );
