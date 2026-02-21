@@ -5,7 +5,9 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/features/notes/presentation/screens/notes_lists.dart';
+import 'package:study_hub/features/notes/presentation/screens/notes_tabbar.dart';
 import 'package:study_hub/features/notes/presentation/screens/upload_notes.dart';
+import 'package:study_hub/features/notes/presentation/screens/widgets/notes_search_bar.dart';
 
 class NotesScreen extends StatelessWidget {
   const NotesScreen({super.key});
@@ -57,7 +59,16 @@ class NotesScreen extends StatelessWidget {
             ),
           ),
         ],),
-      body: FileListPage(),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 8.h),
+            child: const NotesSearchBar(),
+          ),
+          8.verticalSpace,
+          Expanded(child: NotesTabbar()),
+        ],
+      ),
     );
   }
 }

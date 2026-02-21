@@ -36,7 +36,6 @@ class FileListPage extends StatelessWidget {
         colorClass: AppColors.backgroundColor,
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(20.w),
         itemCount: dummyFiles.length,
         itemBuilder: (context, index) {
           return FileCard(fileData: dummyFiles[index]);
