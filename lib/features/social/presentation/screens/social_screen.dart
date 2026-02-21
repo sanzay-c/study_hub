@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
+import 'package:study_hub/common/widgets/study_hub_tabbar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
-import 'package:study_hub/features/social/presentation/screens/study_hub_tab_bar.dart';
+import 'package:study_hub/features/social/presentation/screens/users_discover_screen.dart';
 
 class SocialScreen extends StatelessWidget {
   const SocialScreen({super.key});
@@ -19,14 +20,23 @@ class SocialScreen extends StatelessWidget {
       appBar: StudyHubAppBar(title: "Social"),
       body: Column(
         children: [
-          // Search Bar at the top
           Padding(
             padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 16.h),
             child: const UserSearchBar(),
           ),
 
-          // Tab Bar below search
-          Expanded(child: StudyHubTabBar()),
+          Expanded(
+            child: StudyHubTabBar(
+              tabs: ["Discover", "Following", "Followers"],
+              children: [
+                UsersDiscoverScreen(), 
+                const Center(
+                  child: Text('Following'),
+                ),
+                const Center(child: Text('Followers')),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -56,11 +66,14 @@ class UserSearchBar extends StatelessWidget {
               colorClass: AppColors.subTextColor,
             ),
             fontWeight: FontWeight.w600,
-            fontSize: 16.sp, 
+            fontSize: 16.sp,
           ),
 
           prefixIcon: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h), // Icon ra text ko gap
+            padding: EdgeInsets.symmetric(
+              horizontal: 18.w,
+              vertical: 18.h,
+            ), // Icon ra text ko gap
             child: SvgImageRenderWidget(
               height: 20.h,
               width: 20.w,

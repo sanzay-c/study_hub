@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:study_hub/features/notes/presentation/screens/notes_lists.dart';
-import 'package:study_hub/features/social/presentation/screens/users_discover_screen.dart';
-import 'package:study_hub/features/social/presentation/widgets/custom_tab_bar.dart';
+import 'package:study_hub/common/widgets/custom_tab_bar.dart';
 
-class NotesTabbar extends StatefulWidget {
-  const NotesTabbar({super.key});
+class StudyHubTabBar extends StatefulWidget {
+  final List<String> tabs;
+  final List<Widget> children;
+
+  const StudyHubTabBar({
+    super.key,
+    required this.tabs,
+    required this.children,
+  });
 
   @override
-  State<NotesTabbar> createState() => _NotesTabbarState();
+  State<StudyHubTabBar> createState() => _StudyHubTabBarState();
 }
 
-class _NotesTabbarState extends State<NotesTabbar>
+class _StudyHubTabBarState extends State<StudyHubTabBar>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: widget.tabs.length,
+      vsync: this,
+    );
   }
 
   @override
@@ -36,16 +44,13 @@ class _NotesTabbarState extends State<NotesTabbar>
           children: [
             CustomTabBar(
               controller: _tabController,
-              tabs: const ['Discover', 'My Notes'],
+              tabs: widget.tabs,
             ),
             16.verticalSpace,
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
-                  FileListPage(),
-                  const Center(child: Text('my notes that i have shared in the groups')),
-                ],
+                children: widget.children,
               ),
             ),
           ],

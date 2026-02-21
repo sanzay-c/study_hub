@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
+import 'package:study_hub/common/widgets/study_hub_tabbar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
@@ -66,7 +67,24 @@ class GroupsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: GroupCardList(),
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding:  EdgeInsets.only(top: 20.h),
+              child: StudyHubTabBar(
+                tabs: ['Discover', 'Joined', 'Created'],
+                children: [
+                  GroupCardList(),
+                  const Center(child: Text('Following')),
+                  const Center(child: Text('Followers')),
+                ],
+              ),
+            ),
+          ),
+          // GroupCardList(),
+        ],
+      ),
     );
   }
 }
@@ -97,7 +115,6 @@ class GroupCardList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.all(20.w),
       itemCount: groupData.length,
       itemBuilder: (context, index) {
         final group = groupData[index];
@@ -120,13 +137,13 @@ class GroupCardList extends StatelessWidget {
             colorClass: AppColors.containerColor,
           ),
           borderRadius: BorderRadius.circular(24.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black.withValues(alpha: 0.2),
+          //     blurRadius: 15,
+          //     offset: const Offset(0, 5),
+          //   ),
+          // ],
           border: Border.all(
             color: getColorByTheme(
               context: context,
