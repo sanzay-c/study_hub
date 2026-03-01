@@ -7,8 +7,22 @@ import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 
-class UploadNotes extends StatelessWidget {
+class UploadNotes extends StatefulWidget {
   const UploadNotes({super.key});
+
+  @override
+  State<UploadNotes> createState() => _UploadNotesState();
+}
+
+class _UploadNotesState extends State<UploadNotes> {
+  final List<String> _groups = [
+    'Physics — Grade 11',
+    'Chemistry — Grade 11',
+    'Mathematics — Grade 12',
+    'Biology — Grade 11',
+  ];
+
+  String? _selectedGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +53,7 @@ class UploadNotes extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,6 +72,10 @@ class UploadNotes extends StatelessWidget {
               ),
             ],
           ),
+          24.verticalSpace,
+
+          _buildLabel('Select Group'),
+          _buildGroupsDropdown(context),
           24.verticalSpace,
 
           _buildLabel('Upload PDF'),
@@ -81,7 +100,6 @@ class UploadNotes extends StatelessWidget {
               ],
             ),
           ),
-
           24.verticalSpace,
 
           CommonButton(
@@ -105,6 +123,59 @@ class UploadNotes extends StatelessWidget {
     );
   }
 
+  Widget _buildGroupsDropdown(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: getColorByTheme(
+          context: context,
+          colorClass: AppColors.containerInput,
+        ),
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedGroup,
+          isExpanded: true,
+          hint: TextWidget(
+            text: 'Select a group...',
+            fontSize: 13.sp,
+            color: getColorByTheme(
+              context: context,
+              colorClass: AppColors.textColor,
+            ),
+          ),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: getColorByTheme(
+              context: context,
+              colorClass: AppColors.containerBorderColor,
+            ),
+          ),
+          dropdownColor: getColorByTheme(
+            context: context,
+            colorClass: AppColors.containerColor,
+          ),
+          borderRadius: BorderRadius.circular(14.r),
+          items: _groups.map((group) {
+            return DropdownMenuItem<String>(
+              value: group,
+              child: TextWidget(
+                text: group,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() => _selectedGroup = value);
+          },
+        ),
+      ),
+    );
+  }
+
+  // ── Label helper (unchanged) ────────────────────────────────────────────────
   Widget _buildLabel(String text) {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),

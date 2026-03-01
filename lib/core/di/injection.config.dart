@@ -38,6 +38,19 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
+import 'package:study_hub/features/notes/data/datasource/notes_remote_datasource.dart'
+    as _i900;
+import 'package:study_hub/features/notes/data/repo_impl/notes_repo_impl.dart'
+    as _i563;
+import 'package:study_hub/features/notes/domain/repo/notes_repo.dart' as _i689;
+import 'package:study_hub/features/notes/domain/usecase/download_note_usecase.dart'
+    as _i546;
+import 'package:study_hub/features/notes/domain/usecase/get_discover_notes_usecase.dart'
+    as _i1000;
+import 'package:study_hub/features/notes/domain/usecase/get_my_notes_usecase.dart'
+    as _i261;
+import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart'
+    as _i348;
 import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart'
     as _i970;
 import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
@@ -71,6 +84,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i394.AuthLocalDataSource>(
       () => _i394.AuthLocalDataSourceImpl(gh<_i284.AuthDao>()),
     );
+    gh.lazySingleton<_i900.NoteRemoteDataSource>(
+      () => _i900.NoteRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i199.UserStatsRemoteDataSource>(
       () => _i199.UserStatsRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
@@ -80,6 +96,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i117.UserStatsRepository>(
       () =>
           _i282.UserStatsRepositoryImpl(gh<_i199.UserStatsRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i689.NotesRepo>(
+      () => _i563.NotesRepoImpl(
+        noteRemoteDataSource: gh<_i900.NoteRemoteDataSource>(),
+      ),
     );
     gh.lazySingleton<_i481.AuthRepo>(
       () => _i658.AuthRepoImpl(
@@ -96,6 +117,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i970.UploadAvatarCubit>(
       () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
     );
+    gh.factory<_i546.DownloadNoteUseCase>(
+      () => _i546.DownloadNoteUseCase(repository: gh<_i689.NotesRepo>()),
+    );
+    gh.factory<_i1000.GetDiscoverNotesUsecase>(
+      () => _i1000.GetDiscoverNotesUsecase(repository: gh<_i689.NotesRepo>()),
+    );
+    gh.factory<_i261.GetMyNotesUseCase>(
+      () => _i261.GetMyNotesUseCase(repository: gh<_i689.NotesRepo>()),
+    );
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
     );
@@ -108,6 +138,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1006.LoginUsecase>(),
         gh<_i481.AuthRepo>(),
         gh<_i558.LogoutUsecase>(),
+      ),
+    );
+    gh.factory<_i348.NotesBloc>(
+      () => _i348.NotesBloc(
+        gh<_i1000.GetDiscoverNotesUsecase>(),
+        gh<_i261.GetMyNotesUseCase>(),
+        gh<_i546.DownloadNoteUseCase>(),
       ),
     );
     gh.factory<_i566.UserStatsBloc>(

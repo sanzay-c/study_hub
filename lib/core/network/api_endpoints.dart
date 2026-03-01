@@ -19,4 +19,11 @@ class ApiEndpoints {
 
   // upload avatar
   static const String uploadAvatar = "/api/auth/upload_avatar/";
+
+  // notes
+  static const String myNotes = '/api/notes/me/';
+  static const String discoverNotes = '/api/notes/discover/';
+
+  //download notes{{base_url}}/api/notes/699b4b0459cfafcbda0950d9/download/
+  static String downloadNotes(String noteId) => "/api/notes/$noteId/download/";
 }

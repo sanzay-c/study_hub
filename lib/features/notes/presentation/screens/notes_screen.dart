@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:study_hub/common/widgets/custom_toast.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
 import 'package:study_hub/common/widgets/study_hub_tabbar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
-import 'package:study_hub/features/notes/presentation/screens/notes_lists.dart';
+import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
+import 'package:study_hub/features/notes/presentation/bloc/notes_state.dart';
+import 'package:study_hub/features/notes/presentation/screens/discover_notes_page.dart';
+import 'package:study_hub/features/notes/presentation/screens/my_notes_page.dart';
 import 'package:study_hub/features/notes/presentation/screens/upload_notes.dart';
 import 'package:study_hub/features/notes/presentation/screens/widgets/notes_search_bar.dart';
 
@@ -65,25 +70,43 @@ class NotesScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 8.h),
-            child: const NotesSearchBar(),
-          ),
-          8.verticalSpace,
-          Expanded(
-            child: StudyHubTabBar(
-              tabs: ['Discover', 'My Notes'],
-              children: [
-                FileListPage(),
-                const Center(
-                  child: Text('my notes that i have shared in the groups'),
-                ),
-              ],
+      body: BlocListener<NotesBloc, NotesState>(
+        listenWhen: (previous, current) =>
+            previous.downloadSuccess != current.downloadSuccess ||
+            previous.downloadError != current.downloadError,
+        listener: (context, state) {
+          if (state.downloadSuccess == true) {
+            CustomToast.show(
+              context,
+              message: "Note downloaded successfully!",
+              type: ToastType.success,
+            );
+          } else if (state.downloadError != null) {
+            CustomToast.show(
+              context,
+              message: state.downloadError!,
+              type: ToastType.error,
+            );
+          }
+        },
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 8.h),
+              child: const NotesSearchBar(),
             ),
-          ),
-        ],
+            8.verticalSpace,
+            Expanded(
+              child: StudyHubTabBar(
+                tabs: const ['Discover', 'My Notes'],
+                children: const [
+                  DiscoverNotesPage(),
+                  MyNotesPage(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
