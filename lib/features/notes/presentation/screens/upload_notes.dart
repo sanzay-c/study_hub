@@ -285,6 +285,7 @@ class DropdownShimmer extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor: baseColor,
+      // ignore: deprecated_member_use
       highlightColor: baseColor.withOpacity(0.5),
       period: const Duration(milliseconds: 1500),
       child: Container(

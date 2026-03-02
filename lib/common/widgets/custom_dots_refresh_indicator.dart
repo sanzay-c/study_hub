@@ -136,7 +136,7 @@ class _WavyDotsRowState extends State<_WavyDotsRow> with SingleTickerProviderSta
 
             final double colorT = ((waveOffset + 1) / 2).clamp(0.0, 1.0);
             final Color dotColor = Color.lerp(
-              widget.color.withOpacity(0.3), 
+              widget.color.withValues(alpha: 0.3), 
               widget.color, 
               colorT
             )!;
@@ -186,6 +186,7 @@ class _GlowDot extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: glowColor.withOpacity(0.4 * glowIntensity),
             blurRadius: 6 * glowIntensity,
             spreadRadius: 1 * glowIntensity,
