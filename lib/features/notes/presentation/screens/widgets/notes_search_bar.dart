@@ -1,11 +1,40 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
 
-class NotesSearchBar extends StatelessWidget {
+class NotesSearchBar extends StatefulWidget {
   const NotesSearchBar({super.key});
+
+  @override
+  State<NotesSearchBar> createState() => _NotesSearchBarState();
+}
+
+class _NotesSearchBarState extends State<NotesSearchBar> {
+  final TextEditingController _controller = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        final notesBloc = context.read<NotesBloc>();
+        notesBloc.add(GetDiscoverNotesEvent(search: query));
+        notesBloc.add(GetMyNotesEvent(search: query));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +47,17 @@ class NotesSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: TextField(
+        controller: _controller,
+        onChanged: _onSearchChanged,
         textAlignVertical: TextAlignVertical.center,
+        style: TextStyle(
+          color: getColorByTheme(
+            context: context,
+            colorClass: AppColors.textColor,
+          ),
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           hintText: 'Search notes...',
           hintStyle: TextStyle(
@@ -27,11 +66,10 @@ class NotesSearchBar extends StatelessWidget {
               colorClass: AppColors.subTextColor,
             ),
             fontWeight: FontWeight.w600,
-            fontSize: 16.sp, 
+            fontSize: 16.sp,
           ),
-
           prefixIcon: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h), 
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
             child: SvgImageRenderWidget(
               height: 20.h,
               width: 20.w,
@@ -42,6 +80,16 @@ class NotesSearchBar extends StatelessWidget {
             minWidth: 24.w,
             minHeight: 24.h,
           ),
+          suffixIcon: _controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 20),
+                  onPressed: () {
+                    _controller.clear();
+                    _onSearchChanged('');
+                    setState(() {});
+                  },
+                )
+              : null,
           border: InputBorder.none,
           isDense: true,
         ),

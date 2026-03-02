@@ -38,6 +38,16 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
+import 'package:study_hub/features/groups/data/datasource/groups_remote_datasource.dart'
+    as _i170;
+import 'package:study_hub/features/groups/data/repo_impl/groups_repository_impl.dart'
+    as _i633;
+import 'package:study_hub/features/groups/domain/repo/groups_repository.dart'
+    as _i1011;
+import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart'
+    as _i809;
+import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart'
+    as _i690;
 import 'package:study_hub/features/notes/data/datasource/notes_remote_datasource.dart'
     as _i900;
 import 'package:study_hub/features/notes/data/repo_impl/notes_repo_impl.dart'
@@ -49,8 +59,12 @@ import 'package:study_hub/features/notes/domain/usecase/get_discover_notes_useca
     as _i1000;
 import 'package:study_hub/features/notes/domain/usecase/get_my_notes_usecase.dart'
     as _i261;
+import 'package:study_hub/features/notes/domain/usecase/upload_note_usecase.dart'
+    as _i758;
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart'
     as _i348;
+import 'package:study_hub/features/notes/presentation/cubit-upload-note/upload_note_cubit.dart'
+    as _i760;
 import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart'
     as _i970;
 import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
@@ -93,6 +107,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i230.AuthDatasource>(
       () => _i230.AuthDatasource(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i170.GroupsRemoteDataSource>(
+      () => _i170.GroupsRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i1011.GroupsRepository>(
+      () => _i633.GroupsRepositoryImpl(
+        remoteDataSource: gh<_i170.GroupsRemoteDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i117.UserStatsRepository>(
       () =>
           _i282.UserStatsRepositoryImpl(gh<_i199.UserStatsRemoteDataSource>()),
@@ -117,6 +139,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i970.UploadAvatarCubit>(
       () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
     );
+    gh.factory<_i809.GetGroupsUseCase>(
+      () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),
+    );
     gh.factory<_i546.DownloadNoteUseCase>(
       () => _i546.DownloadNoteUseCase(repository: gh<_i689.NotesRepo>()),
     );
@@ -126,8 +151,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i261.GetMyNotesUseCase>(
       () => _i261.GetMyNotesUseCase(repository: gh<_i689.NotesRepo>()),
     );
+    gh.factory<_i758.UploadNoteUseCase>(
+      () => _i758.UploadNoteUseCase(repository: gh<_i689.NotesRepo>()),
+    );
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i760.UploadNoteCubit>(
+      () => _i760.UploadNoteCubit(
+        uploadNoteUseCase: gh<_i758.UploadNoteUseCase>(),
+      ),
     );
     gh.lazySingleton<_i1067.GetUserStatsUseCase>(
       () => _i1067.GetUserStatsUseCase(gh<_i117.UserStatsRepository>()),
@@ -149,6 +182,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i566.UserStatsBloc>(
       () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
+    );
+    gh.factory<_i690.GroupsCubit>(
+      () => _i690.GroupsCubit(getGroupsUseCase: gh<_i809.GetGroupsUseCase>()),
     );
     return this;
   }

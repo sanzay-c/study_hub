@@ -11,7 +11,8 @@ class GetMyNotesUseCase {
   Future<List<NotesEntity>> call({
     required int page,
     required int limit,
+    String? search,
   }) {
-    return repository.getMyNotes(page: page, limit: limit);
+    return repository.getMyNotes(page: page, limit: limit, search: search);
   }
 }

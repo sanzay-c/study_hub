@@ -8,7 +8,9 @@ import 'package:study_hub/core/network/internet/screens/widget/connectivity_wrap
 import 'package:study_hub/core/routing/router_config.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
+import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
+import 'package:study_hub/features/notes/presentation/cubit-upload-note/upload_note_cubit.dart';
 import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart';
 import 'package:study_hub/features/user_stats/presentation/bloc/user_stats_bloc.dart';
 
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => getIt<NotesBloc>()),
             BlocProvider(create: (_) => getIt<ConnectivityCubit>()),
             BlocProvider(create: (_) => getIt<MainBottomNavBloc>()),
+            BlocProvider(create: (_) => getIt<GroupsCubit>()..getGroups()),
+            BlocProvider(create: (_) => getIt<UploadNoteCubit>()),
           ],
           child: BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {
@@ -51,7 +55,7 @@ class MyApp extends StatelessWidget {
                   brightness: Brightness.dark, // Dark theme
                 ),
                 routerConfig: router,
-                builder:  (context, child) {
+                builder: (context, child) {
                   return ConnectivityWrapper(
                     child: child ?? const SizedBox.shrink(),
                   );

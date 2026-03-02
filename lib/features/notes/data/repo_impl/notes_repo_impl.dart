@@ -16,11 +16,13 @@ class NotesRepoImpl implements NotesRepo {
   Future<List<NotesEntity>> getDiscoverNotes({
     required int page,
     required int limit,
+    String? search,
   }) async {
     try {
       final result = await noteRemoteDataSource.getDiscoverNotes(  
         page: page,
         limit: limit,
+        search: search,
       );
       return result.map((e) => e.toEntity()).toList();
     } on DioException catch (e) {
@@ -34,11 +36,13 @@ class NotesRepoImpl implements NotesRepo {
   Future<List<NotesEntity>> getMyNotes({
     required int page,
     required int limit,
+    String? search,
   }) async {
     try {
       final result = await noteRemoteDataSource.getMyNotes(  
         page: page,
         limit: limit,
+        search: search,
       );
       return result.map((e) => e.toEntity()).toList();
     } on DioException catch (e) {
@@ -72,6 +76,20 @@ class NotesRepoImpl implements NotesRepo {
       );
     } catch (e) {
       throw Exception("Download failed: ${e.toString()}");
+    }
+  }
+
+  @override
+  Future<void> uploadNote({required String groupId, required String filePath}) async {
+    try {
+      await noteRemoteDataSource.uploadNote(
+        groupId: groupId,
+        filePath: filePath,
+      );
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Upload failed');
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }

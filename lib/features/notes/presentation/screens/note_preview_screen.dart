@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
+import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/features/auth/data/datasource/auth_local_datasource.dart';
 import 'package:study_hub/features/notes/domain/entities/notes_entity.dart';
@@ -85,7 +86,6 @@ class _NotePreviewScreenState extends State<NotePreviewScreen> {
           _isLoading = false;
         });
       } else {
-        // For Images: CachedNetworkImage handles streaming directly
         setState(() {
           _isLoading = false;
         });
@@ -105,6 +105,7 @@ class _NotePreviewScreenState extends State<NotePreviewScreen> {
     final isPdf = widget.note.fileType.toLowerCase().contains('pdf');
 
     return Scaffold(
+      backgroundColor: getColorByTheme(context: context, colorClass: AppColors.backgroundColor),
       appBar: StudyHubAppBar(
         title: widget.note.title ?? "Preview",
       ),

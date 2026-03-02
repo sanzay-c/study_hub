@@ -7,31 +7,31 @@ part 'notes_model.g.dart';
 class NotesModel {
   @JsonKey(name: '_id')
   String id;
-  String groupId;
-  String uploadedBy;
+  String? groupId;
+  String? uploadedBy;
   String? title;
   String? description;
-  String filePath;
-  String fileType;
-  int fileSize;
+  String? filePath;
+  String? fileType;
+  int? fileSize;
   DateTime? createdAt;
-  String uploaderUsername;
+  String? uploaderUsername;
   dynamic uploaderAvatar;
-  String groupName;
+  String? groupName;
 
   NotesModel({
     required this.id,
-    required this.groupId,
-    required this.uploadedBy,
+    this.groupId,
+    this.uploadedBy,
     this.title,
     this.description,
-    required this.filePath,
-    required this.fileType,
-    required this.fileSize,
+    this.filePath,
+    this.fileType,
+    this.fileSize,
     this.createdAt,
-    required this.uploaderUsername,
+    this.uploaderUsername,
     this.uploaderAvatar,
-    required this.groupName,
+    this.groupName,
   });
 
   NotesModel copyWith({
@@ -68,22 +68,20 @@ class NotesModel {
       _$NotesModelFromJson(json);
   Map<String, dynamic> toJson() => _$NotesModelToJson(this);
 
-
-
   NotesEntity toEntity() {
     return NotesEntity(
       id: id,
-      groupId: groupId,
-      uploadedBy: uploadedBy,
+      groupId: groupId ?? '',
+      uploadedBy: uploadedBy ?? '',
       title: title,
       description: description,
-      filePath: filePath,
-      fileType: fileType,
-      fileSize: fileSize,
+      filePath: filePath ?? '',
+      fileType: fileType ?? '',
+      fileSize: fileSize ?? 0,
       createdAt: createdAt,
-      uploaderUsername: uploaderUsername,
+      uploaderUsername: uploaderUsername ?? 'Unknown',
       uploaderAvatar: uploaderAvatar,
-      groupName: groupName,
+      groupName: groupName ?? 'Unknown',
     );
   }
 

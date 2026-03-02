@@ -5,10 +5,11 @@ sealed class NotesEvent extends Equatable {}
 
 class GetMyNotesEvent extends NotesEvent {
   final bool isRefresh;
-  GetMyNotesEvent({this.isRefresh = false});
+  final String? search;
+  GetMyNotesEvent({this.isRefresh = false, this.search});
   
   @override
-  List<Object?> get props => [isRefresh];
+  List<Object?> get props => [isRefresh, search];
 }
 
 class DownloadNoteRequested extends NotesEvent {
@@ -23,8 +24,9 @@ class DownloadNoteRequested extends NotesEvent {
 
 class GetDiscoverNotesEvent extends NotesEvent {
   final bool isRefresh;
-  GetDiscoverNotesEvent({this.isRefresh = false});
+  final String? search;
+  GetDiscoverNotesEvent({this.isRefresh = false, this.search});
   
   @override
-  List<Object?> get props => [isRefresh];
+  List<Object?> get props => [isRefresh, search];
 }

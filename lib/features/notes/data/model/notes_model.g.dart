@@ -8,19 +8,19 @@ part of 'notes_model.dart';
 
 NotesModel _$NotesModelFromJson(Map<String, dynamic> json) => NotesModel(
   id: json['_id'] as String,
-  groupId: json['group_id'] as String,
-  uploadedBy: json['uploaded_by'] as String,
+  groupId: json['group_id'] as String?,
+  uploadedBy: json['uploaded_by'] as String?,
   title: json['title'] as String?,
   description: json['description'] as String?,
-  filePath: json['file_path'] as String,
-  fileType: json['file_type'] as String,
-  fileSize: (json['file_size'] as num).toInt(),
+  filePath: json['file_path'] as String?,
+  fileType: json['file_type'] as String?,
+  fileSize: (json['file_size'] as num?)?.toInt(),
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),
-  uploaderUsername: json['uploader_username'] as String,
+  uploaderUsername: json['uploader_username'] as String?,
   uploaderAvatar: json['uploader_avatar'],
-  groupName: json['group_name'] as String,
+  groupName: json['group_name'] as String?,
 );
 
 Map<String, dynamic> _$NotesModelToJson(NotesModel instance) =>

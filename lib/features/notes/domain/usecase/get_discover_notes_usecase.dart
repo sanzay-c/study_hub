@@ -12,7 +12,8 @@ class GetDiscoverNotesUsecase {
   Future<List<NotesEntity>> call({
     required int page,
     required int limit,
+    String? search,
   }) {
-    return repository.getDiscoverNotes(page: page, limit: limit);
+    return repository.getDiscoverNotes(page: page, limit: limit, search: search);
   }
 }

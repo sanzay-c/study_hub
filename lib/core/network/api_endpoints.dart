@@ -26,4 +26,10 @@ class ApiEndpoints {
 
   //download notes{{base_url}}/api/notes/699b4b0459cfafcbda0950d9/download/
   static String downloadNotes(String noteId) => "/api/notes/$noteId/download/";
+
+  // GET groups
+  static const String getGroups = '/api/groups/';
+
+  // GET notes
+  static const String getNotes = '/api/notes/';
 }
