@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:study_hub/core/config/env_config.dart';
 import 'package:study_hub/features/notes/domain/entities/notes_entity.dart';
 
 part 'notes_model.g.dart';
@@ -80,7 +81,7 @@ class NotesModel {
       fileSize: fileSize ?? 0,
       createdAt: createdAt,
       uploaderUsername: uploaderUsername ?? 'Unknown',
-      uploaderAvatar: uploaderAvatar,
+      uploaderAvatar: EnvConfig.resolveImageUrl(uploaderAvatar as String?),
       groupName: groupName ?? 'Unknown',
     );
   }

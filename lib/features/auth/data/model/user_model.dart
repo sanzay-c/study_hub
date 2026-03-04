@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:study_hub/core/config/env_config.dart';
 import 'package:study_hub/core/services/local/auth_database.dart' as db;
 import 'package:study_hub/features/auth/domain/entities/user.dart' as entity;
 
@@ -39,7 +40,7 @@ class UserModel {
       username: username,
       email: email,
       fullname: fullname,
-      avatarPath: avatarPath,
+      avatarPath: EnvConfig.resolveImageUrl(avatarPath),
       lastSeen: lastSeen,
     );
   }

@@ -65,6 +65,24 @@ import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart'
     as _i348;
 import 'package:study_hub/features/notes/presentation/cubit-upload-note/upload_note_cubit.dart'
     as _i760;
+import 'package:study_hub/features/social/data/datasource/social_remote_datasource.dart'
+    as _i615;
+import 'package:study_hub/features/social/data/repo_impl/social_repo_impl.dart'
+    as _i730;
+import 'package:study_hub/features/social/domain/repo/social_repo.dart'
+    as _i430;
+import 'package:study_hub/features/social/domain/usecase/follow_user_usecase.dart'
+    as _i118;
+import 'package:study_hub/features/social/domain/usecase/social_discover_usecase.dart'
+    as _i925;
+import 'package:study_hub/features/social/domain/usecase/social_followers_usecase.dart'
+    as _i824;
+import 'package:study_hub/features/social/domain/usecase/social_following_usecase.dart'
+    as _i503;
+import 'package:study_hub/features/social/domain/usecase/unfollow_user_usecase.dart'
+    as _i256;
+import 'package:study_hub/features/social/presentation/bloc/social_bloc.dart'
+    as _i847;
 import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart'
     as _i970;
 import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
@@ -104,6 +122,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i199.UserStatsRemoteDataSource>(
       () => _i199.UserStatsRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i615.SocialRemoteDataSource>(
+      () => _i615.SocialRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i230.AuthDatasource>(
       () => _i230.AuthDatasource(gh<_i361.Dio>()),
     );
@@ -113,6 +134,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1011.GroupsRepository>(
       () => _i633.GroupsRepositoryImpl(
         remoteDataSource: gh<_i170.GroupsRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i430.SocialRepo>(
+      () => _i730.SocialRepoImpl(
+        socialRemoteDataSource: gh<_i615.SocialRemoteDataSource>(),
       ),
     );
     gh.lazySingleton<_i117.UserStatsRepository>(
@@ -136,6 +162,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i558.LogoutUsecase>(
       () => _i558.LogoutUsecase(gh<_i481.AuthRepo>()),
     );
+    gh.factory<_i118.FollowUserUsecase>(
+      () => _i118.FollowUserUsecase(repository: gh<_i430.SocialRepo>()),
+    );
+    gh.factory<_i256.UnfollowUserUsecase>(
+      () => _i256.UnfollowUserUsecase(repository: gh<_i430.SocialRepo>()),
+    );
     gh.factory<_i970.UploadAvatarCubit>(
       () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
     );
@@ -154,6 +186,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i758.UploadNoteUseCase>(
       () => _i758.UploadNoteUseCase(repository: gh<_i689.NotesRepo>()),
     );
+    gh.factory<_i925.SocialDiscoverUsecase>(
+      () => _i925.SocialDiscoverUsecase(gh<_i430.SocialRepo>()),
+    );
+    gh.factory<_i824.SocialFollowersUsecase>(
+      () => _i824.SocialFollowersUsecase(gh<_i430.SocialRepo>()),
+    );
+    gh.factory<_i503.SocialFollowingUsecase>(
+      () => _i503.SocialFollowingUsecase(gh<_i430.SocialRepo>()),
+    );
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
     );
@@ -171,6 +212,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1006.LoginUsecase>(),
         gh<_i481.AuthRepo>(),
         gh<_i558.LogoutUsecase>(),
+      ),
+    );
+    gh.factory<_i847.SocialBloc>(
+      () => _i847.SocialBloc(
+        getFollowersUsecase: gh<_i824.SocialFollowersUsecase>(),
+        getFollowingUsecase: gh<_i503.SocialFollowingUsecase>(),
+        getDiscoverUsecase: gh<_i925.SocialDiscoverUsecase>(),
+        followUserUsecase: gh<_i118.FollowUserUsecase>(),
+        unfollowUserUsecase: gh<_i256.UnfollowUserUsecase>(),
       ),
     );
     gh.factory<_i348.NotesBloc>(

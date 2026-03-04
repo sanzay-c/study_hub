@@ -32,4 +32,12 @@ class ApiEndpoints {
 
   // GET notes
   static const String getNotes = '/api/notes/';
+
+  // Social
+  static const String socialFollowing = "/api/social/following/";
+  static const String socialFollowers = "/api/social/followers/";
+  static const String socialDiscover = "/api/social/discover/";
+  
+  static const String socialFollow = "/api/social/follow/";
+  static const String socialUnfollow = "/api/social/follow/";
 }

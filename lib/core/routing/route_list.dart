@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:study_hub/common/splash_screen/chat_splash_screen.dart';
 import 'package:study_hub/core/routing/custom_go_route.dart';
@@ -9,6 +10,7 @@ import 'package:study_hub/features/auth/presentation/screens/sign_up_screen.dart
 import 'package:study_hub/features/bottom_nav/presentation/screen/study_hub_bottom_nav.dart';
 import 'package:study_hub/features/chat/presentation/screens/messages_screen.dart';
 import 'package:study_hub/features/groups/presentation/screens/group_details_screen.dart';
+import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/screens/social_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/user_details_screen.dart';
 
@@ -61,9 +63,18 @@ List<RouteBase> get screensRoute => [
     child: SocialScreen(),
   ),
 
-  customGoRoute(
+  GoRoute(
     path: RouteName.userDetailsScreen,
-    child: UserDetailsScreen(),
+    name: RouteName.userDetailsScreen,
+    pageBuilder: (context, state) {
+      final user = state.extra as SocialEntity?;
+      return MaterialPage(
+        key: state.pageKey,
+        child: user != null
+            ? UserDetailsScreen(user: user)
+            : const Scaffold(body: Center(child: Text('User not found'))),
+      );
+    },
   ),
 ];
 

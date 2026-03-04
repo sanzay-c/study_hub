@@ -10,50 +10,48 @@ import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
-import 'package:study_hub/features/notes/presentation/screens/widgets/notes_shimmer.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/bloc/social_bloc.dart';
 import 'package:study_hub/features/social/presentation/widgets/social_shimmer.dart';
 
-class UsersDiscoverScreen extends StatefulWidget {
-  const UsersDiscoverScreen({super.key});
+class UserFollowersScreen extends StatefulWidget {
+  const UserFollowersScreen({super.key});
 
   @override
-  State<UsersDiscoverScreen> createState() => _UsersDiscoverScreenState();
+  State<UserFollowersScreen> createState() => _UserFollowersScreenState();
 }
 
-class _UsersDiscoverScreenState extends State<UsersDiscoverScreen> {
+class _UserFollowersScreenState extends State<UserFollowersScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SocialBloc>().add(GetSocialDiscoverEvent());
+    context.read<SocialBloc>().add(GetSocialFollowersEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
-        if (state.status == SocialStatus.loading &&
-            state.discoverUsers.isEmpty) {
+        if (state.status == SocialStatus.loading && state.followers.isEmpty) {
           return SocialShimmer();
         }
 
-        if (state.status == SocialStatus.error && state.discoverUsers.isEmpty) {
+        if (state.status == SocialStatus.error && state.followers.isEmpty) {
           return Center(child: Text(state.errorMessage ?? 'An error occurred'));
         }
 
-        if (state.discoverUsers.isEmpty) {
-          return const Center(child: Text('No users found to discover'));
+        if (state.followers.isEmpty) {
+          return const Center(child: Text('No such user found'));
         }
 
         return CustomDotsRefreshIndicator(
           onRefresh: () async {
-            context.read<SocialBloc>().add(GetSocialDiscoverEvent());
+            context.read<SocialBloc>().add(GetSocialFollowersEvent());
           },
           child: ListView.builder(
-            itemCount: state.discoverUsers.length,
+            itemCount: state.followers.length,
             itemBuilder: (context, index) {
-              return UserProfileCard(userData: state.discoverUsers[index]);
+              return UserProfileCard(userData: state.followers[index]);
             },
           ),
         );
@@ -136,8 +134,7 @@ class UserProfileCard extends StatelessWidget {
                   ),
                   4.verticalSpace,
                   TextWidget(
-                    text:
-                        'User bio here...', // Bio field not in SocialEntity yet
+                    text: 'User bio here...',
                     fontSize: 14.sp,
                     maxLines: 1,
                     textOverflow: TextOverflow.ellipsis,
@@ -160,38 +157,66 @@ class UserProfileCard extends StatelessWidget {
             ),
 
             BlocBuilder<SocialBloc, SocialState>(
-              buildWhen: (previous, current) =>
-                  previous.actionUserId == userData.userId ||
-                  current.actionUserId == userData.userId ||
-                  previous.discoverUsers.any(
-                        (u) => u.userId == userData.userId && u.isFollowing,
-                      ) !=
-                      current.discoverUsers.any(
-                        (u) => u.userId == userData.userId && u.isFollowing,
-                      ),
+              buildWhen: (previous, current) {
+                // Check if isFollowing changed in followers list for this user
+                final prevFollower =
+                    previous.followers.cast<SocialEntity?>().firstWhere(
+                          (u) => u?.userId == userData.userId,
+                          orElse: () => null,
+                        );
+                final currFollower =
+                    current.followers.cast<SocialEntity?>().firstWhere(
+                          (u) => u?.userId == userData.userId,
+                          orElse: () => null,
+                        );
+                final followerListChanged =
+                    prevFollower?.isFollowing != currFollower?.isFollowing;
+
+                // ✅ Also check if this user appeared/disappeared in the following list
+                // This catches follow/unfollow done from Discover or Following tabs
+                final prevInFollowing =
+                    previous.following.any((u) => u.userId == userData.userId);
+                final currInFollowing =
+                    current.following.any((u) => u.userId == userData.userId);
+                final followingListChanged = prevInFollowing != currInFollowing;
+
+                // Rebuild when loading state changes for THIS specific user
+                final loadingChanged =
+                    (previous.actionUserId == userData.userId) !=
+                        (current.actionUserId == userData.userId);
+
+                return followerListChanged || followingListChanged || loadingChanged;
+              },
               builder: (context, state) {
-                // Look up fresh data from state instead of relying on stale captured userData
-                final currentUser = state.discoverUsers
-                    .cast<SocialEntity?>()
-                    .firstWhere(
-                      (u) => u?.userId == userData.userId,
-                      orElse: () => null,
-                    );
+                // ✅ Check BOTH lists — following list is the source of truth
+                final isInFollowingList =
+                    state.following.any((u) => u.userId == userData.userId);
+
+                final currentUser =
+                    state.followers.cast<SocialEntity?>().firstWhere(
+                          (u) => u?.userId == userData.userId,
+                          orElse: () => null,
+                        );
+
+                // Either source confirming we follow = show Following button
                 final isCurrentlyFollowing =
-                    currentUser?.isFollowing ?? userData.isFollowing;
+                    isInFollowingList ||
+                    (currentUser?.isFollowing ?? userData.isFollowing);
+
                 final isActionLoading = state.actionUserId == userData.userId;
+
                 return GestureDetector(
                   onTap: isActionLoading
                       ? null
                       : () {
                           if (isCurrentlyFollowing) {
                             context.read<SocialBloc>().add(
-                              UnfollowUserEvent(userData.userId),
-                            );
+                                  UnfollowUserEvent(userData.userId),
+                                );
                           } else {
                             context.read<SocialBloc>().add(
-                              FollowUserEvent(userData.userId),
-                            );
+                                  FollowUserEvent(userData.userId),
+                                );
                           }
                         },
                   child: _buildActionButton(
@@ -246,6 +271,7 @@ class UserProfileCard extends StatelessWidget {
         child: const CircularProgressIndicator(strokeWidth: 2),
       );
     }
+
     if (isFollowing) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),

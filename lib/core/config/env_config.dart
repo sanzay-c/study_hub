@@ -37,4 +37,23 @@ class EnvConfig {
   static String getString(String key, {String defaultValue = ''}) {
     return dotenv.get(key, fallback: defaultValue);
   }
+
+  /// Resolves a relative image path to a full URL using the API base URL.
+  static String? resolveImageUrl(String? path) {
+    if (path == null || path.isEmpty) return null;
+    if (path.startsWith('http')) return path;
+    
+    // Ensure the base URL doesn't end with a slash
+    final baseUrl = apiBaseUrl.endsWith('/') 
+        ? apiBaseUrl.substring(0, apiBaseUrl.length - 1) 
+        : apiBaseUrl;
+    
+    // Ensure the path starts with /media/ if it's a relative path from the API
+    String normalizedPath = path.startsWith('/') ? path : '/$path';
+    if (!normalizedPath.startsWith('/media/')) {
+      normalizedPath = '/media$normalizedPath';
+    }
+    
+    return '$baseUrl$normalizedPath';
+  }
 }
