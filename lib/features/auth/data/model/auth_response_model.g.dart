@@ -6,6 +6,7 @@ part of 'auth_response_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+// ignore: unused_element
 AuthResponseModel _$AuthResponseModelFromJson(Map<String, dynamic> json) =>
     AuthResponseModel(
       token: AuthTokenModel.fromJson(json['token'] as Map<String, dynamic>),

@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/features/social/presentation/screens/user_followers_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/user_following_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/users_discover_screen.dart';
-import 'package:study_hub/features/social/presentation/widgets/social_shimmer.dart';
 import 'package:study_hub/features/social/presentation/widgets/user_search_bar.dart';
 
 class SocialScreen extends StatelessWidget {

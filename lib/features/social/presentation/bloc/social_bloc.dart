@@ -34,8 +34,6 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     on<UnfollowUserEvent>(_onUnfollowUser);
   }
 
-  /// Returns a Set of all userIds that we currently follow,
-  /// derived from the following list (source of truth).
   Set<String> get _followedUserIds =>
       state.following.map((u) => u.userId).toSet();
 
@@ -50,11 +48,8 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         search: searchTerm.isEmpty ? null : searchTerm,
       );
 
-      // ✅ Merge backend response with local follow state so that
-      // following someone from Discover/Following tab is reflected here too.
       final followedIds = _followedUserIds;
 
-      // Also collect any locally-known followed users from discoverUsers list
       final discoverFollowedIds = state.discoverUsers
           .where((u) => u.isFollowing)
           .map((u) => u.userId)
@@ -71,15 +66,16 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user;
       }).toList();
 
-      emit(state.copyWith(
-        status: SocialStatus.success,
-        followers: mergedFollowers,
-      ));
+      emit(
+        state.copyWith(
+          status: SocialStatus.success,
+          followers: mergedFollowers,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: SocialStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: SocialStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -90,12 +86,10 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     emit(state.copyWith(status: SocialStatus.loading));
     try {
       final searchTerm = event.search ?? state.searchQuery;
-      final following = await getFollowingUsecase(
+      final following = (await getFollowingUsecase(
         search: searchTerm.isEmpty ? null : searchTerm,
-      );
+      )).map((u) => u.copyWith(isFollowing: true)).toList();
 
-      // Following list is the source of truth — no merge needed.
-      // But update followers & discover lists to stay in sync.
       final followingIds = following.map((u) => u.userId).toSet();
 
       final updatedFollowers = state.followers.map((user) {
@@ -106,17 +100,18 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user.copyWith(isFollowing: followingIds.contains(user.userId));
       }).toList();
 
-      emit(state.copyWith(
-        status: SocialStatus.success,
-        following: following,
-        followers: updatedFollowers,
-        discoverUsers: updatedDiscover,
-      ));
+      emit(
+        state.copyWith(
+          status: SocialStatus.success,
+          following: following,
+          followers: updatedFollowers,
+          discoverUsers: updatedDiscover,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: SocialStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: SocialStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -131,7 +126,6 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         search: searchTerm.isEmpty ? null : searchTerm,
       );
 
-      // ✅ Merge with local follow state so Discover tab stays in sync too.
       final followedIds = _followedUserIds;
 
       final mergedDiscover = discover.map((user) {
@@ -141,20 +135,19 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user;
       }).toList();
 
-      emit(state.copyWith(
-        status: SocialStatus.success,
-        discoverUsers: mergedDiscover,
-      ));
+      emit(
+        state.copyWith(
+          status: SocialStatus.success,
+          discoverUsers: mergedDiscover,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: SocialStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: SocialStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
-  /// Triggered when user types in the search bar.
-  /// Refreshes all three tabs simultaneously with the new query.
   Future<void> _onSearch(
     SearchSocialEvent event,
     Emitter<SocialState> emit,
@@ -169,10 +162,12 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         getDiscoverUsecase(search: search),
       ]);
 
-      final following = results[0];
+      // ignore: unnecessary_cast
+      final following = (results[0] as List<SocialEntity>)
+          .map((u) => u.copyWith(isFollowing: true))
+          .toList();
       final followingIds = following.map((u) => u.userId).toSet();
 
-      // ✅ Merge all lists against the fresh following list (source of truth)
       final mergedFollowers = results[1].map((user) {
         return user.copyWith(isFollowing: followingIds.contains(user.userId));
       }).toList();
@@ -181,17 +176,18 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user.copyWith(isFollowing: followingIds.contains(user.userId));
       }).toList();
 
-      emit(state.copyWith(
-        status: SocialStatus.success,
-        following: following,
-        followers: mergedFollowers,
-        discoverUsers: mergedDiscover,
-      ));
+      emit(
+        state.copyWith(
+          status: SocialStatus.success,
+          following: following,
+          followers: mergedFollowers,
+          discoverUsers: mergedDiscover,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: SocialStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: SocialStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -203,25 +199,27 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     try {
       await followUserUsecase(event.userId);
 
-      // ✅ Update ALL three lists immediately for instant UI feedback
       final updatedFollowers = state.followers.map((user) {
-        if (user.userId == event.userId) return user.copyWith(isFollowing: true);
+        if (user.userId == event.userId)
+          // ignore: curly_braces_in_flow_control_structures
+          return user.copyWith(isFollowing: true);
         return user;
       }).toList();
 
       final updatedDiscover = state.discoverUsers.map((user) {
-        if (user.userId == event.userId) return user.copyWith(isFollowing: true);
+        if (user.userId == event.userId) {
+          return user.copyWith(isFollowing: true);
+        }
         return user;
       }).toList();
 
-      // Also add to following list if not already there
-      final alreadyInFollowing =
-          state.following.any((u) => u.userId == event.userId);
+      final alreadyInFollowing = state.following.any(
+        (u) => u.userId == event.userId,
+      );
       final updatedFollowing = alreadyInFollowing
           ? state.following
           : [
               ...state.following,
-              // Find the user from any list to add to following
               ...state.followers
                   .where((u) => u.userId == event.userId)
                   .map((u) => u.copyWith(isFollowing: true)),
@@ -230,14 +228,15 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
                   .map((u) => u.copyWith(isFollowing: true)),
             ];
 
-      emit(state.copyWith(
-        followers: updatedFollowers,
-        discoverUsers: updatedDiscover,
-        following: updatedFollowing,
-        clearActionUserId: true,
-      ));
+      emit(
+        state.copyWith(
+          followers: updatedFollowers,
+          discoverUsers: updatedDiscover,
+          following: updatedFollowing,
+          clearActionUserId: true,
+        ),
+      );
     } catch (e) {
-      // ✅ Revert optimistic update on failure
       final revertedFollowers = state.followers.map((user) {
         if (user.userId == event.userId) {
           return user.copyWith(isFollowing: false);
@@ -252,12 +251,14 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user;
       }).toList();
 
-      emit(state.copyWith(
-        followers: revertedFollowers,
-        discoverUsers: revertedDiscover,
-        clearActionUserId: true,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          followers: revertedFollowers,
+          discoverUsers: revertedDiscover,
+          clearActionUserId: true,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -269,9 +270,9 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     try {
       await unfollowUserUsecase(event.userId);
 
-      // ✅ Update ALL three lists immediately
-      final updatedFollowing =
-          state.following.where((user) => user.userId != event.userId).toList();
+      final updatedFollowing = state.following
+          .where((user) => user.userId != event.userId)
+          .toList();
 
       final updatedFollowers = state.followers.map((user) {
         if (user.userId == event.userId) {
@@ -287,14 +288,15 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user;
       }).toList();
 
-      emit(state.copyWith(
-        following: updatedFollowing,
-        followers: updatedFollowers,
-        discoverUsers: updatedDiscover,
-        clearActionUserId: true,
-      ));
+      emit(
+        state.copyWith(
+          following: updatedFollowing,
+          followers: updatedFollowers,
+          discoverUsers: updatedDiscover,
+          clearActionUserId: true,
+        ),
+      );
     } catch (e) {
-      // ✅ Revert optimistic update on failure
       final revertedFollowers = state.followers.map((user) {
         if (user.userId == event.userId) {
           return user.copyWith(isFollowing: true);
@@ -302,11 +304,13 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         return user;
       }).toList();
 
-      emit(state.copyWith(
-        followers: revertedFollowers,
-        clearActionUserId: true,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          followers: revertedFollowers,
+          clearActionUserId: true,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

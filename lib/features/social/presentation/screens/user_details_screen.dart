@@ -45,15 +45,21 @@ class _ProfileCard extends StatelessWidget {
   const _ProfileCard({required this.user});
 
   /// Searches all three social lists to get the freshest copy of this user.
+  /// Prioritizes instances where isFollowing is true.
   SocialEntity? _findUser(SocialState state) {
-    return [
-      ...state.followers,
+    final allOccurrences = [
       ...state.following,
+      ...state.followers,
       ...state.discoverUsers,
-    ].cast<SocialEntity?>().firstWhere(
-          (u) => u?.userId == user.userId,
-          orElse: () => null,
-        );
+    ].where((u) => u.userId == user.userId).toList();
+
+    if (allOccurrences.isEmpty) return null;
+
+    // If we follow them in ANY list, consider it the truth.
+    return allOccurrences.firstWhere(
+      (u) => u.isFollowing,
+      orElse: () => allOccurrences.first,
+    );
   }
 
   @override
@@ -123,7 +129,7 @@ class _ProfileCard extends StatelessWidget {
                           ? Image.network(
                               liveUser.avatarPath!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (_, _, _) =>
                                   _buildAvatarFallback(context),
                             )
                           : _buildAvatarFallback(context),
