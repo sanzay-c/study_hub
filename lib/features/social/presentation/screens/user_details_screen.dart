@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/bloc/social_bloc.dart';
+import 'package:study_hub/features/social/presentation/cubit/user_stats_cubit.dart';
 import 'package:study_hub/features/social/presentation/widgets/customized_button.dart';
 
 class UserDetailsScreen extends StatelessWidget {
@@ -18,15 +21,18 @@ class UserDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: StudyHubAppBar(title: 'Profile'),
-      backgroundColor: getColorByTheme(
-        context: context,
-        colorClass: AppColors.backgroundColor,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: _ProfileCard(user: user),
+    return BlocProvider(
+      create: (context) => getIt<UserStatsCubit>()..fetchStats(user.userId),
+      child: Scaffold(
+        appBar: StudyHubAppBar(title: 'Profile'),
+        backgroundColor: getColorByTheme(
+          context: context,
+          colorClass: AppColors.backgroundColor,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: _ProfileCard(user: user),
+          ),
         ),
       ),
     );
@@ -249,6 +255,80 @@ class _ProfileCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+
+                  24.verticalSpace,
+
+                  // ── About Section (Dynamic Stats) ──────────────────────────
+                  Container(
+                    width: double.infinity,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                    decoration: BoxDecoration(
+                      color: getColorByTheme(
+                        context: context,
+                        colorClass: AppColors.containerColor,
+                      ),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(
+                        color: getColorByTheme(
+                          context: context,
+                          colorClass: AppColors.containerBorderColor,
+                        ),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextWidget(
+                          text: 'About',
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        16.verticalSpace,
+                        BlocBuilder<UserStatsCubit, UserStatsState>(
+                          builder: (context, statsState) {
+                            if (statsState is UserStatsLoading) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            if (statsState is UserStatsError) {
+                              return TextWidget(
+                                text: 'Failed to load profile info',
+                                color: getColorByTheme(context: context, colorClass: AppColors.gr0XFF8B32FB),
+                              );
+                            }
+
+                            if (statsState is UserStatsLoaded) {
+                              final stats = statsState.stats;
+                              return Column(
+                                children: [
+                                  _InfoRow(
+                                    icon: AssetsSource.appIcons.messageIcon,
+                                    text: stats.email ?? 'Private email',
+                                  ),
+                                  12.verticalSpace,
+                                  _InfoRow(
+                                    icon: AssetsSource.appIcons.calendarIcon,
+                                    text: stats.joinedDate != null
+                                        ? 'Joined ${DateFormat('MMMM yyyy').format(stats.joinedDate!)}'
+                                        : 'Member since 2024',
+                                  ),
+                                ],
+                              );
+                            }
+
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

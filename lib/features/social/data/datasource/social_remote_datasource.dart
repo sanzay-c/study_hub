@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/core/network/api_endpoints.dart';
 import 'package:study_hub/features/social/data/model/social_model.dart';
+import 'package:study_hub/features/social/data/model/user_stats_model.dart';
 
 abstract class SocialRemoteDataSource {
   Future<List<SocialModel>> getSocialFollowing({String? search});
@@ -9,6 +10,7 @@ abstract class SocialRemoteDataSource {
   Future<List<SocialModel>> getSocialDiscover({String? search});
   Future<void> followUser(String userId);
   Future<void> unfollowUser(String userId);
+  Future<UserStatsModel> getUserStats(String userId);
 }
 
 @LazySingleton(as: SocialRemoteDataSource)
@@ -64,5 +66,11 @@ class SocialRemoteDataSourceImpl implements SocialRemoteDataSource {
       ApiEndpoints.socialUnfollow,
       data: {'user_id': userId},
     );
+  }
+  
+  @override
+  Future<UserStatsModel> getUserStats(String userId) async {
+    final response = await dio.get(ApiEndpoints.userStatsId(userId));
+    return UserStatsModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

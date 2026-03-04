@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/features/social/data/datasource/social_remote_datasource.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
+import 'package:study_hub/features/social/domain/entities/user_stats_entity.dart';
 import 'package:study_hub/features/social/domain/repo/social_repo.dart';
 
 @LazySingleton(as: SocialRepo)
@@ -35,5 +36,11 @@ class SocialRepoImpl implements SocialRepo {
   @override
   Future<void> unfollowUser(String userId) async {
     await socialRemoteDataSource.unfollowUser(userId);
+  }
+
+  @override
+  Future<UserStatsEntity> getUserStats(String userId) async {
+    final result = await socialRemoteDataSource.getUserStats(userId);
+    return result.toEntity();
   }
 }

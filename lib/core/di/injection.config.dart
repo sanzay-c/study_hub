@@ -73,6 +73,8 @@ import 'package:study_hub/features/social/domain/repo/social_repo.dart'
     as _i430;
 import 'package:study_hub/features/social/domain/usecase/follow_user_usecase.dart'
     as _i118;
+import 'package:study_hub/features/social/domain/usecase/get_user_stats_usecase.dart'
+    as _i443;
 import 'package:study_hub/features/social/domain/usecase/social_discover_usecase.dart'
     as _i925;
 import 'package:study_hub/features/social/domain/usecase/social_followers_usecase.dart'
@@ -83,6 +85,8 @@ import 'package:study_hub/features/social/domain/usecase/unfollow_user_usecase.d
     as _i256;
 import 'package:study_hub/features/social/presentation/bloc/social_bloc.dart'
     as _i847;
+import 'package:study_hub/features/social/presentation/cubit/user_stats_cubit.dart'
+    as _i842;
 import 'package:study_hub/features/upload_avatar/presentation/cubit/upload_avatar_cubit.dart'
     as _i970;
 import 'package:study_hub/features/user_stats/data/datasource/user_stats_remote_datasource.dart'
@@ -186,6 +190,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i758.UploadNoteUseCase>(
       () => _i758.UploadNoteUseCase(repository: gh<_i689.NotesRepo>()),
     );
+    gh.factory<_i443.GetUserStatsUsecase>(
+      () => _i443.GetUserStatsUsecase(gh<_i430.SocialRepo>()),
+    );
     gh.factory<_i925.SocialDiscoverUsecase>(
       () => _i925.SocialDiscoverUsecase(gh<_i430.SocialRepo>()),
     );
@@ -229,6 +236,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i261.GetMyNotesUseCase>(),
         gh<_i546.DownloadNoteUseCase>(),
       ),
+    );
+    gh.factory<_i842.UserStatsCubit>(
+      () => _i842.UserStatsCubit(gh<_i443.GetUserStatsUsecase>()),
     );
     gh.factory<_i566.UserStatsBloc>(
       () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
