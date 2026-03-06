@@ -56,6 +56,7 @@ interface class AppIconsSource {
   String calendarIcon = '${_baseUrl}calendar_icon.svg';
   String searchIcon = '${_baseUrl}search_icon.svg';
   String galleryIcon = '${_baseUrl}galleryIcon.svg';
+  String gearIcon = '${_baseUrl}gear-icon.svg';
 }
 
 class AssetsSource {
