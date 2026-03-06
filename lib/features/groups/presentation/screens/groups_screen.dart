@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
 import 'package:study_hub/common/widgets/study_hub_tabbar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
-import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/core/di/injection.dart';
-import 'package:study_hub/core/routing/navigation_service.dart';
-import 'package:study_hub/core/routing/route_name.dart';
+import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/screens/create_group_bottom_sheet.dart';
+import 'package:study_hub/features/groups/presentation/screens/groups_created.dart';
+import 'package:study_hub/features/groups/presentation/screens/groups_discover.dart';
+import 'package:study_hub/features/groups/presentation/screens/groups_joined.dart';
 
 class GroupsScreen extends StatelessWidget {
   const GroupsScreen({super.key});
@@ -71,167 +73,27 @@ class GroupsScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Padding(
-              padding:  EdgeInsets.only(top: 20.h),
+              padding: EdgeInsets.only(top: 20.h),
               child: StudyHubTabBar(
                 tabs: ['Discover', 'Joined', 'Created'],
                 children: [
-                  GroupCardList(),
-                  const Center(child: Text('Following')),
-                  const Center(child: Text('Followers')),
+                  BlocProvider(
+                    create: (_) => getIt<GroupsCubit>()..getDiscoverGroups(),
+                    child: const GroupsDiscover(),
+                  ),
+                  BlocProvider(
+                    create: (_) => getIt<GroupsCubit>()..getJoinedGroups(),
+                    child: const GroupsJoined(),
+                  ),
+                  BlocProvider(
+                    create: (_) => getIt<GroupsCubit>()..getCreatedGroups(),
+                    child: const GroupsCreated(),
+                  ),
                 ],
               ),
             ),
           ),
-          // GroupCardList(),
         ],
-      ),
-    );
-  }
-}
-
-final List<Map<String, dynamic>> groupData = [
-  {
-    "title": "Computer Science 101",
-    "description":
-        "Introduction to Computer Science - Algorithms, Data Structure, and Problem Solving",
-    "memberCount": 234,
-    "category": "Computer Science",
-    "image":
-        "https://images.unsplash.com/photo-1497633762265-9d179a990aa6", // Library image
-  },
-  {
-    "title": "Graphic Design Pro",
-    "description":
-        "Mastering UI/UX principles, color theory, and modern digital illustrations.",
-    "memberCount": 156,
-    "category": "Design",
-    "image": "https://images.unsplash.com/photo-1558655146-d09347e92766",
-  },
-];
-
-class GroupCardList extends StatelessWidget {
-  const GroupCardList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: groupData.length,
-      itemBuilder: (context, index) {
-        final group = groupData[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: 24.h),
-          child: _buildGroupCard(group, context),
-        );
-      },
-    );
-  }
-
-  Widget _buildGroupCard(Map<String, dynamic> group, BuildContext context) {
-    return GestureDetector(
-      onTap: () =>
-          getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
-      child: Container(
-        decoration: BoxDecoration(
-          color: getColorByTheme(
-            context: context,
-            colorClass: AppColors.containerColor,
-          ),
-          borderRadius: BorderRadius.circular(24.r),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withValues(alpha: 0.2),
-          //     blurRadius: 15,
-          //     offset: const Offset(0, 5),
-          //   ),
-          // ],
-          border: Border.all(
-            color: getColorByTheme(
-              context: context,
-              colorClass: AppColors.containerBorderColor,
-            ),
-            width: 1.w,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- Group Image ---
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-              child: Image.network(
-                group['image'],
-                height: 180.h,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextWidget(
-                    text: group['title'],
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.6,
-                  ),
-                  8.verticalSpace,
-
-                  TextWidget(
-                    text: group['description'],
-                    color: getColorByTheme(
-                      context: context,
-                      colorClass: AppColors.subTextColor,
-                    ),
-                  ),
-
-                  16.verticalSpace,
-
-                  Row(
-                    children: [
-                      SvgImageRenderWidget(
-                        svgImagePath:
-                            AssetsSource.bottomNavAssetsSource.socialIcon,
-                        height: 16.h,
-                        width: 16.w,
-                      ),
-                      8.horizontalSpace,
-                      TextWidget(
-                        text: group['memberCount'].toString(),
-                        color: getColorByTheme(
-                          context: context,
-                          colorClass: AppColors.subTextColor,
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 8.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: getColorByTheme(
-                            context: context,
-                            colorClass: AppColors.containerInput,
-                          ),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: TextWidget(
-                          text: group['category'],
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

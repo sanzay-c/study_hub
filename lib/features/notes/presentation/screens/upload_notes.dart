@@ -13,6 +13,7 @@ import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/features/groups/domain/entities/groups_entity.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
+import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
 import 'package:study_hub/features/notes/presentation/cubit-upload-note/upload_note_cubit.dart';
 
@@ -243,7 +244,7 @@ class _UploadNotesState extends State<UploadNotes> {
                   colorClass: AppColors.containerColor,
                 ),
                 borderRadius: BorderRadius.circular(14.r),
-                items: state.groups.map((group) {
+                items: (state.groups ?? []).map((group) {
                   return DropdownMenuItem<GroupsEntity>(
                     value: group,
                     child: TextWidget(

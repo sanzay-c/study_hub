@@ -44,6 +44,8 @@ import 'package:study_hub/features/groups/data/repo_impl/groups_repository_impl.
     as _i633;
 import 'package:study_hub/features/groups/domain/repo/groups_repository.dart'
     as _i1011;
+import 'package:study_hub/features/groups/domain/usecase/get_all_groups_usecase.dart'
+    as _i111;
 import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart'
     as _i809;
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart'
@@ -139,6 +141,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i633.GroupsRepositoryImpl(
         remoteDataSource: gh<_i170.GroupsRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i111.GetAllGroupsUsecase>(
+      () => _i111.GetAllGroupsUsecase(gh<_i1011.GroupsRepository>()),
     );
     gh.lazySingleton<_i430.SocialRepo>(
       () => _i730.SocialRepoImpl(
@@ -244,7 +249,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
     );
     gh.factory<_i690.GroupsCubit>(
-      () => _i690.GroupsCubit(getGroupsUseCase: gh<_i809.GetGroupsUseCase>()),
+      () => _i690.GroupsCubit(
+        getGroupsUseCase: gh<_i809.GetGroupsUseCase>(),
+        getAllGroupsUsecase: gh<_i111.GetAllGroupsUsecase>(),
+      ),
     );
     return this;
   }

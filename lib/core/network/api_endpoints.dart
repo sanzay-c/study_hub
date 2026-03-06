@@ -40,4 +40,11 @@ class ApiEndpoints {
   
   static const String socialFollow = "/api/social/follow/";
   static const String socialUnfollow = "/api/social/follow/";
+
+  // groups
+  // this same endpoint uses 'tab' param to show different tabs 
+  // '?tab=discover' => shows the groups to discover
+  // '?tab=joined' => shows the joined groups
+  // '?tab=created' => shows the groups that a user have created  
+  static const String getAllGroups = '/api/groups/';
 }

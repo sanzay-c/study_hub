@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => getIt<NotesBloc>()),
             BlocProvider(create: (_) => getIt<ConnectivityCubit>()),
             BlocProvider(create: (_) => getIt<MainBottomNavBloc>()),
-            BlocProvider(create: (_) => getIt<GroupsCubit>()..getGroups()),
+            BlocProvider(create: (_) => getIt<GroupsCubit>()),
             BlocProvider(create: (_) => getIt<UploadNoteCubit>()),
           ],
           child: BlocBuilder<ThemeBloc, ThemeState>(
