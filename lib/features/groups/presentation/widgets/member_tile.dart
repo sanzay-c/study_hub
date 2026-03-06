@@ -13,6 +13,7 @@ class MemberTile extends StatelessWidget {
   final String? imageUrl; // Added: Image URL ko lagi parameter
   final bool isOnline;
   final bool isOwner;
+  final VoidCallback? onTap;
 
   const MemberTile({
     super.key,
@@ -21,11 +22,14 @@ class MemberTile extends StatelessWidget {
     this.imageUrl, // Required banayeko
     required this.isOnline,
     required this.isOwner,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         children: [
@@ -66,6 +70,7 @@ class MemberTile extends StatelessWidget {
           ),
         ],
       ),
+     ),
     );
   }
 }

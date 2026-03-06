@@ -6,6 +6,7 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_state.dart';
@@ -18,6 +19,11 @@ import 'package:study_hub/features/groups/presentation/widgets/view_all_bottom_s
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:study_hub/features/notes/data/model/notes_model.dart';
 import 'package:study_hub/features/notes/presentation/screens/note_preview_screen.dart';
+import 'package:study_hub/features/social/domain/entities/social_entity.dart';
+import 'package:study_hub/features/social/presentation/screens/user_details_screen.dart';
+import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
 
@@ -109,6 +115,31 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           status: member.isOnline ? "Online" : "Offline",
                           isOnline: member.isOnline,
                           isOwner: member.isOwner,
+                          imageUrl: member.avatarPath,
+                          onTap: () {
+                            final currentUserId = context.read<AuthBloc>().state.user?.id;
+                            
+                            if (member.userId == currentUserId) {
+                              context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                              context.go(RouteName.bottomNavScreen);
+                            } else {
+                              final socialUser = SocialEntity(
+                                userId: member.userId,
+                                username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                avatarPath: member.avatarPath,
+                                followers: '0',
+                                following: '0',
+                                isFollowing: false,
+                                followedAt: null,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserDetailsScreen(user: socialUser),
+                                ),
+                              );
+                            }
+                          },
                         );
                       },
                     ),
@@ -129,6 +160,30 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                               status: member.isOnline ? "Online" : "Offline",
                               isOnline: member.isOnline,
                               isOwner: member.isOwner,
+                              onTap: () {
+                                final currentUserId = context.read<AuthBloc>().state.user?.id;
+
+                                if (member.userId == currentUserId) {
+                                  context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                  context.go(RouteName.bottomNavScreen);
+                                } else {
+                                  final socialUser = SocialEntity(
+                                    userId: member.userId,
+                                    username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                    avatarPath: member.avatarPath,
+                                    followers: '0',
+                                    following: '0',
+                                    isFollowing: false,
+                                    followedAt: null,
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserDetailsScreen(user: socialUser),
+                                    ),
+                                  );
+                                }
+                              },
                             );
                           },
                         ),
