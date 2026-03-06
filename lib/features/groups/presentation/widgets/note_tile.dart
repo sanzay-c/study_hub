@@ -8,49 +8,54 @@ import 'package:study_hub/core/constants/assets_source.dart';
 class NoteTile extends StatelessWidget {
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
   const NoteTile({
     super.key,
     required this.title,
     required this.subtitle,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: getColorByTheme(
-          context: context,
-          colorClass: AppColors.containerInput,
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Row(
-        children: [
-          _NoteIconBox(),
-          12.horizontalSpace,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextWidget(
-                  text: title,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
-                ),
-                TextWidget(
-                  text: 'uploaded by: $subtitle',
-                  fontSize: 12.sp,
-                  color: getColorByTheme(
-                    context: context,
-                    colorClass: AppColors.subTextColor,
-                  ),
-                ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: getColorByTheme(
+            context: context,
+            colorClass: AppColors.containerInput,
           ),
-        ],
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Row(
+          children: [
+            _NoteIconBox(),
+            12.horizontalSpace,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextWidget(
+                    text: title,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
+                  TextWidget(
+                    text: 'uploaded by: $subtitle',
+                    fontSize: 12.sp,
+                    color: getColorByTheme(
+                      context: context,
+                      colorClass: AppColors.subTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

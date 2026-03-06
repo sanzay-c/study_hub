@@ -16,6 +16,8 @@ import 'package:study_hub/features/groups/presentation/widgets/note_tile.dart';
 import 'package:study_hub/features/groups/presentation/widgets/section_container.dart';
 import 'package:study_hub/features/groups/presentation/widgets/view_all_bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:study_hub/features/notes/data/model/notes_model.dart';
+import 'package:study_hub/features/notes/presentation/screens/note_preview_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 
@@ -148,6 +150,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         itemBuilder: (item) => NoteTile(
                           title: item['title'] ?? "Untitled",
                           subtitle: item['uploader_username'] ?? "Unknown uploader",
+                          onTap: () {
+                            final noteEntity = NotesModel.fromJson(item).toEntity();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotePreviewScreen(note: noteEntity),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       child: ListView.separated(
@@ -160,6 +171,15 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           return NoteTile(
                             title: note['title'] ?? "Untitled",
                             subtitle: note['uploader_username'] ?? "Unknown uploader",
+                            onTap: () {
+                              final noteEntity = NotesModel.fromJson(note).toEntity();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotePreviewScreen(note: noteEntity),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

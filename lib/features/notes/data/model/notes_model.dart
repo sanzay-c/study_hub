@@ -65,8 +65,24 @@ class NotesModel {
     );
   }
 
-  factory NotesModel.fromJson(Map<String, dynamic> json) =>
-      _$NotesModelFromJson(json);
+  factory NotesModel.fromJson(Map<String, dynamic> json) {
+    return NotesModel(
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+      groupId: json['group_id']?.toString(),
+      uploadedBy: json['uploaded_by']?.toString(),
+      title: json['title']?.toString(),
+      description: json['description']?.toString(),
+      filePath: json['file_path']?.toString(),
+      fileType: json['file_type']?.toString(),
+      fileSize: (json['file_size'] as num?)?.toInt(),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.tryParse(json['created_at']?.toString() ?? ''),
+      uploaderUsername: json['uploader_username']?.toString(),
+      uploaderAvatar: json['uploader_avatar'],
+      groupName: json['group_name']?.toString(),
+    );
+  }
   Map<String, dynamic> toJson() => _$NotesModelToJson(this);
 
   NotesEntity toEntity() {
