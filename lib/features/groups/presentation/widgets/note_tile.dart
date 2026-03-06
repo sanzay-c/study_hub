@@ -40,7 +40,7 @@ class NoteTile extends StatelessWidget {
                   fontSize: 15.sp,
                 ),
                 TextWidget(
-                  text: subtitle,
+                  text: 'uploaded by: $subtitle',
                   fontSize: 12.sp,
                   color: getColorByTheme(
                     context: context,

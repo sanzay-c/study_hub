@@ -18,5 +18,7 @@ class RouteName {
   static const String socialScreen = '/social-screen';
 
   static const String userDetailsScreen = '/user-details-screen';
+
+  // static const String getGroupsDetailScreen = '/groups-detail-screen/';
 }
   

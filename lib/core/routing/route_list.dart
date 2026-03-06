@@ -10,6 +10,9 @@ import 'package:study_hub/features/auth/presentation/screens/sign_up_screen.dart
 import 'package:study_hub/features/bottom_nav/presentation/screen/study_hub_bottom_nav.dart';
 import 'package:study_hub/features/chat/presentation/screens/messages_screen.dart';
 import 'package:study_hub/features/groups/presentation/screens/group_details_screen.dart';
+import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart';
+import 'package:study_hub/core/di/injection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/screens/social_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/user_details_screen.dart';
@@ -53,9 +56,16 @@ List<RouteBase> get screensRoute => [
     child: MessagesScreen(),
   ),
 
-  customGoRoute(
+  GoRoute(
     path: RouteName.groupDetailsScreen,
-    child: GroupDetailsScreen(),
+    name: RouteName.groupDetailsScreen,
+    builder: (context, state) {
+      final groupId = state.extra?.toString() ?? '';
+      return BlocProvider(
+        create: (context) => getIt<GroupDetailCubit>()..getGroupDetails(groupId),
+        child: GroupDetailsScreen(groupId: groupId),
+      );
+    },
   ),
 
   customGoRoute(
@@ -76,5 +86,11 @@ List<RouteBase> get screensRoute => [
       );
     },
   ),
+
+
+  // customGoRoute(
+  //   path: RouteName.groupDetailsScreen,
+  //   child: GroupDetailsScreen(),
+  // ),
 ];
 

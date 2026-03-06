@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/core/network/api_endpoints.dart';
+import 'package:study_hub/features/groups/data/model/get_groups_detail_model.dart';
 import 'package:study_hub/features/groups/data/model/get_groups_model.dart';
 import 'package:study_hub/features/groups/data/model/groups_model.dart';
 
 abstract class GroupsRemoteDataSource {
   Future<List<GroupsModel>> getGroups();
   Future<List<GetGroupsModel>> getAllGroups({String? tab});
+  Future<GetGroupsDetailModel> getGroupDetails(String groupId);
 }
 
 @LazySingleton(as: GroupsRemoteDataSource)
@@ -56,5 +58,25 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
     return (data as List)
         .map((e) => GetGroupsModel.fromJson(e))
         .toList();
+  }
+  
+  @override
+  Future<GetGroupsDetailModel> getGroupDetails(String groupId) async {
+    // API endpoint call garne. groupId lai URL string ma inject garnu parcha.
+    final response = await dio.get(ApiEndpoints.getGroupsDetail(groupId));
+
+    if (response.statusCode == 200) {
+      // Dio le response.data lai automatically Map ma convert gari sakeko huncha
+      final dynamic responseData = response.data;
+      
+      // Response structure herera handle garne (if wrap bhako cha bhane)
+      final data = (responseData is Map && responseData.containsKey('data')) 
+          ? responseData['data'] 
+          : responseData;
+
+      return GetGroupsDetailModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load group details');
+    }
   }
 }

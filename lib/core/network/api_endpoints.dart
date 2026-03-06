@@ -47,4 +47,9 @@ class ApiEndpoints {
   // '?tab=joined' => shows the joined groups
   // '?tab=created' => shows the groups that a user have created  
   static const String getAllGroups = '/api/groups/';
+
+  static get baseUrl => null;
+
+  // get groups detail api
+  static String getGroupsDetail(String groupId) => "/api/groups/$groupId";
 }

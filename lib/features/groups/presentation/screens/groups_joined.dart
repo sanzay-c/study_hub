@@ -20,13 +20,14 @@ class GroupsJoined extends StatefulWidget {
   State<GroupsJoined> createState() => _GroupsJoinedState();
 }
 
-class _GroupsJoinedState extends State<GroupsJoined>  with AutomaticKeepAliveClientMixin  {
+class _GroupsJoinedState extends State<GroupsJoined>
+    with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true; 
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); 
+    super.build(context);
     return BlocBuilder<GroupsCubit, GroupsState>(
       builder: (context, state) {
         if (state is GroupsLoading) {
@@ -56,8 +57,12 @@ class _GroupsJoinedState extends State<GroupsJoined>  with AutomaticKeepAliveCli
 
   Widget _buildGroupCard(GetGroupsEntity group, BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
+      onTap: () {
+        getIt<NavigationService>().pushNamed(
+          RouteName.groupDetailsScreen,
+          extra: group.id,
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: getColorByTheme(

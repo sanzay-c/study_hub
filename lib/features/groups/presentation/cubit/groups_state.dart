@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
-
-
 import 'package:study_hub/features/groups/domain/entities/groups_entity.dart';
 
 abstract class GroupsState extends Equatable {

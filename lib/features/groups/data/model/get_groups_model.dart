@@ -37,20 +37,20 @@ class GetGroupsModel {
 
   factory GetGroupsModel.fromJson(Map<String, dynamic> json) {
     return GetGroupsModel(
-      id: json['_id'] as String,
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-      subject: json['subject'] as String?,
-      createdBy: json['created_by'] as String?,
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+      name: json['name']?.toString(),
+      description: json['description']?.toString(),
+      subject: json['subject']?.toString(),
+      createdBy: json['created_by']?.toString(),
       members: _parseMembers(json['members']),
       isPublic: json['is_public'] as bool?,
       createdAt: json['created_at'] == null
           ? null
-          : DateTime.parse(json['created_at'] as String),
-      creatorName: json['creator_name'] as String?,
-      imageUrl: json['image_url'] as String?,
+          : DateTime.tryParse(json['created_at']?.toString() ?? ''),
+      creatorName: json['creator_name']?.toString(),
+      imageUrl: json['image_url']?.toString(),
       onlineCount: (json['online_count'] as num?)?.toInt(),
-      imagePath: json['image_path'] as String?,
+      imagePath: json['image_path']?.toString(),
     );
   }
 
@@ -63,7 +63,7 @@ class GetGroupsModel {
     return (members as List<dynamic>)
         .map((e) {
           if (e is String) return e;
-          if (e is Map) return e['_id']?.toString() ?? '';
+          if (e is Map) return e['_id']?.toString() ?? e['id']?.toString() ?? '';
           return e?.toString() ?? '';
         })
         .where((e) => e.isNotEmpty)
@@ -82,7 +82,7 @@ class GetGroupsModel {
       isPublic: isPublic ?? true,
       createdAt: createdAt ?? DateTime.now(),
       creatorName: creatorName,
-      imageUrl: imageUrl,
+      imageUrl: EnvConfig.resolveImageUrl(imageUrl),
       onlineCount: onlineCount ?? 0,
       imagePath: EnvConfig.resolveImageUrl(imagePath),
     );

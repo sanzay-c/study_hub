@@ -4,10 +4,13 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/core/config/env_config.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MemberTile extends StatelessWidget {
   final String name;
   final String status;
+  final String? imageUrl; // Added: Image URL ko lagi parameter
   final bool isOnline;
   final bool isOwner;
 
@@ -15,6 +18,7 @@ class MemberTile extends StatelessWidget {
     super.key,
     required this.name,
     required this.status,
+    this.imageUrl, // Required banayeko
     required this.isOnline,
     required this.isOwner,
   });
@@ -25,7 +29,11 @@ class MemberTile extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         children: [
-          _OnlineAvatarStack(isOnline: isOnline, context: context),
+          _OnlineAvatarStack(
+            isOnline: isOnline, 
+            context: context, 
+            imageUrl: imageUrl ?? '', // Child widget ma pass gareko
+          ),
           12.horizontalSpace,
           Expanded(
             child: Column(
@@ -65,14 +73,32 @@ class MemberTile extends StatelessWidget {
 class _OnlineAvatarStack extends StatelessWidget {
   final bool isOnline;
   final BuildContext context;
+  final String imageUrl;
 
-  const _OnlineAvatarStack({required this.isOnline, required this.context});
+  const _OnlineAvatarStack({
+    required this.isOnline, 
+    required this.context, 
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final resolvedUrl = EnvConfig.resolveImageUrl(imageUrl);
+    
     return Stack(
       children: [
-        CircleAvatar(radius: 24.r, backgroundColor: Colors.grey[300]),
+        CircleAvatar(
+          radius: 24.r,
+          backgroundColor: Colors.grey[200],
+          foregroundImage: resolvedUrl != null 
+              ? CachedNetworkImageProvider(resolvedUrl)
+              : null,
+          child: Icon(
+            Icons.person, 
+            size: 24.sp, 
+            color: Colors.grey[400],
+          ),
+        ),
         if (isOnline)
           Positioned(
             bottom: 0,

@@ -20,10 +20,10 @@ class GroupsCreated extends StatefulWidget {
   State<GroupsCreated> createState() => _GroupsCreatedState();
 }
 
-class _GroupsCreatedState extends State<GroupsCreated> with AutomaticKeepAliveClientMixin {
-  
+class _GroupsCreatedState extends State<GroupsCreated>
+    with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true;  
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +59,12 @@ class _GroupsCreatedState extends State<GroupsCreated> with AutomaticKeepAliveCl
 
   Widget _buildGroupCard(GetGroupsEntity group, BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
+      onTap: () {
+        getIt<NavigationService>().pushNamed(
+          RouteName.groupDetailsScreen,
+          extra: group.id,
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: getColorByTheme(
@@ -84,7 +88,7 @@ class _GroupsCreatedState extends State<GroupsCreated> with AutomaticKeepAliveCl
               child: group.imagePath != null && group.imagePath!.isNotEmpty
                   ? Image.network(
                       group.imagePath!,
-                      height: 140.h, 
+                      height: 140.h,
                       width: double.infinity,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
@@ -187,8 +191,7 @@ class _GroupsCreatedState extends State<GroupsCreated> with AutomaticKeepAliveCl
       decoration: BoxDecoration(
         color: getColorByTheme(
           context: context,
-          colorClass:
-              AppColors.containerColor, 
+          colorClass: AppColors.containerColor,
         ),
       ),
       child: Center(
@@ -208,10 +211,7 @@ class _GroupsCreatedState extends State<GroupsCreated> with AutomaticKeepAliveCl
               ),
             ],
           ).createShader(bounds),
-          child: Icon(
-            Icons.groups_rounded,
-            size: 60.sp, 
-          ),
+          child: Icon(Icons.groups_rounded, size: 60.sp),
         ),
       ),
     );

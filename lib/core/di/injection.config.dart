@@ -46,8 +46,12 @@ import 'package:study_hub/features/groups/domain/repo/groups_repository.dart'
     as _i1011;
 import 'package:study_hub/features/groups/domain/usecase/get_all_groups_usecase.dart'
     as _i111;
+import 'package:study_hub/features/groups/domain/usecase/get_groups_detail_usecase.dart'
+    as _i461;
 import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart'
     as _i809;
+import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart'
+    as _i74;
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart'
     as _i690;
 import 'package:study_hub/features/notes/data/datasource/notes_remote_datasource.dart'
@@ -145,6 +149,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i111.GetAllGroupsUsecase>(
       () => _i111.GetAllGroupsUsecase(gh<_i1011.GroupsRepository>()),
     );
+    gh.factory<_i461.GetGroupDetailsUseCase>(
+      () => _i461.GetGroupDetailsUseCase(gh<_i1011.GroupsRepository>()),
+    );
     gh.lazySingleton<_i430.SocialRepo>(
       () => _i730.SocialRepoImpl(
         socialRemoteDataSource: gh<_i615.SocialRemoteDataSource>(),
@@ -179,6 +186,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i970.UploadAvatarCubit>(
       () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i74.GroupDetailCubit>(
+      () => _i74.GroupDetailCubit(
+        getGroupDetailsUseCase: gh<_i461.GetGroupDetailsUseCase>(),
+      ),
     );
     gh.factory<_i809.GetGroupsUseCase>(
       () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),

@@ -57,8 +57,12 @@ class _GroupsDiscoverState extends State<GroupsDiscover>
 
   Widget _buildGroupCard(GetGroupsEntity group, BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          getIt<NavigationService>().pushNamed(RouteName.groupDetailsScreen),
+      onTap: () {
+        getIt<NavigationService>().pushNamed(
+          RouteName.groupDetailsScreen,
+          extra: group.id,
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: getColorByTheme(
