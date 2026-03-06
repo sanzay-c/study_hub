@@ -107,6 +107,7 @@ class GroupDetailsScreen extends StatelessWidget {
                 groupName: groupDetailsData['groupName'],
                 description: groupDetailsData['description'],
                 memberCount: groupDetailsData['memberCount'],
+                createdBy: "sanjayaa",
                 onChat: () {
                   // TODO: Navigate to chat
                 },

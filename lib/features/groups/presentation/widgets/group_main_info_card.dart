@@ -9,6 +9,7 @@ import 'package:study_hub/features/groups/presentation/widgets/group_action_butt
 class GroupMainInfoCard extends StatelessWidget {
   final String groupName;
   final String description;
+  final String createdBy;
   final int memberCount;
   final VoidCallback onChat;
   final VoidCallback onLeave;
@@ -20,6 +21,7 @@ class GroupMainInfoCard extends StatelessWidget {
     required this.memberCount,
     required this.onChat,
     required this.onLeave,
+    required this.createdBy,
   });
 
   @override
@@ -40,7 +42,11 @@ class GroupMainInfoCard extends StatelessWidget {
           ),
         ),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -54,6 +60,7 @@ class GroupMainInfoCard extends StatelessWidget {
           ),
           8.verticalSpace,
           TextWidget(text: description),
+          
           16.verticalSpace,
           Row(
             children: [
@@ -66,6 +73,8 @@ class GroupMainInfoCard extends StatelessWidget {
               TextWidget(text: "$memberCount members"),
             ],
           ),
+          8.verticalSpace,
+          TextWidget(text: "Created By: $createdBy", fontWeight: FontWeight.bold,),
           24.verticalSpace,
           Row(
             children: [
