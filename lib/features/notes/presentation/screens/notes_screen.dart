@@ -7,6 +7,8 @@ import 'package:study_hub/common/widgets/study_hub_tabbar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/core/di/injection.dart';
+import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_state.dart';
 import 'package:study_hub/features/notes/presentation/screens/discover_notes_page.dart';
@@ -35,7 +37,10 @@ class NotesScreen extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (context) => UploadNotes(),
+                  builder: (context) => BlocProvider(
+    create: (_) => getIt<GroupsCubit>()..getGroups(), // ✅ loads groups for dropdown
+    child: const UploadNotes(),
+  ),
                 );
               },
               child: Container(

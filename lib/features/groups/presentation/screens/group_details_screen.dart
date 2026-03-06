@@ -174,8 +174,6 @@ class GroupDetailsScreen extends StatelessWidget {
               ),
               8.horizontalSpace,
               TextWidget(text: "${data['memberCount']} member"),
-              const Spacer(),
-              _buildTag(data['category'], context),
             ],
           ),
           24.verticalSpace,
@@ -380,23 +378,6 @@ class GroupDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(String text, BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: getColorByTheme(
-          context: context,
-          colorClass: AppColors.containerInput,
-        ),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: TextWidget(
-        text: text,
-        fontSize: 12.sp,
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
 
   Widget _buildButton(
     String label,

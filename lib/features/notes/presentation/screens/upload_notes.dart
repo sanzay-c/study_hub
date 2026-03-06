@@ -30,7 +30,8 @@ class _UploadNotesState extends State<UploadNotes> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UploadNoteCubit, UploadNoteState>( // uploadNotes cubit
+    return BlocListener<UploadNoteCubit, UploadNoteState>(
+      // uploadNotes cubit
       listener: (context, state) {
         if (state is UploadNoteSuccess) {
           CustomToast.show(
@@ -202,7 +203,8 @@ class _UploadNotesState extends State<UploadNotes> {
   }
 
   Widget _buildGroupsDropdown(BuildContext context) {
-    return BlocBuilder<GroupsCubit, GroupsState>( // Groups cubit
+    return BlocBuilder<GroupsCubit, GroupsState>(
+      // Groups cubit
       builder: (context, state) {
         if (state is GroupsLoading) {
           return DropdownShimmer();
@@ -244,7 +246,7 @@ class _UploadNotesState extends State<UploadNotes> {
                   colorClass: AppColors.containerColor,
                 ),
                 borderRadius: BorderRadius.circular(14.r),
-                items: (state.groups ?? []).map((group) {
+                items: state.groups?.map((group) {
                   return DropdownMenuItem<GroupsEntity>(
                     value: group,
                     child: TextWidget(
