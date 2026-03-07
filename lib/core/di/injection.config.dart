@@ -50,6 +50,8 @@ import 'package:study_hub/features/groups/domain/usecase/get_groups_detail_useca
     as _i461;
 import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart'
     as _i809;
+import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart'
+    as _i399;
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart'
     as _i74;
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart'
@@ -156,6 +158,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i730.SocialRepoImpl(
         socialRemoteDataSource: gh<_i615.SocialRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i399.CreateGroupCubit>(
+      () => _i399.CreateGroupCubit(gh<_i1011.GroupsRepository>()),
     );
     gh.lazySingleton<_i117.UserStatsRepository>(
       () =>

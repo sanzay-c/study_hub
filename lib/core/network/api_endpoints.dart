@@ -52,4 +52,7 @@ class ApiEndpoints {
 
   // get groups detail api
   static String getGroupsDetail(String groupId) => "/api/groups/$groupId";
+
+  // POST create a new group
+  static const String createNewGroup = '/api/groups/'; // POST method
 }

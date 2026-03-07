@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:study_hub/core/network/api_endpoints.dart';
+import 'package:study_hub/features/groups/data/model/create_new_group.dart';
 import 'package:study_hub/features/groups/data/model/get_groups_detail_model.dart';
 import 'package:study_hub/features/groups/data/model/get_groups_model.dart';
 import 'package:study_hub/features/groups/data/model/groups_model.dart';
@@ -9,6 +11,7 @@ abstract class GroupsRemoteDataSource {
   Future<List<GroupsModel>> getGroups();
   Future<List<GetGroupsModel>> getAllGroups({String? tab});
   Future<GetGroupsDetailModel> getGroupDetails(String groupId);
+  Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image});
 }
 
 @LazySingleton(as: GroupsRemoteDataSource)
@@ -77,6 +80,40 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       return GetGroupsDetailModel.fromJson(data);
     } else {
       throw Exception('Failed to load group details');
+    }
+  }
+  
+  @override
+  Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image}) async {
+    dynamic body;
+    
+    if (image != null) {
+      body = FormData.fromMap({
+        ...groupData,
+        'image': await MultipartFile.fromFile(
+          image.path,
+          filename: image.name,
+        ),
+      });
+    } else {
+      body = groupData;
+    }
+
+    final response = await dio.post(
+      ApiEndpoints.createNewGroup, 
+      data: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final dynamic responseData = response.data;
+
+      final data = (responseData is Map && responseData.containsKey('data'))
+          ? responseData['data']
+          : responseData;
+
+      return CreateNewGroup.fromJson(data);
+    } else {
+      throw Exception('Failed to create group');
     }
   }
 }

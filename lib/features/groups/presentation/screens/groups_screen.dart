@@ -7,6 +7,7 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
 import 'package:study_hub/core/di/injection.dart';
+import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/screens/create_group_bottom_sheet.dart';
 import 'package:study_hub/features/groups/presentation/screens/groups_created.dart';
@@ -34,7 +35,10 @@ class GroupsScreen extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (context) => CreateGroupBottomSheet(),
+                  builder: (context) => BlocProvider(
+                    create: (context) => getIt<CreateGroupCubit>(),
+                    child: const CreateGroupBottomSheet(),
+                  ),
                 );
               },
               child: Container(
