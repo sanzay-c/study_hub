@@ -11,8 +11,10 @@ class GroupMainInfoCard extends StatelessWidget {
   final String description;
   final String createdBy;
   final int memberCount;
+  final bool isMember;
   final VoidCallback onChat;
   final VoidCallback onLeave;
+  final VoidCallback onJoin;
 
   const GroupMainInfoCard({
     super.key,
@@ -21,7 +23,9 @@ class GroupMainInfoCard extends StatelessWidget {
     required this.memberCount,
     required this.onChat,
     required this.onLeave,
+    required this.onJoin,
     required this.createdBy,
+    this.isMember = true,
   });
 
   @override
@@ -78,26 +82,35 @@ class GroupMainInfoCard extends StatelessWidget {
           24.verticalSpace,
           Row(
             children: [
-              Expanded(
-                child: GroupActionButton(
-                  label: "Chat",
-                  isPrimary: true,
-                  icon: Icons.chat_bubble_outline,
-                  onTap: onChat,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: GroupActionButton(
-                  label: "Leave",
-                  isPrimary: false,
-                  backgroundColor: getColorByTheme(
-                    context: context,
-                    colorClass: AppColors.containerInput,
+              if (isMember) ...[
+                Expanded(
+                  child: GroupActionButton(
+                    label: "Chat",
+                    isPrimary: true,
+                    icon: AssetsSource.bottomNavAssetsSource.chatIcon,
+                    onTap: onChat,
                   ),
-                  onTap: onLeave,
                 ),
-              ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: GroupActionButton(
+                    label: "Leave",
+                    isPrimary: false,
+                    backgroundColor: getColorByTheme(
+                      context: context,
+                      colorClass: AppColors.containerInput,
+                    ),
+                    onTap: onLeave,
+                  ),
+                ),
+              ] else
+                Expanded(
+                  child: GroupActionButton(
+                    label: "Join Group",
+                    isPrimary: true,
+                    onTap: onJoin,
+                  ),
+                ),
             ],
           ),
         ],

@@ -29,6 +29,7 @@ class GroupsCubit extends Cubit<GroupsState> {
     emit(GroupsLoading());
     try {
       final groups = await getAllGroupsUsecase(tab: 'discover');
+      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       if (!isClosed) emit(GroupsSuccess(getGroups: groups));
     } catch (e) {
       if (!isClosed) emit(GroupsError(message: e.toString()));
@@ -40,6 +41,7 @@ class GroupsCubit extends Cubit<GroupsState> {
     emit(GroupsLoading());
     try {
       final groups = await getAllGroupsUsecase(tab: 'joined');
+      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       if (!isClosed) emit(GroupsSuccess(getGroups: groups));
     } catch (e) {
       if (!isClosed) emit(GroupsError(message: e.toString()));
@@ -51,6 +53,7 @@ class GroupsCubit extends Cubit<GroupsState> {
     emit(GroupsLoading());
     try {
       final groups = await getAllGroupsUsecase(tab: 'created');
+      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       if (!isClosed) emit(GroupsSuccess(getGroups: groups));
     } catch (e) {
       if (!isClosed) emit(GroupsError(message: e.toString()));

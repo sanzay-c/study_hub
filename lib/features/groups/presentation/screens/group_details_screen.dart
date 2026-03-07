@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:study_hub/common/widgets/custom_toast.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
@@ -47,15 +48,26 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
       appBar: StudyHubAppBar(
         title: 'Group Details',
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20.w),
-            child: GestureDetector(
-              onTap: () {},
-              child: SvgImageRenderWidget(
-                svgImagePath: AssetsSource.appIcons.gearIcon,
-                svgColor: AppColors.appIconColor,
-              ),
-            ),
+          BlocBuilder<GroupDetailCubit, GroupDetailState>(
+            builder: (context, state) {
+              if (state is GroupDetailSuccess) {
+                final currentUserId = context.read<AuthBloc>().state.user?.id;
+                final isMember = state.groupDetail.members.contains(currentUserId);
+                if (!isMember) return const SizedBox.shrink();
+
+                return Padding(
+                  padding: EdgeInsets.only(right: 20.w),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: SvgImageRenderWidget(
+                      svgImagePath: AssetsSource.appIcons.gearIcon,
+                      svgColor: AppColors.appIconColor,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ],
       ),
@@ -68,6 +80,9 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           } else if (state is GroupDetailSuccess) {
             final data = state.groupDetail;
             
+            final currentUserId = context.read<AuthBloc>().state.user?.id;
+            final isMember = data.members.contains(currentUserId);
+
             // Logic for preview counts
             final previewMemberCount = data.membersPreview.length > 4 ? 4 : data.membersPreview.length;
             final previewNoteCount = data.notesPreview.length > 2 ? 2 : data.notesPreview.length;
@@ -95,101 +110,111 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                       description: data.description,
                       memberCount: data.memberCount,
                       createdBy: data.creatorName,
+                      isMember: isMember,
                       onChat: () {},
                       onLeave: () {},
-                    ),
-                  ),
-
-                  // Members Section
-                  SectionContainer(
-                    title: "Members",
-                    trailing: "View All",
-                    onTrailingTap: () => ViewAllBottomSheet.show(
-                      context: context,
-                      title: "All Members",
-                      data: data.membersPreview,
-                      itemBuilder: (item) {
-                        final member = item as MembersPreviewEntity;
-                        return MemberTile(
-                          name: member.fullname,
-                          status: member.isOnline ? "Online" : "Offline",
-                          isOnline: member.isOnline,
-                          isOwner: member.isOwner,
-                          imageUrl: member.avatarPath,
-                          onTap: () {
-                            final currentUserId = context.read<AuthBloc>().state.user?.id;
-                            
-                            if (member.userId == currentUserId) {
-                              context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
-                              context.go(RouteName.bottomNavScreen);
-                            } else {
-                              final socialUser = SocialEntity(
-                                userId: member.userId,
-                                username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
-                                avatarPath: member.avatarPath,
-                                followers: '0',
-                                following: '0',
-                                isFollowing: false,
-                                followedAt: null,
-                              );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UserDetailsScreen(user: socialUser),
-                                ),
-                              );
-                            }
-                          },
+                      onJoin: () {
+                        // TODO: Implement join group logic (e.g. calling cubit/usecase)
+                        CustomToast.show(
+                          context, 
+                          message: "Join request sent (Placeholder)",
+                          type: ToastType.info,
                         );
                       },
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _OnlineCountBadge(count: data.onlineCount),
-                        12.verticalSpace,
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: previewMemberCount,
-                          itemBuilder: (context, index) {
-                            final member = data.membersPreview[index];
-                            return MemberTile(
-                              imageUrl: member.avatarPath ?? '',
-                              name: member.fullname,
-                              status: member.isOnline ? "Online" : "Offline",
-                              isOnline: member.isOnline,
-                              isOwner: member.isOwner,
-                              onTap: () {
-                                final currentUserId = context.read<AuthBloc>().state.user?.id;
-
-                                if (member.userId == currentUserId) {
-                                  context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
-                                  context.go(RouteName.bottomNavScreen);
-                                } else {
-                                  final socialUser = SocialEntity(
-                                    userId: member.userId,
-                                    username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
-                                    avatarPath: member.avatarPath,
-                                    followers: '0',
-                                    following: '0',
-                                    isFollowing: false,
-                                    followedAt: null,
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UserDetailsScreen(user: socialUser),
-                                    ),
-                                  );
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                   ),
+
+                  // Members Section - Only show if user is a member
+                  if (isMember)
+                    SectionContainer(
+                      title: "Members",
+                      trailing: "View All",
+                      onTrailingTap: () => ViewAllBottomSheet.show(
+                        context: context,
+                        title: "All Members",
+                        data: data.membersPreview,
+                        itemBuilder: (item) {
+                          final member = item as MembersPreviewEntity;
+                          return MemberTile(
+                            name: member.fullname,
+                            status: member.isOnline ? "Online" : "Offline",
+                            isOnline: member.isOnline,
+                            isOwner: member.isOwner,
+                            imageUrl: member.avatarPath,
+                            onTap: () {
+                              final currentUserId = context.read<AuthBloc>().state.user?.id;
+                              
+                              if (member.userId == currentUserId) {
+                                context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                context.go(RouteName.bottomNavScreen);
+                              } else {
+                                final socialUser = SocialEntity(
+                                  userId: member.userId,
+                                  username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                  avatarPath: member.avatarPath,
+                                  followers: '0',
+                                  following: '0',
+                                  isFollowing: false,
+                                  followedAt: null,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserDetailsScreen(user: socialUser),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _OnlineCountBadge(count: data.onlineCount),
+                          12.verticalSpace,
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: previewMemberCount,
+                            itemBuilder: (context, index) {
+                              final member = data.membersPreview[index];
+                              return MemberTile(
+                                imageUrl: member.avatarPath ?? '',
+                                name: member.fullname,
+                                status: member.isOnline ? "Online" : "Offline",
+                                isOnline: member.isOnline,
+                                isOwner: member.isOwner,
+                                onTap: () {
+                                  final currentUserId = context.read<AuthBloc>().state.user?.id;
+
+                                  if (member.userId == currentUserId) {
+                                    context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                    context.go(RouteName.bottomNavScreen);
+                                  } else {
+                                    final socialUser = SocialEntity(
+                                      userId: member.userId,
+                                      username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                      avatarPath: member.avatarPath,
+                                      followers: '0',
+                                      following: '0',
+                                      isFollowing: false,
+                                      followedAt: null,
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UserDetailsScreen(user: socialUser),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
 
                   16.verticalSpace,
 

@@ -8,7 +8,7 @@ import 'package:study_hub/core/constants/assets_source.dart';
 class GroupActionButton extends StatelessWidget {
   final String label;
   final bool isPrimary;
-  final IconData? icon;
+  final String? icon;
   final Color? backgroundColor;
   final VoidCallback? onTap;
 
@@ -50,7 +50,7 @@ class GroupActionButton extends StatelessWidget {
           children: [
             if (icon != null) ...[
               SvgImageRenderWidget(
-                svgImagePath: AssetsSource.bottomNavAssetsSource.chatIcon,
+                svgImagePath: icon!,
                 svgColor: AppColors.allWhite,
                 height: 18.h,
                 width: 18.w,
