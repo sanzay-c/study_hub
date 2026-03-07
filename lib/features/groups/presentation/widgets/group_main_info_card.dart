@@ -12,6 +12,7 @@ class GroupMainInfoCard extends StatelessWidget {
   final String createdBy;
   final int memberCount;
   final bool isMember;
+  final bool isOwner;
   final VoidCallback onChat;
   final VoidCallback onLeave;
   final VoidCallback onJoin;
@@ -26,6 +27,7 @@ class GroupMainInfoCard extends StatelessWidget {
     required this.onJoin,
     required this.createdBy,
     this.isMember = true,
+    this.isOwner = false,
   });
 
   @override
@@ -91,18 +93,20 @@ class GroupMainInfoCard extends StatelessWidget {
                     onTap: onChat,
                   ),
                 ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: GroupActionButton(
-                    label: "Leave",
-                    isPrimary: false,
-                    backgroundColor: getColorByTheme(
-                      context: context,
-                      colorClass: AppColors.containerInput,
+                if (!isOwner) ...[
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: GroupActionButton(
+                      label: "Leave",
+                      isPrimary: false,
+                      backgroundColor: getColorByTheme(
+                        context: context,
+                        colorClass: AppColors.containerInput,
+                      ),
+                      onTap: onLeave,
                     ),
-                    onTap: onLeave,
                   ),
-                ),
+                ],
               ] else
                 Expanded(
                   child: GroupActionButton(

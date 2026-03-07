@@ -52,7 +52,9 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
             builder: (context, state) {
               if (state is GroupDetailSuccess) {
                 final currentUserId = context.read<AuthBloc>().state.user?.id;
-                final isMember = state.groupDetail.members.contains(currentUserId);
+                final isMember = state.groupDetail.members.contains(currentUserId) || 
+                               state.groupDetail.membersPreview.any((m) => m.userId == currentUserId) ||
+                               state.groupDetail.createdBy == currentUserId;
                 if (!isMember) return const SizedBox.shrink();
 
                 return Padding(
@@ -81,7 +83,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
             final data = state.groupDetail;
             
             final currentUserId = context.read<AuthBloc>().state.user?.id;
-            final isMember = data.members.contains(currentUserId);
+            final isMember = data.members.contains(currentUserId) || 
+                            data.membersPreview.any((m) => m.userId == currentUserId) ||
+                            data.createdBy == currentUserId;
+            final isOwner = data.createdBy == currentUserId;
 
             // Logic for preview counts
             final previewMemberCount = data.membersPreview.length > 4 ? 4 : data.membersPreview.length;
@@ -111,6 +116,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                       memberCount: data.memberCount,
                       createdBy: data.creatorName,
                       isMember: isMember,
+                      isOwner: isOwner,
                       onChat: () {},
                       onLeave: () {},
                       onJoin: () {
