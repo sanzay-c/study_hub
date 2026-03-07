@@ -12,6 +12,8 @@ abstract class GroupsRemoteDataSource {
   Future<List<GetGroupsModel>> getAllGroups({String? tab});
   Future<GetGroupsDetailModel> getGroupDetails(String groupId);
   Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image});
+  Future<void> joinGroup(String groupId);
+  Future<void> leaveGroup(String groupId);
 }
 
 @LazySingleton(as: GroupsRemoteDataSource)
@@ -114,6 +116,24 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       return CreateNewGroup.fromJson(data);
     } else {
       throw Exception('Failed to create group');
+    }
+  }
+  
+  @override
+  Future<void> joinGroup(String groupId) async {
+    final response = await dio.post(ApiEndpoints.joinGroup(groupId));
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to join group');
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId) async {
+    final response = await dio.post(ApiEndpoints.leaveGroup(groupId));
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to leave group');
     }
   }
 }

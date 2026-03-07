@@ -9,4 +9,6 @@ abstract class GroupsRepository {
   Future<List<GetGroupsEntity>> getAllGroups({String? tab}); // groups like discover, joined. created
   Future<GetGroupsDetailEntity> getGroupDetails(String groupId);
   Future<CreateNewGroupEntity> createGroup(CreateNewGroupEntity groupEntity, {XFile? image});
+  Future<void> joinGroup(String groupId);
+  Future<void> leaveGroup(String groupId);
 }

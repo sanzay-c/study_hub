@@ -55,4 +55,10 @@ class ApiEndpoints {
 
   // POST create a new group
   static const String createNewGroup = '/api/groups/'; // POST method
+  
+  // leave group
+  static String leaveGroup(String groupId) => "/api/groups/$groupId/leave/";
+
+  // join group
+  static String joinGroup(String groupId) => "/api/groups/$groupId/join/";
 }

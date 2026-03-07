@@ -68,4 +68,22 @@ class GroupsRepositoryImpl implements GroupsRepository {
       rethrow;
     }
   }
+  
+ @override
+  Future<void> joinGroup(String groupId) async {
+    try {
+      await remoteDataSource.joinGroup(groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> leaveGroup(String groupId) async {
+    try {
+      await remoteDataSource.leaveGroup(groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

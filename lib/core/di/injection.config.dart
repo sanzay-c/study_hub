@@ -50,6 +50,10 @@ import 'package:study_hub/features/groups/domain/usecase/get_groups_detail_useca
     as _i461;
 import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart'
     as _i809;
+import 'package:study_hub/features/groups/domain/usecase/join_group_usecase.dart'
+    as _i581;
+import 'package:study_hub/features/groups/domain/usecase/leave_group_usecase.dart'
+    as _i599;
 import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart'
     as _i399;
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart'
@@ -154,6 +158,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i461.GetGroupDetailsUseCase>(
       () => _i461.GetGroupDetailsUseCase(gh<_i1011.GroupsRepository>()),
     );
+    gh.factory<_i581.JoinGroupUseCase>(
+      () => _i581.JoinGroupUseCase(gh<_i1011.GroupsRepository>()),
+    );
+    gh.factory<_i599.LeaveGroupUseCase>(
+      () => _i599.LeaveGroupUseCase(gh<_i1011.GroupsRepository>()),
+    );
     gh.lazySingleton<_i430.SocialRepo>(
       () => _i730.SocialRepoImpl(
         socialRemoteDataSource: gh<_i615.SocialRemoteDataSource>(),
@@ -192,11 +202,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i970.UploadAvatarCubit>(
       () => _i970.UploadAvatarCubit(gh<_i481.AuthRepo>()),
     );
-    gh.factory<_i74.GroupDetailCubit>(
-      () => _i74.GroupDetailCubit(
-        getGroupDetailsUseCase: gh<_i461.GetGroupDetailsUseCase>(),
-      ),
-    );
     gh.factory<_i809.GetGroupsUseCase>(
       () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),
     );
@@ -226,6 +231,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i74.GroupDetailCubit>(
+      () => _i74.GroupDetailCubit(
+        getGroupDetailsUseCase: gh<_i461.GetGroupDetailsUseCase>(),
+        joinGroupUseCase: gh<_i581.JoinGroupUseCase>(),
+        leaveGroupUseCase: gh<_i599.LeaveGroupUseCase>(),
+      ),
     );
     gh.factory<_i760.UploadNoteCubit>(
       () => _i760.UploadNoteCubit(

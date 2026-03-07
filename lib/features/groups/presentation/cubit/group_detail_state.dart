@@ -30,3 +30,31 @@ class GroupDetailError extends GroupDetailState {
   @override
   List<Object> get props => [message];
 }
+
+class GroupDetailActionLoading extends GroupDetailState {
+  final GetGroupsDetailEntity? groupDetail;
+  const GroupDetailActionLoading({this.groupDetail});
+
+  @override
+  List<Object?> get props => [groupDetail];
+}
+
+class GroupDetailActionSuccess extends GroupDetailState {
+  final String message;
+  final GetGroupsDetailEntity? groupDetail;
+
+  const GroupDetailActionSuccess({required this.message, this.groupDetail});
+
+  @override
+  List<Object?> get props => [message, groupDetail];
+}
+
+class GroupDetailActionError extends GroupDetailState {
+  final String message;
+  final GetGroupsDetailEntity? groupDetail;
+
+  const GroupDetailActionError({required this.message, this.groupDetail});
+
+  @override
+  List<Object?> get props => [message, groupDetail];
+}

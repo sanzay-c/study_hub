@@ -73,192 +73,202 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           ),
         ],
       ),
-      body: BlocBuilder<GroupDetailCubit, GroupDetailState>(
-        builder: (context, state) {
-          if (state is GroupDetailLoading) {
-            return const GroupDetailShimmer();
-          } else if (state is GroupDetailError) {
-            return Center(child: TextWidget(text: state.message));
-          } else if (state is GroupDetailSuccess) {
-            final data = state.groupDetail;
-            
-            final currentUserId = context.read<AuthBloc>().state.user?.id;
-            final isMember = data.members.contains(currentUserId) || 
-                            data.membersPreview.any((m) => m.userId == currentUserId) ||
-                            data.createdBy == currentUserId;
-            final isOwner = data.createdBy == currentUserId;
+      body: BlocListener<GroupDetailCubit, GroupDetailState>(
+        listener: (context, state) {
+          if (state is GroupDetailActionSuccess) {
+            CustomToast.show(context, message: state.message, type: ToastType.success);
+          } else if (state is GroupDetailActionError) {
+            CustomToast.show(context, message: state.message, type: ToastType.error);
+          }
+        },
+        child: BlocBuilder<GroupDetailCubit, GroupDetailState>(
+          builder: (context, state) {
+            if (state is GroupDetailLoading) {
+              return const GroupDetailShimmer();
+            } else if (state is GroupDetailError) {
+              return Center(child: TextWidget(text: state.message));
+            } else {
+              // Extract data from success or action states
+              GetGroupsDetailEntity? data;
+              if (state is GroupDetailSuccess) {
+                data = state.groupDetail;
+              } else if (state is GroupDetailActionLoading) {
+                data = state.groupDetail;
+              } else if (state is GroupDetailActionSuccess) {
+                data = state.groupDetail;
+              } else if (state is GroupDetailActionError) {
+                data = state.groupDetail;
+              }
 
-            // Logic for preview counts
-            final previewMemberCount = data.membersPreview.length > 4 ? 4 : data.membersPreview.length;
-            final previewNoteCount = data.notesPreview.length > 2 ? 2 : data.notesPreview.length;
+              if (data == null) {
+                return const GroupDetailShimmer();
+              }
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Banner - Using imageUrl from API
-                  if (data.imageUrl != null && data.imageUrl!.isNotEmpty)
-                    CachedNetworkImage(
-                      imageUrl: data.imageUrl!,
-                      height: 150.h,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => _buildPlaceholder(),
-                      errorWidget: (context, url, error) => _buildPlaceholder(),
-                    )
-                  else
-                    _buildPlaceholder(),
+              final currentUserId = context.read<AuthBloc>().state.user?.id;
+              final isMember = data.members.contains(currentUserId) ||
+                  data.membersPreview.any((m) => m.userId == currentUserId) ||
+                  data.createdBy == currentUserId;
+              final isOwner = data.createdBy == currentUserId;
 
-                  Transform.translate(
-                    offset: Offset(0, -40.h),
-                    child: GroupMainInfoCard(
-                      groupName: data.name,
-                      description: data.description,
-                      memberCount: data.memberCount,
-                      createdBy: data.creatorName,
-                      isMember: isMember,
-                      isOwner: isOwner,
-                      onChat: () {},
-                      onLeave: () {},
-                      onJoin: () {
-                        // TODO: Implement join group logic (e.g. calling cubit/usecase)
-                        CustomToast.show(
-                          context, 
-                          message: "Join request sent (Placeholder)",
-                          type: ToastType.info,
-                        );
-                      },
-                    ),
-                  ),
+              final previewMemberCount = data.membersPreview.length > 4 ? 4 : data.membersPreview.length;
+              final previewNoteCount = data.notesPreview.length > 2 ? 2 : data.notesPreview.length;
 
-                  // Members Section - Only show if user is a member
-                  if (isMember)
-                    SectionContainer(
-                      title: "Members",
-                      trailing: "View All",
-                      onTrailingTap: () => ViewAllBottomSheet.show(
-                        context: context,
-                        title: "All Members",
-                        data: data.membersPreview,
-                        itemBuilder: (item) {
-                          final member = item as MembersPreviewEntity;
-                          return MemberTile(
-                            name: member.fullname,
-                            status: member.isOnline ? "Online" : "Offline",
-                            isOnline: member.isOnline,
-                            isOwner: member.isOwner,
-                            imageUrl: member.avatarPath,
-                            onTap: () {
-                              final currentUserId = context.read<AuthBloc>().state.user?.id;
-                              
-                              if (member.userId == currentUserId) {
-                                context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
-                                context.go(RouteName.bottomNavScreen);
-                              } else {
-                                final socialUser = SocialEntity(
-                                  userId: member.userId,
-                                  username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
-                                  avatarPath: member.avatarPath,
-                                  followers: '0',
-                                  following: '0',
-                                  isFollowing: false,
-                                  followedAt: null,
-                                );
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserDetailsScreen(user: socialUser),
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (data.imageUrl != null && data.imageUrl!.isNotEmpty)
+                      CachedNetworkImage(
+                        imageUrl: data.imageUrl!,
+                        height: 150.h,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => _buildPlaceholder(),
+                        errorWidget: (context, url, error) => _buildPlaceholder(),
+                      )
+                    else
+                      _buildPlaceholder(),
+                    Transform.translate(
+                      offset: Offset(0, -40.h),
+                      child: GroupMainInfoCard(
+                        groupName: data.name,
+                        description: data.description,
+                        memberCount: data.memberCount,
+                        createdBy: data.creatorName,
+                        isMember: isMember,
+                        isOwner: isOwner,
+                        onChat: () {},
+                        onLeave: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const TextWidget(text: "Leave Group"),
+                              content: const TextWidget(
+                                text: "Are you sure you want to leave this group?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const TextWidget(text: "Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    context.read<GroupDetailCubit>().leaveGroup(data!.id);
+                                  },
+                                  child: const TextWidget(
+                                    text: "Yes, Leave",
+                                    color: Colors.red,
                                   ),
-                                );
-                              }
-                            },
+                                ),
+                              ],
+                            ),
                           );
                         },
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _OnlineCountBadge(count: data.onlineCount),
-                          12.verticalSpace,
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: previewMemberCount,
-                            itemBuilder: (context, index) {
-                              final member = data.membersPreview[index];
-                              return MemberTile(
-                                imageUrl: member.avatarPath ?? '',
-                                name: member.fullname,
-                                status: member.isOnline ? "Online" : "Offline",
-                                isOnline: member.isOnline,
-                                isOwner: member.isOwner,
-                                onTap: () {
-                                  final currentUserId = context.read<AuthBloc>().state.user?.id;
-
-                                  if (member.userId == currentUserId) {
-                                    context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
-                                    context.go(RouteName.bottomNavScreen);
-                                  } else {
-                                    final socialUser = SocialEntity(
-                                      userId: member.userId,
-                                      username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
-                                      avatarPath: member.avatarPath,
-                                      followers: '0',
-                                      following: '0',
-                                      isFollowing: false,
-                                      followedAt: null,
-                                    );
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => UserDetailsScreen(user: socialUser),
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                        onJoin: () => context.read<GroupDetailCubit>().joinGroup(data!.id),
                       ),
                     ),
-
-                  16.verticalSpace,
-
-                  // Recent Notes Section - Only show if notes exist
-                  if (data.notesPreview.isNotEmpty)
-                    SectionContainer(
-                      title: "Recent Notes",
-                      trailing: "View All",
-                      onTrailingTap: () => ViewAllBottomSheet.show(
-                        context: context,
-                        title: "All Notes",
-                        data: data.notesPreview,
-                        itemBuilder: (item) => NoteTile(
-                          title: item['title'] ?? "Untitled",
-                          subtitle: item['uploader_username'] ?? "Unknown uploader",
-                          onTap: () {
-                            final noteEntity = NotesModel.fromJson(item).toEntity();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NotePreviewScreen(note: noteEntity),
-                              ),
+                    if (isMember)
+                      SectionContainer(
+                        title: "Members",
+                        trailing: "View All",
+                        onTrailingTap: () => ViewAllBottomSheet.show(
+                          context: context,
+                          title: "All Members",
+                          data: data!.membersPreview,
+                          itemBuilder: (item) {
+                            final member = item as MembersPreviewEntity;
+                            return MemberTile(
+                              name: member.fullname,
+                              status: member.isOnline ? "Online" : "Offline",
+                              isOnline: member.isOnline,
+                              isOwner: member.isOwner,
+                              imageUrl: member.avatarPath,
+                              onTap: () {
+                                final currentUserId = context.read<AuthBloc>().state.user?.id;
+                                if (member.userId == currentUserId) {
+                                  context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                  context.go(RouteName.bottomNavScreen);
+                                } else {
+                                  final socialUser = SocialEntity(
+                                    userId: member.userId,
+                                    username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                    avatarPath: member.avatarPath,
+                                    followers: '0',
+                                    following: '0',
+                                    isFollowing: false,
+                                    followedAt: null,
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserDetailsScreen(user: socialUser),
+                                    ),
+                                  );
+                                }
+                              },
                             );
                           },
                         ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _OnlineCountBadge(count: data.onlineCount),
+                            12.verticalSpace,
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: previewMemberCount,
+                              itemBuilder: (context, index) {
+                                final member = data!.membersPreview[index];
+                                return MemberTile(
+                                  imageUrl: member.avatarPath ?? '',
+                                  name: member.fullname,
+                                  status: member.isOnline ? "Online" : "Offline",
+                                  isOnline: member.isOnline,
+                                  isOwner: member.isOwner,
+                                  onTap: () {
+                                    final currentUserId = context.read<AuthBloc>().state.user?.id;
+                                    if (member.userId == currentUserId) {
+                                      context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                      context.go(RouteName.bottomNavScreen);
+                                    } else {
+                                      final socialUser = SocialEntity(
+                                        userId: member.userId,
+                                        username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                        avatarPath: member.avatarPath,
+                                        followers: '0',
+                                        following: '0',
+                                        isFollowing: false,
+                                        followedAt: null,
+                                      );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserDetailsScreen(user: socialUser),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: previewNoteCount,
-                        separatorBuilder: (_, __) => 12.verticalSpace,
-                        itemBuilder: (context, index) {
-                          final note = data.notesPreview[index];
-                          return NoteTile(
-                            title: note['title'] ?? "Untitled",
-                            subtitle: note['uploader_username'] ?? "Unknown uploader",
+                    16.verticalSpace,
+                    if (data.notesPreview.isNotEmpty)
+                      SectionContainer(
+                        title: "Recent Notes",
+                        trailing: "View All",
+                        onTrailingTap: () => ViewAllBottomSheet.show(
+                          context: context,
+                          title: "All Notes",
+                          data: data!.notesPreview,
+                          itemBuilder: (item) => NoteTile(
+                            title: item['title'] ?? "Untitled",
+                            subtitle: item['uploader_username'] ?? "Unknown uploader",
                             onTap: () {
-                              final noteEntity = NotesModel.fromJson(note).toEntity();
+                              final noteEntity = NotesModel.fromJson(item).toEntity();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -266,18 +276,38 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                 ),
                               );
                             },
-                          );
-                        },
+                          ),
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: previewNoteCount,
+                          separatorBuilder: (_, __) => 12.verticalSpace,
+                          itemBuilder: (context, index) {
+                            final note = data!.notesPreview[index];
+                            return NoteTile(
+                              title: note['title'] ?? "Untitled",
+                              subtitle: note['uploader_username'] ?? "Unknown uploader",
+                              onTap: () {
+                                final noteEntity = NotesModel.fromJson(note).toEntity();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NotePreviewScreen(note: noteEntity),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-
-                  40.verticalSpace,
-                ],
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
+                    40.verticalSpace,
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }
