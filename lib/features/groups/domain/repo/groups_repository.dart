@@ -11,4 +11,6 @@ abstract class GroupsRepository {
   Future<CreateNewGroupEntity> createGroup(CreateNewGroupEntity groupEntity, {XFile? image});
   Future<void> joinGroup(String groupId);
   Future<void> leaveGroup(String groupId);
+  Future<CreateNewGroupEntity> updateGroup(String groupId, CreateNewGroupEntity groupEntity, {XFile? image});
+  Future<void> deleteGroup(String groupId);
 }

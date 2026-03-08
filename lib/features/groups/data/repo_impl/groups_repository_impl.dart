@@ -86,4 +86,49 @@ class GroupsRepositoryImpl implements GroupsRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<CreateNewGroupEntity> updateGroup(
+    String groupId, 
+    CreateNewGroupEntity groupEntity, 
+    {XFile? image}
+  ) async {
+    try {
+      // 1. Entity lai Model (DTO) ma convert garne
+      final groupModel = CreateNewGroup(
+        id: groupId,
+        name: groupEntity.name,
+        description: groupEntity.description,
+        subject: groupEntity.subject,
+        createdBy: groupEntity.createdBy,
+        members: groupEntity.members,
+        isPublic: groupEntity.isPublic,
+        imagePath: groupEntity.imagePath,
+        createdAt: groupEntity.createdAt,
+        creatorName: groupEntity.creatorName,
+        imageUrl: groupEntity.imageUrl,
+      );
+
+      // 2. Remote Data Source call garne
+      final resultModel = await remoteDataSource.updateGroup(
+        groupId, 
+        groupModel.toJson(), 
+        image: image,
+      );
+
+      // 3. Result Model lai Entity ma map garera return garne
+      return resultModel.toEntity();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteGroup(String groupId) async {
+    try {
+      await remoteDataSource.deleteGroup(groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

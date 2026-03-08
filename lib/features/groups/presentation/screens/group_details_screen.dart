@@ -7,11 +7,15 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
+import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_state.dart';
+import 'package:study_hub/features/groups/presentation/screens/create_group_bottom_sheet.dart';
 import 'package:study_hub/features/groups/presentation/widgets/group_main_info_card.dart';
+import 'package:study_hub/features/groups/presentation/widgets/group_setting_bottomsheet.dart';
 import 'package:study_hub/features/groups/presentation/widgets/groups_detail_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/widgets/member_tile.dart';
 import 'package:study_hub/features/groups/presentation/widgets/note_tile.dart';
@@ -25,8 +29,6 @@ import 'package:study_hub/features/social/presentation/screens/user_details_scre
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
-
 
 class GroupDetailsScreen extends StatefulWidget {
   final String groupId;
@@ -37,7 +39,6 @@ class GroupDetailsScreen extends StatefulWidget {
 }
 
 class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,16 +52,65 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           BlocBuilder<GroupDetailCubit, GroupDetailState>(
             builder: (context, state) {
               if (state is GroupDetailSuccess) {
+                final data = state.groupDetail;
                 final currentUserId = context.read<AuthBloc>().state.user?.id;
-                final isMember = state.groupDetail.members.contains(currentUserId) || 
-                               state.groupDetail.membersPreview.any((m) => m.userId == currentUserId) ||
-                               state.groupDetail.createdBy == currentUserId;
+                final isOwner = data.createdBy == currentUserId;
+                final isMember =
+                    data.members.contains(currentUserId) ||
+                    data.membersPreview.any(
+                      (m) => m.userId == currentUserId,
+                    ) ||
+                    data.createdBy == currentUserId;
                 if (!isMember) return const SizedBox.shrink();
 
                 return Padding(
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      GroupSettingsBottomSheet.show(
+                        context: context,
+                        isOwner: isOwner,
+                        onEdit: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => BlocProvider(
+                              create: (context) => getIt<CreateGroupCubit>(),
+                              child: CreateGroupBottomSheet(group: data),
+                            ),
+                          );
+                        },
+                        onDelete: () {
+                          final cubit = context.read<GroupDetailCubit>();
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: const TextWidget(text: "Delete Group"),
+                              content: const TextWidget(
+                                text: "Are you sure? This action cannot be undone.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(dialogContext),
+                                  child: const TextWidget(text: "Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext);
+                                    cubit.deleteGroup(data!.id);
+                                  },
+                                  child: const TextWidget(
+                                    text: "Delete",
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                     child: SvgImageRenderWidget(
                       svgImagePath: AssetsSource.appIcons.gearIcon,
                       svgColor: AppColors.appIconColor,
@@ -76,9 +126,24 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
       body: BlocListener<GroupDetailCubit, GroupDetailState>(
         listener: (context, state) {
           if (state is GroupDetailActionSuccess) {
-            CustomToast.show(context, message: state.message, type: ToastType.success);
+            CustomToast.show(
+              context,
+              message: state.message,
+              type: ToastType.success,
+            );
+            if (state.message == "Group deleted successfully") {
+              context.pop();
+            } else if (state.message == "Group updated successfully") {
+              // Details will be refreshed by cubit usually, 
+              // but if not, we can call it here. 
+              // CreateGroupBottomSheet success closes the sheet.
+            }
           } else if (state is GroupDetailActionError) {
-            CustomToast.show(context, message: state.message, type: ToastType.error);
+            CustomToast.show(
+              context,
+              message: state.message,
+              type: ToastType.error,
+            );
           }
         },
         child: BlocBuilder<GroupDetailCubit, GroupDetailState>(
@@ -88,7 +153,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
             } else if (state is GroupDetailError) {
               return Center(child: TextWidget(text: state.message));
             } else {
-              // Extract data from success or action states
               GetGroupsDetailEntity? data;
               if (state is GroupDetailSuccess) {
                 data = state.groupDetail;
@@ -105,13 +169,18 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
               }
 
               final currentUserId = context.read<AuthBloc>().state.user?.id;
-              final isMember = data.members.contains(currentUserId) ||
+              final isMember =
+                  data.members.contains(currentUserId) ||
                   data.membersPreview.any((m) => m.userId == currentUserId) ||
                   data.createdBy == currentUserId;
               final isOwner = data.createdBy == currentUserId;
 
-              final previewMemberCount = data.membersPreview.length > 4 ? 4 : data.membersPreview.length;
-              final previewNoteCount = data.notesPreview.length > 2 ? 2 : data.notesPreview.length;
+              final previewMemberCount = data.membersPreview.length > 4
+                  ? 4
+                  : data.membersPreview.length;
+              final previewNoteCount = data.notesPreview.length > 2
+                  ? 2
+                  : data.notesPreview.length;
 
               return SingleChildScrollView(
                 child: Column(
@@ -123,7 +192,8 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         width: double.infinity,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => _buildPlaceholder(),
-                        errorWidget: (context, url, error) => _buildPlaceholder(),
+                        errorWidget: (context, url, error) =>
+                            _buildPlaceholder(),
                       )
                     else
                       _buildPlaceholder(),
@@ -136,24 +206,33 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         createdBy: data.creatorName,
                         isMember: isMember,
                         isOwner: isOwner,
-                        onChat: () {},
+                        onChat: () {
+                          context.pushNamed(
+                            RouteName.messagesScreen,
+                            extra: data!.id,
+                          );
+                        },
                         onLeave: () {
+                          final cubit = context.read<GroupDetailCubit>();
                           showDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
+                            builder: (dialogContext) => AlertDialog(
                               title: const TextWidget(text: "Leave Group"),
                               content: const TextWidget(
-                                text: "Are you sure you want to leave this group?",
+                                text:
+                                    "Are you sure you want to leave this group?",
                               ),
                               actions: [
                                 TextButton(
-                                  onPressed: () => Navigator.pop(context),
+                                  onPressed: () => Navigator.pop(dialogContext),
                                   child: const TextWidget(text: "Cancel"),
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
-                                    context.read<GroupDetailCubit>().leaveGroup(data!.id);
+                                    Navigator.pop(dialogContext);
+                                    cubit.leaveGroup(
+                                      data!.id,
+                                    );
                                   },
                                   child: const TextWidget(
                                     text: "Yes, Leave",
@@ -164,7 +243,9 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             ),
                           );
                         },
-                        onJoin: () => context.read<GroupDetailCubit>().joinGroup(data!.id),
+                        onJoin: () => context
+                            .read<GroupDetailCubit>()
+                            .joinGroup(data!.id),
                       ),
                     ),
                     if (isMember)
@@ -184,14 +265,24 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                               isOwner: member.isOwner,
                               imageUrl: member.avatarPath,
                               onTap: () {
-                                final currentUserId = context.read<AuthBloc>().state.user?.id;
+                                final currentUserId = context
+                                    .read<AuthBloc>()
+                                    .state
+                                    .user
+                                    ?.id;
                                 if (member.userId == currentUserId) {
-                                  context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                  context.read<MainBottomNavBloc>().add(
+                                    const NavSlugChanged('Profile'),
+                                  );
                                   context.go(RouteName.bottomNavScreen);
                                 } else {
                                   final socialUser = SocialEntity(
                                     userId: member.userId,
-                                    username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                    username: member.username.isEmpty
+                                        ? (member.fullname.isEmpty
+                                              ? "Unknown"
+                                              : member.fullname)
+                                        : member.username,
                                     avatarPath: member.avatarPath,
                                     followers: '0',
                                     following: '0',
@@ -201,7 +292,8 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => UserDetailsScreen(user: socialUser),
+                                      builder: (context) =>
+                                          UserDetailsScreen(user: socialUser),
                                     ),
                                   );
                                 }
@@ -223,18 +315,30 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                 return MemberTile(
                                   imageUrl: member.avatarPath ?? '',
                                   name: member.fullname,
-                                  status: member.isOnline ? "Online" : "Offline",
+                                  status: member.isOnline
+                                      ? "Online"
+                                      : "Offline",
                                   isOnline: member.isOnline,
                                   isOwner: member.isOwner,
                                   onTap: () {
-                                    final currentUserId = context.read<AuthBloc>().state.user?.id;
+                                    final currentUserId = context
+                                        .read<AuthBloc>()
+                                        .state
+                                        .user
+                                        ?.id;
                                     if (member.userId == currentUserId) {
-                                      context.read<MainBottomNavBloc>().add(const NavSlugChanged('Profile'));
+                                      context.read<MainBottomNavBloc>().add(
+                                        const NavSlugChanged('Profile'),
+                                      );
                                       context.go(RouteName.bottomNavScreen);
                                     } else {
                                       final socialUser = SocialEntity(
                                         userId: member.userId,
-                                        username: member.username.isEmpty ? (member.fullname.isEmpty ? "Unknown" : member.fullname) : member.username,
+                                        username: member.username.isEmpty
+                                            ? (member.fullname.isEmpty
+                                                  ? "Unknown"
+                                                  : member.fullname)
+                                            : member.username,
                                         avatarPath: member.avatarPath,
                                         followers: '0',
                                         following: '0',
@@ -244,7 +348,10 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => UserDetailsScreen(user: socialUser),
+                                          builder: (context) =>
+                                              UserDetailsScreen(
+                                                user: socialUser,
+                                              ),
                                         ),
                                       );
                                     }
@@ -266,13 +373,17 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           data: data!.notesPreview,
                           itemBuilder: (item) => NoteTile(
                             title: item['title'] ?? "Untitled",
-                            subtitle: item['uploader_username'] ?? "Unknown uploader",
+                            subtitle:
+                                item['uploader_username'] ?? "Unknown uploader",
                             onTap: () {
-                              final noteEntity = NotesModel.fromJson(item).toEntity();
+                              final noteEntity = NotesModel.fromJson(
+                                item,
+                              ).toEntity();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => NotePreviewScreen(note: noteEntity),
+                                  builder: (context) =>
+                                      NotePreviewScreen(note: noteEntity),
                                 ),
                               );
                             },
@@ -287,13 +398,18 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                             final note = data!.notesPreview[index];
                             return NoteTile(
                               title: note['title'] ?? "Untitled",
-                              subtitle: note['uploader_username'] ?? "Unknown uploader",
+                              subtitle:
+                                  note['uploader_username'] ??
+                                  "Unknown uploader",
                               onTap: () {
-                                final noteEntity = NotesModel.fromJson(note).toEntity();
+                                final noteEntity = NotesModel.fromJson(
+                                  note,
+                                ).toEntity();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => NotePreviewScreen(note: noteEntity),
+                                    builder: (context) =>
+                                        NotePreviewScreen(note: noteEntity),
                                   ),
                                 );
                               },

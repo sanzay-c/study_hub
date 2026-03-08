@@ -61,4 +61,10 @@ class ApiEndpoints {
 
   // join group
   static String joinGroup(String groupId) => "/api/groups/$groupId/join/";
+
+  // delete group
+  static String deleteGroup(String groupId) => "/api/groups/$groupId/"; // DELETE method
+
+  // update group
+  static String updateGroup(String groupId) => "/api/groups/$groupId/"; // PATCH method
 }

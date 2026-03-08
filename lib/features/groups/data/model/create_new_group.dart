@@ -7,35 +7,33 @@ part 'create_new_group.g.dart';
 class CreateNewGroup {
   @JsonKey(
     name: '_id',
-  ) // Specific name bhayeko le yeslai matra manually define garne
+  )
   final String id;
-
   final String name;
   final String description;
   final dynamic subject;
-  final String createdBy; // Automatically maps to 'created_by'
-  final List<String> members;
-  final bool isPublic; // Automatically maps to 'is_public'
-  final String imagePath; // Automatically maps to 'image_path'
-  final DateTime createdAt; // Automatically maps to 'created_at'
-  final String creatorName; // Automatically maps to 'creator_name'
-  final String imageUrl; // Automatically maps to 'image_url'
+  final String? createdBy;
+  final List<String>? members;
+  final bool? isPublic;
+  final String? imagePath;
+  final DateTime? createdAt;
+  final String? creatorName;
+  final String? imageUrl;
 
   CreateNewGroup({
     required this.id,
     required this.name,
     required this.description,
-    required this.subject,
-    required this.createdBy,
-    required this.members,
-    required this.isPublic,
-    required this.imagePath,
-    required this.createdAt,
-    required this.creatorName,
-    required this.imageUrl,
+    this.subject,
+    this.createdBy,
+    this.members,
+    this.isPublic,
+    this.imagePath,
+    this.createdAt,
+    this.creatorName,
+    this.imageUrl,
   });
 
-  // copyWith method (Boilerplate low garna helpful hunchha)
   CreateNewGroup copyWith({
     String? id,
     String? name,

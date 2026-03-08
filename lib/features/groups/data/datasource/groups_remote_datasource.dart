@@ -14,6 +14,8 @@ abstract class GroupsRemoteDataSource {
   Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image});
   Future<void> joinGroup(String groupId);
   Future<void> leaveGroup(String groupId);
+  Future<CreateNewGroup> updateGroup(String groupId, Map<String, dynamic> groupData, {XFile? image});
+  Future<void> deleteGroup(String groupId);
 }
 
 @LazySingleton(as: GroupsRemoteDataSource)
@@ -134,6 +136,52 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
 
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to leave group');
+    }
+  }
+  
+  @override
+  Future<CreateNewGroup> updateGroup(String groupId, Map<String, dynamic> groupData, {XFile? image}) async {
+    dynamic body;
+    
+    // Update garda pani image huna sakne bhayeko le FormData handle garne
+    if (image != null) {
+      body = FormData.fromMap({
+        ...groupData,
+        'image': await MultipartFile.fromFile(
+          image.path,
+          filename: image.name,
+        ),
+      });
+    } else {
+      body = groupData;
+    }
+
+    // PATCH method use garne partial update ko lagi
+    final response = await dio.patch(
+      ApiEndpoints.updateGroup(groupId), 
+      data: body,
+    );
+
+    if (response.statusCode == 200) {
+      final dynamic responseData = response.data;
+      final data = (responseData is Map && responseData.containsKey('data'))
+          ? responseData['data']
+          : responseData;
+
+      return CreateNewGroup.fromJson(data);
+    } else {
+      throw Exception('Failed to update group');
+    }
+  }
+
+  @override
+  Future<void> deleteGroup(String groupId) async {
+    // DELETE method call garne
+    final response = await dio.delete(ApiEndpoints.deleteGroup(groupId));
+
+    // Delete ma hami dherai jaso 200 or 204 (No Content) status code check garchhau
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to delete group');
     }
   }
 }

@@ -10,11 +10,13 @@ import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
+import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
 import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/create_group_state.dart';
 
 class CreateGroupBottomSheet extends StatelessWidget {
-  const CreateGroupBottomSheet({super.key});
+  final GetGroupsDetailEntity? group;
+  const CreateGroupBottomSheet({super.key, this.group});
 
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
@@ -26,14 +28,26 @@ class CreateGroupBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (group != null) {
+      context.read<CreateGroupCubit>().initializeForUpdate(
+            groupId: group!.id,
+            name: group!.name,
+            description: group!.description,
+            isPublic: group!.isPublic,
+          );
+    }
+
     return BlocListener<CreateGroupCubit, CreateGroupState>(
       listenWhen: (previous, current) =>
-          previous.isSuccess != current.isSuccess || previous.error != current.error,
+          previous.isSuccess != current.isSuccess ||
+          previous.error != current.error,
       listener: (context, state) {
         if (state.isSuccess) {
           CustomToast.show(
             context,
-            message: "Group created successfully!",
+            message: group != null
+                ? "Group updated successfully!"
+                : "Group created successfully!",
             type: ToastType.success,
           );
           Navigator.pop(context);
@@ -74,13 +88,13 @@ class CreateGroupBottomSheet extends StatelessWidget {
                 ),
               ),
               16.verticalSpace,
-              
+
               // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextWidget(
-                    text: 'Create Groups',
+                    text: group != null ? 'Update Group' : 'Create Group',
                     fontWeight: FontWeight.w800,
                     fontSize: 18.sp,
                   ),
@@ -101,7 +115,8 @@ class CreateGroupBottomSheet extends StatelessWidget {
               GestureDetector(
                 onTap: () => _pickImage(context),
                 child: BlocBuilder<CreateGroupCubit, CreateGroupState>(
-                  buildWhen: (previous, current) => previous.image != current.image,
+                  buildWhen: (previous, current) =>
+                      previous.image != current.image,
                   builder: (context, state) {
                     return Container(
                       width: double.infinity,
@@ -117,14 +132,23 @@ class CreateGroupBottomSheet extends StatelessWidget {
                                 image: FileImage(File(state.image!.path)),
                                 fit: BoxFit.cover,
                               )
-                            : null,
+                            : (group?.imageUrl != null &&
+                                    group!.imageUrl!.isNotEmpty)
+                                ? DecorationImage(
+                                    image: NetworkImage(group!.imageUrl!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                       ),
-                      child: state.image == null
+                      child: (state.image == null &&
+                              (group?.imageUrl == null ||
+                                  group!.imageUrl!.isEmpty))
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SvgImageRenderWidget(
-                                  svgImagePath: AssetsSource.appIcons.uploadIcon,
+                                  svgImagePath:
+                                      AssetsSource.appIcons.uploadIcon,
                                 ),
                                 8.verticalSpace,
                                 const TextWidget(text: 'Click to upload'),
@@ -142,7 +166,9 @@ class CreateGroupBottomSheet extends StatelessWidget {
               _buildTextField(
                 context,
                 'Enter group name',
-                onChanged: (val) => context.read<CreateGroupCubit>().onNameChanged(val),
+                initialValue: group?.name,
+                onChanged: (val) =>
+                    context.read<CreateGroupCubit>().onNameChanged(val),
               ),
               20.verticalSpace,
 
@@ -152,13 +178,16 @@ class CreateGroupBottomSheet extends StatelessWidget {
                 context,
                 'Describe your group',
                 maxLines: 3,
-                onChanged: (val) => context.read<CreateGroupCubit>().onDescriptionChanged(val),
+                initialValue: group?.description,
+                onChanged: (val) =>
+                    context.read<CreateGroupCubit>().onDescriptionChanged(val),
               ),
               20.verticalSpace,
 
               // Privacy Toggle
               BlocBuilder<CreateGroupCubit, CreateGroupState>(
-                buildWhen: (previous, current) => previous.isPublic != current.isPublic,
+                buildWhen: (previous, current) =>
+                    previous.isPublic != current.isPublic,
                 builder: (context, state) {
                   return Container(
                     padding: EdgeInsets.all(16.w),
@@ -180,9 +209,9 @@ class CreateGroupBottomSheet extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                               8.verticalSpace,
-                              TextWidget(
+                              const TextWidget(
                                 text: 'Require approval to join',
-                                fontSize: 12.sp,
+                                fontSize: 12,
                               ),
                             ],
                           ),
@@ -190,11 +219,14 @@ class CreateGroupBottomSheet extends StatelessWidget {
                         Transform.scale(
                           scale: 0.8,
                           child: CupertinoSwitch(
-                            value: !state.isPublic, // Private is opposite of Public
+                            value: !state
+                                .isPublic, // Private is opposite of Public
                             activeTrackColor: const Color(0xFF6A9BEE),
                             inactiveTrackColor: const Color(0xFFE5E7EB),
                             onChanged: (value) {
-                              context.read<CreateGroupCubit>().onVisibilityChanged(!value);
+                              context
+                                  .read<CreateGroupCubit>()
+                                  .onVisibilityChanged(!value);
                             },
                           ),
                         ),
@@ -207,10 +239,11 @@ class CreateGroupBottomSheet extends StatelessWidget {
 
               // Submit Button
               BlocBuilder<CreateGroupCubit, CreateGroupState>(
-                buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+                buildWhen: (previous, current) =>
+                    previous.isLoading != current.isLoading,
                 builder: (context, state) {
                   return CommonButton(
-                    text: 'Create Group',
+                    text: group != null ? 'Update Group' : 'Create Group',
                     isLoading: state.isLoading,
                     onTap: () => context.read<CreateGroupCubit>().submitGroup(),
                     color: [
@@ -226,10 +259,12 @@ class CreateGroupBottomSheet extends StatelessWidget {
                   );
                 },
               ),
-              
+
               // Keyboard avoidance padding
               Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
               ),
             ],
           ),
@@ -249,9 +284,14 @@ class CreateGroupBottomSheet extends StatelessWidget {
     BuildContext context, 
     String hint, {
     int maxLines = 1, 
+    String? initialValue,
     Function(String)? onChanged,
   }) {
     return TextField(
+      controller: TextEditingController(text: initialValue)
+        ..selection = TextSelection.fromPosition(
+          TextPosition(offset: initialValue?.length ?? 0),
+        ),
       maxLines: maxLines,
       onChanged: onChanged,
       decoration: InputDecoration(

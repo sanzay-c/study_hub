@@ -57,11 +57,14 @@ class _GroupsJoinedState extends State<GroupsJoined>
 
   Widget _buildGroupCard(GetGroupsEntity group, BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        getIt<NavigationService>().pushNamed(
+      onTap: () async {
+        await getIt<NavigationService>().pushNamed(
           RouteName.groupDetailsScreen,
           extra: group.id,
         );
+        if (context.mounted) {
+          context.read<GroupsCubit>().getJoinedGroups();
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -140,7 +143,15 @@ class _GroupsJoinedState extends State<GroupsJoined>
                       ),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          await getIt<NavigationService>().pushNamed(
+                            RouteName.groupDetailsScreen,
+                            extra: group.id,
+                          );
+                          if (context.mounted) {
+                            context.read<GroupsCubit>().getJoinedGroups();
+                          }
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16.w,

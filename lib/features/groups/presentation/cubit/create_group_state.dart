@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateGroupState extends Equatable {
+  final String? groupId;
   final String name;
   final String description;
   final XFile? image;
@@ -11,6 +12,7 @@ class CreateGroupState extends Equatable {
   final bool isSuccess;
 
   const CreateGroupState({
+    this.groupId,
     this.name = '',
     this.description = '',
     this.image,
@@ -21,6 +23,7 @@ class CreateGroupState extends Equatable {
   });
 
   CreateGroupState copyWith({
+    String? groupId,
     String? name,
     String? description,
     XFile? image,
@@ -30,6 +33,7 @@ class CreateGroupState extends Equatable {
     bool? isSuccess,
   }) {
     return CreateGroupState(
+      groupId: groupId ?? this.groupId,
       name: name ?? this.name,
       description: description ?? this.description,
       image: image ?? this.image,
@@ -41,5 +45,5 @@ class CreateGroupState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, description, isPublic, isLoading, error, isSuccess];
+  List<Object?> get props => [groupId, name, description, isPublic, isLoading, error, isSuccess];
 }

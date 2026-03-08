@@ -5,26 +5,26 @@ class CreateNewGroupEntity extends Equatable {
   final String name;
   final String description;
   final dynamic subject;
-  final String createdBy;
-  final List<String> members;
-  final bool isPublic;
-  final String imagePath;
-  final DateTime createdAt;
-  final String creatorName;
-  final String imageUrl;
+  final String? createdBy;
+  final List<String>? members;
+  final bool? isPublic;
+  final String? imagePath;
+  final DateTime? createdAt;
+  final String? creatorName;
+  final String? imageUrl;
 
   const CreateNewGroupEntity({
     required this.id,
     required this.name,
     required this.description,
-    required this.subject,
-    required this.createdBy,
-    required this.members,
-    required this.isPublic,
-    required this.imagePath,
-    required this.createdAt,
-    required this.creatorName,
-    required this.imageUrl,
+    this.subject,
+    this.createdBy,
+    this.members,
+    this.isPublic,
+    this.imagePath,
+    this.createdAt,
+    this.creatorName,
+    this.imageUrl,
   });
 
   @override
