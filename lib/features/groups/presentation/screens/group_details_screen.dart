@@ -264,6 +264,38 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                               isOnline: member.isOnline,
                               isOwner: member.isOwner,
                               imageUrl: member.avatarPath,
+                              onLongPress: (isOwner && member.userId != currentUserId)
+                                  ? () {
+                                      final cubit = context.read<GroupDetailCubit>();
+                                      showDialog(
+                                        context: context,
+                                        builder: (dialogContext) => AlertDialog(
+                                          title: const TextWidget(text: "Remove Member"),
+                                          content: const TextWidget(
+                                            text: "Are you sure you want to remove ? They will no longer be able to participate in this group.",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(dialogContext),
+                                              child: const TextWidget(text: "Cancel"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(dialogContext);
+                                                cubit.removeMember(data!.id, member.userId);
+                                                // Close the bottom sheet as well since lists might change
+                                                Navigator.pop(context); 
+                                              },
+                                              child: const TextWidget(
+                                                text: "Remove",
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  : null,
                               onTap: () {
                                 final currentUserId = context
                                     .read<AuthBloc>()
@@ -320,6 +352,36 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                       : "Offline",
                                   isOnline: member.isOnline,
                                   isOwner: member.isOwner,
+                                  onLongPress: (isOwner && member.userId != currentUserId)
+                                      ? () {
+                                          final cubit = context.read<GroupDetailCubit>();
+                                          showDialog(
+                                            context: context,
+                                            builder: (dialogContext) => AlertDialog(
+                                              title: const TextWidget(text: "Remove Member"),
+                                              content: const TextWidget(
+                                                text: "Are you sure you want to remove ? They will no longer be able to participate in this group.",
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(dialogContext),
+                                                  child: const TextWidget(text: "Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(dialogContext);
+                                                    cubit.removeMember(data!.id, member.userId);
+                                                  },
+                                                  child: const TextWidget(
+                                                    text: "Remove",
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      : null,
                                   onTap: () {
                                     final currentUserId = context
                                         .read<AuthBloc>()

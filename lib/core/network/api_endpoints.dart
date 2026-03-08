@@ -67,4 +67,7 @@ class ApiEndpoints {
 
   // update group
   static String updateGroup(String groupId) => "/api/groups/$groupId/"; // PATCH method
+
+  // remove rember group owner
+  static String removeMember(String groupId) => "/api/groups/$groupId/kick/"; // POST method
 }

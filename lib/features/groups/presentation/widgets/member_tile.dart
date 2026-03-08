@@ -14,21 +14,24 @@ class MemberTile extends StatelessWidget {
   final bool isOnline;
   final bool isOwner;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const MemberTile({
     super.key,
     required this.name,
     required this.status,
-    this.imageUrl, // Required banayeko
+    this.imageUrl, 
     required this.isOnline,
     required this.isOwner,
     this.onTap,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(

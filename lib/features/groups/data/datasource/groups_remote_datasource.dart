@@ -11,11 +11,19 @@ abstract class GroupsRemoteDataSource {
   Future<List<GroupsModel>> getGroups();
   Future<List<GetGroupsModel>> getAllGroups({String? tab});
   Future<GetGroupsDetailModel> getGroupDetails(String groupId);
-  Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image});
+  Future<CreateNewGroup> createGroup(
+    Map<String, dynamic> groupData, {
+    XFile? image,
+  });
   Future<void> joinGroup(String groupId);
   Future<void> leaveGroup(String groupId);
-  Future<CreateNewGroup> updateGroup(String groupId, Map<String, dynamic> groupData, {XFile? image});
+  Future<CreateNewGroup> updateGroup(
+    String groupId,
+    Map<String, dynamic> groupData, {
+    XFile? image,
+  });
   Future<void> deleteGroup(String groupId);
+  Future<void> removeMember(String groupId, String userId);
 }
 
 @LazySingleton(as: GroupsRemoteDataSource)
@@ -27,7 +35,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   @override
   Future<List<GroupsModel>> getGroups() async {
     final response = await dio.get(ApiEndpoints.getGroups);
-    
+
     dynamic data;
     if (response.data is List) {
       data = response.data;
@@ -39,11 +47,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       throw Exception('Invalid groups response format');
     }
 
-    return (data as List)
-        .map((e) => GroupsModel.fromJson(e))
-        .toList();
+    return (data as List).map((e) => GroupsModel.fromJson(e)).toList();
   }
-  
+
   @override
   Future<List<GetGroupsModel>> getAllGroups({String? tab}) async {
     final response = await dio.get(
@@ -62,11 +68,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       throw Exception('Invalid groups response format');
     }
 
-    return (data as List)
-        .map((e) => GetGroupsModel.fromJson(e))
-        .toList();
+    return (data as List).map((e) => GetGroupsModel.fromJson(e)).toList();
   }
-  
+
   @override
   Future<GetGroupsDetailModel> getGroupDetails(String groupId) async {
     // API endpoint call garne. groupId lai URL string ma inject garnu parcha.
@@ -75,10 +79,10 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
     if (response.statusCode == 200) {
       // Dio le response.data lai automatically Map ma convert gari sakeko huncha
       final dynamic responseData = response.data;
-      
+
       // Response structure herera handle garne (if wrap bhako cha bhane)
-      final data = (responseData is Map && responseData.containsKey('data')) 
-          ? responseData['data'] 
+      final data = (responseData is Map && responseData.containsKey('data'))
+          ? responseData['data']
           : responseData;
 
       return GetGroupsDetailModel.fromJson(data);
@@ -86,27 +90,24 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       throw Exception('Failed to load group details');
     }
   }
-  
+
   @override
-  Future<CreateNewGroup> createGroup(Map<String, dynamic> groupData, {XFile? image}) async {
+  Future<CreateNewGroup> createGroup(
+    Map<String, dynamic> groupData, {
+    XFile? image,
+  }) async {
     dynamic body;
-    
+
     if (image != null) {
       body = FormData.fromMap({
         ...groupData,
-        'image': await MultipartFile.fromFile(
-          image.path,
-          filename: image.name,
-        ),
+        'image': await MultipartFile.fromFile(image.path, filename: image.name),
       });
     } else {
       body = groupData;
     }
 
-    final response = await dio.post(
-      ApiEndpoints.createNewGroup, 
-      data: body,
-    );
+    final response = await dio.post(ApiEndpoints.createNewGroup, data: body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final dynamic responseData = response.data;
@@ -120,7 +121,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       throw Exception('Failed to create group');
     }
   }
-  
+
   @override
   Future<void> joinGroup(String groupId) async {
     final response = await dio.post(ApiEndpoints.joinGroup(groupId));
@@ -138,19 +139,20 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
       throw Exception('Failed to leave group');
     }
   }
-  
+
   @override
-  Future<CreateNewGroup> updateGroup(String groupId, Map<String, dynamic> groupData, {XFile? image}) async {
+  Future<CreateNewGroup> updateGroup(
+    String groupId,
+    Map<String, dynamic> groupData, {
+    XFile? image,
+  }) async {
     dynamic body;
-    
+
     // Update garda pani image huna sakne bhayeko le FormData handle garne
     if (image != null) {
       body = FormData.fromMap({
         ...groupData,
-        'image': await MultipartFile.fromFile(
-          image.path,
-          filename: image.name,
-        ),
+        'image': await MultipartFile.fromFile(image.path, filename: image.name),
       });
     } else {
       body = groupData;
@@ -158,7 +160,7 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
 
     // PATCH method use garne partial update ko lagi
     final response = await dio.patch(
-      ApiEndpoints.updateGroup(groupId), 
+      ApiEndpoints.updateGroup(groupId),
       data: body,
     );
 
@@ -182,6 +184,22 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
     // Delete ma hami dherai jaso 200 or 204 (No Content) status code check garchhau
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete group');
+    }
+  }
+
+  @override
+  Future<void> removeMember(String groupId, String userId) async {
+   
+    final response = await dio.post(
+      ApiEndpoints.removeMember(groupId),
+      data: {
+        'user_id':
+            userId,
+      },
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to remove member from group');
     }
   }
 }

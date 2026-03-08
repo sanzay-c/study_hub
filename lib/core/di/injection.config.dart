@@ -56,6 +56,8 @@ import 'package:study_hub/features/groups/domain/usecase/join_group_usecase.dart
     as _i581;
 import 'package:study_hub/features/groups/domain/usecase/leave_group_usecase.dart'
     as _i599;
+import 'package:study_hub/features/groups/domain/usecase/remove_member_usecase.dart'
+    as _i402;
 import 'package:study_hub/features/groups/domain/usecase/update_group_usecase.dart'
     as _i571;
 import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart'
@@ -171,6 +173,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i49.DeleteGroupUseCase>(
       () => _i49.DeleteGroupUseCase(gh<_i1011.GroupsRepository>()),
     );
+    gh.lazySingleton<_i402.RemoveMemberUseCase>(
+      () => _i402.RemoveMemberUseCase(gh<_i1011.GroupsRepository>()),
+    );
     gh.lazySingleton<_i571.UpdateGroupUseCase>(
       () => _i571.UpdateGroupUseCase(gh<_i1011.GroupsRepository>()),
     );
@@ -215,16 +220,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i571.UpdateGroupUseCase>(),
       ),
     );
-    gh.factory<_i809.GetGroupsUseCase>(
-      () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),
-    );
     gh.factory<_i74.GroupDetailCubit>(
       () => _i74.GroupDetailCubit(
         getGroupDetailsUseCase: gh<_i461.GetGroupDetailsUseCase>(),
         joinGroupUseCase: gh<_i581.JoinGroupUseCase>(),
         leaveGroupUseCase: gh<_i599.LeaveGroupUseCase>(),
         deleteGroupUseCase: gh<_i49.DeleteGroupUseCase>(),
+        removeMemberUseCase: gh<_i402.RemoveMemberUseCase>(),
       ),
+    );
+    gh.factory<_i809.GetGroupsUseCase>(
+      () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),
     );
     gh.factory<_i546.DownloadNoteUseCase>(
       () => _i546.DownloadNoteUseCase(repository: gh<_i689.NotesRepo>()),

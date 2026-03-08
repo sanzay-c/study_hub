@@ -131,4 +131,13 @@ class GroupsRepositoryImpl implements GroupsRepository {
       rethrow;
     }
   }
+  
+ @override
+  Future<void> removeMember(String groupId, String userId) async {
+    try {
+      await remoteDataSource.removeMember(groupId, userId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
