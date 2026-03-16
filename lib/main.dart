@@ -8,6 +8,7 @@ import 'package:study_hub/core/network/internet/screens/widget/connectivity_wrap
 import 'package:study_hub/core/routing/router_config.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
+import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:study_hub/features/groups/presentation/cubit/create_group_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => getIt<GroupsCubit>()),
             BlocProvider(create: (_) => getIt<CreateGroupCubit>()),
             BlocProvider(create: (_) => getIt<UploadNoteCubit>()),
+            BlocProvider(create: (_) => getIt<ChatBloc>()),
           ],
           child: BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {

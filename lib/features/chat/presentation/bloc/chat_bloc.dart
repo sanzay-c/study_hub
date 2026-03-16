@@ -40,6 +40,8 @@ final CloseChatConnectionUseCase _closeChatConnection;
           isGroup: event.isGroup, 
           currentUserId: event.currentUserId
         );
+        // Sort history by timestamp (oldest first → newest at bottom)
+        history.sort((a, b) => a.timestamp.compareTo(b.timestamp));
         emit(state.copyWith(status: ChatStatus.success, messages: history));
 
         // Stream Connection
@@ -67,8 +69,40 @@ final CloseChatConnectionUseCase _closeChatConnection;
         final model = ChatMessageModel.fromJson(json);
         final entity = model.toEntity(event.currentUserId);
 
-        final updatedMessages = List<ChatMessageEntity>.from(state.messages)..add(entity);
-        emit(state.copyWith(messages: updatedMessages));
+        // Deduplication & Sorting logic
+        final List<ChatMessageEntity> currentMessages = List.from(state.messages);
+        
+        // 1. Check for exact ID match (server echo or history)
+        final existingIndex = currentMessages.indexWhere((m) => m.id == entity.id);
+        
+        // 2. If no ID match, check for Local Echo match (same content, same sender, very close timestamp)
+        int localEchoIndex = -1;
+        if (existingIndex == -1 && entity.isMe) {
+           localEchoIndex = currentMessages.indexWhere((m) => 
+            state.sendingMessageIds.contains(m.id) && 
+            m.content == entity.content
+          );
+        }
+
+        if (existingIndex != -1) {
+          // Update existing
+          currentMessages[existingIndex] = entity;
+        } else if (localEchoIndex != -1) {
+          // Replace local echo with server version
+          final localId = currentMessages[localEchoIndex].id;
+          currentMessages[localEchoIndex] = entity;
+          
+          final updatedSending = Set<String>.from(state.sendingMessageIds)..remove(localId);
+          emit(state.copyWith(sendingMessageIds: updatedSending));
+        } else {
+          // New message
+          currentMessages.add(entity);
+        }
+
+        // Always sort by timestamp to ensure correct order
+        currentMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        
+        emit(state.copyWith(messages: currentMessages));
       } catch (e) {
         // Parsing error
       }
@@ -76,6 +110,30 @@ final CloseChatConnectionUseCase _closeChatConnection;
 
     // 3. Message pathaune
     on<SendMessageEvent>((event, emit) {
+      final tempId = "temp_${DateTime.now().millisecondsSinceEpoch}";
+      
+      // Optimistic Update
+      final tempEntity = ChatMessageEntity(
+        id: tempId,
+        senderId: event.senderId,
+        receiverId: event.receiverId,
+        groupId: event.isGroup ? state.messages.isNotEmpty ? state.messages.first.groupId : null : null,
+        content: event.message,
+        timestamp: DateTime.now(),
+        isMe: true,
+      );
+
+      final updatedMessages = List<ChatMessageEntity>.from(state.messages)..add(tempEntity);
+      // Sort even after adding local echo
+      updatedMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      
+      final updatedSending = Set<String>.from(state.sendingMessageIds)..add(tempId);
+      
+      emit(state.copyWith(
+        messages: updatedMessages,
+        sendingMessageIds: updatedSending,
+      ));
+
       _sendMessage(
         message: event.message,
         senderId: event.senderId,

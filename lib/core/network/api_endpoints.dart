@@ -73,6 +73,16 @@ class ApiEndpoints {
   // remove rember group owner
   static String removeMember(String groupId) => "/api/groups/$groupId/kick/"; // POST method
 
+  static String get _wsBaseUrl {
+    final baseUrl = EnvConfig.apiBaseUrl;
+    if (baseUrl.startsWith('https://')) {
+      return baseUrl.replaceFirst('https://', 'wss://');
+    } else if (baseUrl.startsWith('http://')) {
+      return baseUrl.replaceFirst('http://', 'ws://');
+    }
+    return 'ws://$baseUrl';
+  }
+
 
   // wss:
   // ws://127.0.0.1:8000/ws/dm/6990a163d0b34aed2411b8c4/6965107b15eb685b5d75c0ef/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDAzNTI2LCJpYXQiOjE3NzI5ODU1MjYsImp0aSI6IjFmYTY5YThjMmQwNTQyZmZiZWY5Yjg2NWQ0M2E0N2JjIiwidXNlcl9pZCI6IjY5OTBhMTYzZDBiMzRhZWQyNDExYjhjNCIsInVzZXJuYW1lIjoiVGVzdDEwMSJ9._eahOkXxQ0KXgNFACaUTOP3IfGEEToh9iCUkKrkTJK0
@@ -83,7 +93,7 @@ class ApiEndpoints {
   //     "sender_id": "6990a163d0b34aed2411b8c4",
   //     "receiver_id": "6965107b15eb685b5d75c0ef"
   // }
-  static String dmMessage(String userIdA, userIdB) => "ws://${EnvConfig.apiBaseUrl}/ws/dm/$userIdA/$userIdB/"; 
+  static String dmMessage(String userIdA, userIdB) => "$_wsBaseUrl/ws/dm/$userIdA/$userIdB/"; 
   
   // wss:
   // ws:/${EnvConfig.apiBaseUrl}/ws/chat/6965d509cc8d76c2ee6f6279/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMDAzNTI2LCJpYXQiOjE3NzI5ODU1MjYsImp0aSI6IjFmYTY5YThjMmQwNTQyZmZiZWY5Yjg2NWQ0M2E0N2JjIiwidXNlcl9pZCI6IjY5OTBhMTYzZDBiMzRhZWQyNDExYjhjNCIsInVzZXJuYW1lIjoiVGVzdDEwMSJ9._eahOkXxQ0KXgNFACaUTOP3IfGEEToh9iCUkKrkTJK0
@@ -93,7 +103,7 @@ class ApiEndpoints {
   //     "message": "Hello from Postman!",
   //     "sender_id": "6990a163d0b34aed2411b8c4"
   // }
-  static String messageGroup(String groupId) => "ws://${EnvConfig.apiBaseUrl}/ws/chat/$groupId/"; 
+  static String messageGroup(String groupId) => "$_wsBaseUrl/ws/chat/$groupId/"; 
 
   // fetch group history
   // {{base_url}}/api/chat/messages/?group_id=6965d509cc8d76c2ee6f6279

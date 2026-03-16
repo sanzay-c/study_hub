@@ -209,7 +209,11 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         onChat: () {
                           context.pushNamed(
                             RouteName.messagesScreen,
-                            extra: data!.id,
+                            extra: {
+                              'id': data!.id,
+                              'isGroup': true,
+                              'title': data.name,
+                            },
                           );
                         },
                         onLeave: () {

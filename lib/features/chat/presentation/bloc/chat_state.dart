@@ -14,12 +14,15 @@ class ChatState extends Equatable {
   // Message send garda loading dekhauna (Optional)
   final bool isSending;
 
+  final Set<String> sendingMessageIds;
+
   const ChatState({
     this.status = ChatStatus.initial,
     this.messages = const [],
     this.errorMessage,
     this.isConnectionActive = false,
     this.isSending = false,
+    this.sendingMessageIds = const {},
   });
 
   ChatState copyWith({
@@ -28,6 +31,7 @@ class ChatState extends Equatable {
     String? errorMessage,
     bool? isConnectionActive,
     bool? isSending,
+    Set<String>? sendingMessageIds,
   }) {
     return ChatState(
       status: status ?? this.status,
@@ -35,6 +39,7 @@ class ChatState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       isConnectionActive: isConnectionActive ?? this.isConnectionActive,
       isSending: isSending ?? this.isSending,
+      sendingMessageIds: sendingMessageIds ?? this.sendingMessageIds,
     );
   }
 
@@ -45,5 +50,6 @@ class ChatState extends Equatable {
         errorMessage,
         isConnectionActive,
         isSending,
+        sendingMessageIds,
       ];
 }

@@ -1,3 +1,4 @@
+import 'package:study_hub/core/config/env_config.dart';
 import 'package:study_hub/features/chat/domain/entities/chat_message_entity.dart';
 
 class ChatMessageModel {
@@ -7,6 +8,8 @@ class ChatMessageModel {
   final String? groupId;
   final String content;
   final DateTime timestamp;
+  final String? senderName;
+  final String? senderAvatarUrl;
 
   ChatMessageModel({
     required this.id,
@@ -15,6 +18,8 @@ class ChatMessageModel {
     this.groupId,
     required this.content,
     required this.timestamp,
+    this.senderName,
+    this.senderAvatarUrl,
   });
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +32,15 @@ class ChatMessageModel {
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'])
           : DateTime.now(),
+      senderName: json['sender_username'] ?? 
+                  json['sender_name'] ?? 
+                  json['username'] ?? 
+                  json['name'],
+      senderAvatarUrl: EnvConfig.resolveImageUrl(
+        json['sender_avatar'] ?? 
+        json['sender_avatar_url'] ??
+        json['avatar_path']
+      ),
     );
   }
 
@@ -38,7 +52,9 @@ class ChatMessageModel {
       groupId: groupId,
       content: content,
       timestamp: timestamp,
-      isMe: senderId == currentUserId,  
+      isMe: senderId == currentUserId,
+      senderName: senderName,
+      senderAvatarUrl: senderAvatarUrl,
     );
   }
 }

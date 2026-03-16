@@ -13,6 +13,7 @@ import 'package:study_hub/features/groups/presentation/screens/group_details_scr
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.dart';
 import 'package:study_hub/core/di/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/screens/social_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/user_details_screen.dart';
@@ -51,9 +52,24 @@ List<RouteBase> get bottomNavRoute => [
 ];
 
 List<RouteBase> get screensRoute => [
-  customGoRoute(
+  GoRoute(
     path: RouteName.messagesScreen,
-    child: MessagesScreen(),
+    name: RouteName.messagesScreen,
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>? ?? {};
+      final id = extra['id'] as String? ?? '';
+      final isGroup = extra['isGroup'] as bool? ?? false;
+      final title = extra['title'] as String? ?? 'Chat';
+
+      return BlocProvider(
+        create: (context) => getIt<ChatBloc>(),
+        child: MessagesScreen(
+          id: id,
+          isGroup: isGroup,
+          title: title,
+        ),
+      );
+    },
   ),
 
   GoRoute(

@@ -38,6 +38,22 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
+import 'package:study_hub/features/chat/data/datasource/chat_remote_datasource.dart'
+    as _i136;
+import 'package:study_hub/features/chat/data/repo_impl/chat_repository_impl.dart'
+    as _i864;
+import 'package:study_hub/features/chat/domain/repo/chat_repository.dart'
+    as _i707;
+import 'package:study_hub/features/chat/domain/usecase/close_chat_connection_usecase.dart'
+    as _i608;
+import 'package:study_hub/features/chat/domain/usecase/connect_chat_usecase.dart'
+    as _i685;
+import 'package:study_hub/features/chat/domain/usecase/get_chat_history_usecase.dart'
+    as _i322;
+import 'package:study_hub/features/chat/domain/usecase/send_message_usecase.dart'
+    as _i341;
+import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart'
+    as _i707;
 import 'package:study_hub/features/groups/data/datasource/groups_remote_datasource.dart'
     as _i170;
 import 'package:study_hub/features/groups/data/repo_impl/groups_repository_impl.dart'
@@ -144,6 +160,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i199.UserStatsRemoteDataSource>(
       () => _i199.UserStatsRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i136.ChatRemoteDataSource>(
+      () => _i136.ChatRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i615.SocialRemoteDataSource>(
       () => _i615.SocialRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
     );
@@ -199,6 +218,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i394.AuthLocalDataSource>(),
       ),
     );
+    gh.lazySingleton<_i707.ChatRepository>(
+      () => _i864.ChatRepositoryImpl(
+        remoteDataSource: gh<_i136.ChatRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i1006.LoginUsecase>(
       () => _i1006.LoginUsecase(gh<_i481.AuthRepo>()),
     );
@@ -231,6 +255,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i809.GetGroupsUseCase>(
       () => _i809.GetGroupsUseCase(repository: gh<_i1011.GroupsRepository>()),
+    );
+    gh.lazySingleton<_i608.CloseChatConnectionUseCase>(
+      () => _i608.CloseChatConnectionUseCase(gh<_i707.ChatRepository>()),
+    );
+    gh.lazySingleton<_i685.ConnectChatUseCase>(
+      () => _i685.ConnectChatUseCase(gh<_i707.ChatRepository>()),
+    );
+    gh.lazySingleton<_i322.GetChatHistoryUseCase>(
+      () => _i322.GetChatHistoryUseCase(gh<_i707.ChatRepository>()),
+    );
+    gh.lazySingleton<_i341.SendChatMessageUseCase>(
+      () => _i341.SendChatMessageUseCase(gh<_i707.ChatRepository>()),
     );
     gh.factory<_i546.DownloadNoteUseCase>(
       () => _i546.DownloadNoteUseCase(repository: gh<_i689.NotesRepo>()),
@@ -282,6 +318,14 @@ extension GetItInjectableX on _i174.GetIt {
         getDiscoverUsecase: gh<_i925.SocialDiscoverUsecase>(),
         followUserUsecase: gh<_i118.FollowUserUsecase>(),
         unfollowUserUsecase: gh<_i256.UnfollowUserUsecase>(),
+      ),
+    );
+    gh.factory<_i707.ChatBloc>(
+      () => _i707.ChatBloc(
+        gh<_i322.GetChatHistoryUseCase>(),
+        gh<_i685.ConnectChatUseCase>(),
+        gh<_i341.SendChatMessageUseCase>(),
+        gh<_i608.CloseChatConnectionUseCase>(),
       ),
     );
     gh.factory<_i348.NotesBloc>(

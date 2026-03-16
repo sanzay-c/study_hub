@@ -5,7 +5,9 @@ class ChatMessageEntity {
   final String? groupId;
   final String content;
   final DateTime timestamp;
-  final bool isMe; // UI ma left/right side dekhauna
+  final bool isMe;
+  final String? senderName;       // Display name of sender (optional)
+  final String? senderAvatarUrl;  // Avatar URL of sender (optional)
 
   ChatMessageEntity({
     required this.id,
@@ -15,5 +17,7 @@ class ChatMessageEntity {
     required this.content,
     required this.timestamp,
     required this.isMe,
+    this.senderName,
+    this.senderAvatarUrl,
   });
 }
