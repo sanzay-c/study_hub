@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
@@ -55,7 +57,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  @override
   void initState() {
     super.initState();
     _loadChat();
@@ -71,13 +72,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
     if (mounted) {
       context.read<ChatBloc>().add(
-            LoadChatHistoryEvent(
-              id: widget.id,
-              isGroup: widget.isGroup,
-              currentUserId: currentUserId,
-              token: token,
-            ),
-          );
+        LoadChatHistoryEvent(
+          id: widget.id,
+          isGroup: widget.isGroup,
+          currentUserId: currentUserId,
+          token: token,
+        ),
+      );
     }
   }
 
@@ -88,13 +89,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final currentUserId = authState.user?.id ?? '';
 
     context.read<ChatBloc>().add(
-          SendMessageEvent(
-            message: messageController.text.trim(),
-            senderId: currentUserId,
-            receiverId: widget.isGroup ? null : widget.id,
-            isGroup: widget.isGroup,
-          ),
-        );
+      SendMessageEvent(
+        message: messageController.text.trim(),
+        senderId: currentUserId,
+        receiverId: widget.isGroup ? null : widget.id,
+        isGroup: widget.isGroup,
+      ),
+    );
 
     messageController.clear();
   }
@@ -120,8 +121,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final localDate = date.toLocal();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final messageDate =
-        DateTime(localDate.year, localDate.month, localDate.day);
+    final messageDate = DateTime(
+      localDate.year,
+      localDate.month,
+      localDate.day,
+    );
 
     if (messageDate == today) {
       return "Today";
@@ -206,7 +210,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   } else if (state.status == ChatStatus.error) {
                     return Center(
                       child: TextWidget(
-                          text: state.errorMessage ?? "An error occurred"),
+                        text: state.errorMessage ?? "An error occurred",
+                      ),
                     );
                   }
 
@@ -224,13 +229,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     controller: _scrollController,
                     reverse: true,
                     padding: EdgeInsets.symmetric(
-                        horizontal: 16.w, vertical: 20.h),
+                      horizontal: 16.w,
+                      vertical: 20.h,
+                    ),
                     itemCount: reversedMessages.length,
                     itemBuilder: (context, index) {
                       final chat = reversedMessages[index];
                       final timeString = _formatTime(chat.timestamp);
-                      final isSending =
-                          state.sendingMessageIds.contains(chat.id);
+                      final isSending = state.sendingMessageIds.contains(
+                        chat.id,
+                      );
                       // ---------------------------------------------------------------------------
                       // Date Header Logic
                       // ---------------------------------------------------------------------------
@@ -259,7 +267,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                             Padding(
                               padding: EdgeInsets.only(bottom: 20.h),
                               child: _buildSystemMessage(
-                                  chat.content, systemType, context),
+                                chat.content,
+                                systemType,
+                                context,
+                              ),
                             ),
                           ],
                         );
@@ -272,8 +283,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 20.h),
                             child: chat.isMe
-                                ? _buildSenderBubble(chat.content, timeString,
-                                    context, isSending)
+                                ? _buildSenderBubble(
+                                    chat.content,
+                                    timeString,
+                                    context,
+                                    isSending,
+                                  )
                                 : _buildReceiverBubble(
                                     senderName: chat.senderName,
                                     senderId: chat.senderId,
@@ -334,10 +349,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               5.horizontalSpace,
               Text(
                 content,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: config.textColor,
-                ),
+                style: TextStyle(fontSize: 12.sp, color: config.textColor),
               ),
             ],
           ),
@@ -357,7 +369,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
   _SystemMessageConfig _systemMessageConfig(
-      SystemMessageType type, BuildContext context) {
+    SystemMessageType type,
+    BuildContext context,
+  ) {
     switch (type) {
       case SystemMessageType.joined:
         return _SystemMessageConfig(
@@ -465,7 +479,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
   // -------------------------------------------------------------------------
 
   Widget _buildSenderBubble(
-      String message, String time, BuildContext context, bool isSending) {
+    String message,
+    String time,
+    BuildContext context,
+    bool isSending,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -473,8 +491,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           opacity: isSending ? 0.7 : 1.0,
           child: Container(
             constraints: BoxConstraints(maxWidth: 280.w),
-            padding:
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -500,7 +517,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
             child: TextWidget(
               text: message,
               color: getColorByTheme(
-                  context: context, colorClass: AppColors.allWhite),
+                context: context,
+                colorClass: AppColors.allWhite,
+              ),
             ),
           ),
         ),
@@ -552,8 +571,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         ? senderName
         : '${senderId.length >= 4 ? senderId.substring(0, 4) : senderId}';
 
-    final initial =
-        displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
+    final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,10 +582,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
             CircleAvatar(
               radius: 18.r,
               backgroundColor: const Color(0xFFE2E8F0),
-              backgroundImage:
-                  (avatarUrl != null && avatarUrl.isNotEmpty)
-                      ? NetworkImage(avatarUrl)
-                      : null,
+              backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                  ? NetworkImage(avatarUrl)
+                  : null,
               child: (avatarUrl == null || avatarUrl.isEmpty)
                   ? Text(
                       initial,
@@ -575,8 +592,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                         color: getColorByTheme(
-                            context: context,
-                            colorClass: AppColors.textColor),
+                          context: context,
+                          colorClass: AppColors.textColor,
+                        ),
                       ),
                     )
                   : null,
@@ -697,8 +715,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     ),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 12.h),
+                    contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                     suffixIcon: Padding(
                       padding: EdgeInsets.only(right: 8.w),
                       child: Icon(
