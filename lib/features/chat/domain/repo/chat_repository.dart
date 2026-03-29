@@ -10,4 +10,5 @@ abstract class ChatRepository {
   // History operations (HTTP)
   Future<List<ChatMessageEntity>> getDMHistory(String otherUserId, String currentUserId);
   Future<List<ChatMessageEntity>> getGroupHistory(String groupId, String currentUserId);
+  Future<void> markAsRead(String id, {required bool isGroup});
 }

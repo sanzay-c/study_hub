@@ -19,6 +19,9 @@ class GetGroupsModel {
   String? imageUrl;
   int? onlineCount;
   String? imagePath;
+  DateTime? lastMessageTime;
+  int? unreadCount;
+  String? lastMessageText;
 
   GetGroupsModel({
     required this.id,
@@ -33,6 +36,9 @@ class GetGroupsModel {
     this.imageUrl,
     this.onlineCount,
     this.imagePath,
+    this.lastMessageTime,
+    this.unreadCount,
+    this.lastMessageText,
   });
 
   factory GetGroupsModel.fromJson(Map<String, dynamic> json) {
@@ -51,6 +57,11 @@ class GetGroupsModel {
       imageUrl: json['image_url']?.toString(),
       onlineCount: (json['online_count'] as num?)?.toInt(),
       imagePath: json['image_path']?.toString(),
+      lastMessageTime: json['last_message_time'] == null
+          ? null
+          : DateTime.tryParse(json['last_message_time']?.toString() ?? ''),
+      unreadCount: (json['unread_count'] as num?)?.toInt(),
+      lastMessageText: json['last_message_text']?.toString(),
     );
   }
 
@@ -85,6 +96,9 @@ class GetGroupsModel {
       imageUrl: EnvConfig.resolveImageUrl(imageUrl),
       onlineCount: onlineCount ?? 0,
       imagePath: EnvConfig.resolveImageUrl(imagePath),
+      lastMessageTime: lastMessageTime,
+      unreadCount: unreadCount ?? 0,
+      lastMessageText: lastMessageText,
     );
   }
 
@@ -101,6 +115,9 @@ class GetGroupsModel {
     String? imageUrl,
     int? onlineCount,
     String? imagePath,
+    DateTime? lastMessageTime,
+    int? unreadCount,
+    String? lastMessageText,
   }) => GetGroupsModel(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -114,5 +131,8 @@ class GetGroupsModel {
     imageUrl: imageUrl ?? this.imageUrl,
     onlineCount: onlineCount ?? this.onlineCount,
     imagePath: imagePath ?? this.imagePath,
+    lastMessageTime: lastMessageTime ?? this.lastMessageTime,
+    unreadCount: unreadCount ?? this.unreadCount,
+    lastMessageText: lastMessageText ?? this.lastMessageText,
   );
 }

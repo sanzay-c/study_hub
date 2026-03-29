@@ -24,6 +24,11 @@ GetGroupsModel _$GetGroupsModelFromJson(Map<String, dynamic> json) =>
       imageUrl: json['image_url'] as String?,
       onlineCount: (json['online_count'] as num?)?.toInt(),
       imagePath: json['image_path'] as String?,
+      lastMessageTime: json['last_message_time'] == null
+          ? null
+          : DateTime.parse(json['last_message_time'] as String),
+      unreadCount: (json['unread_count'] as num?)?.toInt(),
+      lastMessageText: json['last_message_text'] as String?,
     );
 
 Map<String, dynamic> _$GetGroupsModelToJson(GetGroupsModel instance) =>
@@ -40,4 +45,7 @@ Map<String, dynamic> _$GetGroupsModelToJson(GetGroupsModel instance) =>
       'image_url': instance.imageUrl,
       'online_count': instance.onlineCount,
       'image_path': instance.imagePath,
+      'last_message_time': instance.lastMessageTime?.toIso8601String(),
+      'unread_count': instance.unreadCount,
+      'last_message_text': instance.lastMessageText,
     };

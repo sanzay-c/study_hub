@@ -8,6 +8,7 @@ import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
@@ -24,6 +25,57 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
   void initState() {
     super.initState();
     context.read<GroupsCubit>().getJoinedGroups();
+  }
+
+  String _formatTime(DateTime? time) {
+    if (time == null) return "Just now"; // Default if no last message
+    
+    final localTime = time.toLocal();
+    final now = DateTime.now();
+    final difference = now.difference(localTime).inDays;
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final messageDate = DateTime(localTime.year, localTime.month, localTime.day);
+
+    if (messageDate == yesterday) {
+      return "Yesterday";
+    } else if (difference >= 2 || localTime.year != now.year) {
+      if (localTime.year == now.year) {
+        return DateFormat('MMM d').format(localTime);
+      } else {
+        return DateFormat('MMM d yyyy').format(localTime);
+      }
+    } else if (localTime.day != now.day) {
+      // Just in case but usually caught by yesterday
+      return DateFormat('MMM d').format(localTime);
+    } else {
+      return DateFormat('h:mm a').format(localTime); // Today
+    }
+  }
+
+  // Helper to build unread badge
+  Widget _buildUnreadBadge(int count) {
+    if (count <= 0) return const SizedBox.shrink();
+    
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF526DFF), // Brand primary blue
+        borderRadius: BorderRadius.circular(10.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextWidget(
+        text: count > 10 ? "10+" : count.toString(),
+        color: Colors.white,
+        fontSize: 10.sp,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 
   @override
@@ -60,14 +112,17 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
                 final group = groups[index];
 
                 return InkWell(
-                  onTap: () => getIt<NavigationService>().pushNamed(
-                    RouteName.messagesScreen,
-                    extra: {
-                      'id': group.id,
-                      'isGroup': true,
-                      'title': group.name,
-                    },
-                  ),
+                  onTap: () {
+                    context.read<GroupsCubit>().markAsRead(group.id);
+                    getIt<NavigationService>().pushNamed(
+                      RouteName.messagesScreen,
+                      extra: {
+                        'id': group.id,
+                        'isGroup': true,
+                        'title': group.name,
+                      },
+                    );
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 17.h),
                     child: Row(
@@ -93,33 +148,47 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
                                 children: [
                                   Expanded(
                                     child: TextWidget(
-                                      text: group.name!,
-                                      fontWeight: FontWeight.w500,
+                                      text: group.name ?? "Community",
+                                      fontWeight: FontWeight.w600,
                                       letterSpacing: -0.5,
-                                      fontSize: 20.sp,
+                                      fontSize: 18.sp,
                                       maxLines: 1,
                                       textOverflow: TextOverflow.ellipsis,
+                                      color: getColorByTheme(
+                                        context: context,
+                                        colorClass: AppColors.textColor,
+                                      ),
                                     ),
                                   ),
+                                  4.horizontalSpace,
                                   TextWidget(
-                                    text: "Just now", // Dynamic time logic can be added later
+                                    text: _formatTime(group.lastMessageTime),
                                     color: getColorByTheme(
                                       context: context,
                                       colorClass: AppColors.subTextColor,
                                     ),
-                                    fontSize: 12.sp,
+                                    fontSize: 11.sp,
                                   ),
                                 ],
                               ),
-                              8.verticalSpace,
-                              TextWidget(
-                                text: group.description!,
-                                maxLines: 1,
-                                textOverflow: TextOverflow.ellipsis,
-                                color: getColorByTheme(
-                                  context: context,
-                                  colorClass: AppColors.subTextColor,
-                                ),
+                              4.verticalSpace,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextWidget(
+                                      text: group.lastMessageText ?? group.description ?? "No messages yet",
+                                      maxLines: 1,
+                                      textOverflow: TextOverflow.ellipsis,
+                                      fontSize: 14.sp,
+                                      color: getColorByTheme(
+                                        context: context,
+                                        colorClass: AppColors.subTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                  8.horizontalSpace,
+                                  _buildUnreadBadge(group.unreadCount),
+                                ],
                               ),
                             ],
                           ),

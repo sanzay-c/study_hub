@@ -136,4 +136,7 @@ class ApiEndpoints {
 
   // get recent chat list 
   static String recentChatList = "/api/chat/recent/"; // GET method
+
+  // mark as read
+  static const String markAsRead = "/api/chat/mark-as-read/"; // POST method
 }

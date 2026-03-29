@@ -50,6 +50,8 @@ import 'package:study_hub/features/chat/domain/usecase/connect_chat_usecase.dart
     as _i685;
 import 'package:study_hub/features/chat/domain/usecase/get_chat_history_usecase.dart'
     as _i322;
+import 'package:study_hub/features/chat/domain/usecase/mark_as_read_usecase.dart'
+    as _i535;
 import 'package:study_hub/features/chat/domain/usecase/send_message_usecase.dart'
     as _i341;
 import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart'
@@ -265,6 +267,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i322.GetChatHistoryUseCase>(
       () => _i322.GetChatHistoryUseCase(gh<_i707.ChatRepository>()),
     );
+    gh.lazySingleton<_i535.MarkAsReadUseCase>(
+      () => _i535.MarkAsReadUseCase(gh<_i707.ChatRepository>()),
+    );
     gh.lazySingleton<_i341.SendChatMessageUseCase>(
       () => _i341.SendChatMessageUseCase(gh<_i707.ChatRepository>()),
     );
@@ -338,14 +343,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i842.UserStatsCubit>(
       () => _i842.UserStatsCubit(gh<_i443.GetUserStatsUsecase>()),
     );
-    gh.factory<_i566.UserStatsBloc>(
-      () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
-    );
     gh.factory<_i690.GroupsCubit>(
       () => _i690.GroupsCubit(
         getGroupsUseCase: gh<_i809.GetGroupsUseCase>(),
         getAllGroupsUsecase: gh<_i111.GetAllGroupsUsecase>(),
+        markAsReadUseCase: gh<_i535.MarkAsReadUseCase>(),
       ),
+    );
+    gh.factory<_i566.UserStatsBloc>(
+      () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
     );
     return this;
   }

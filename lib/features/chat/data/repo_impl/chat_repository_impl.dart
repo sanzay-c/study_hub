@@ -62,4 +62,9 @@ class ChatRepositoryImpl implements ChatRepository {
       rethrow;
     }
   }
-}
+
+  @override
+  Future<void> markAsRead(String id, {required bool isGroup}) async {
+    await remoteDataSource.markAsRead(id, isGroup: isGroup);
+  }
+}
