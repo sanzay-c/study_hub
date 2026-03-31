@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
+import 'package:study_hub/core/notification/notification_service.dart';
 
 class ChatListsScreen extends StatefulWidget {
   const ChatListsScreen({super.key});
@@ -85,7 +86,16 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
         context: context,
         colorClass: AppColors.backgroundColor,
       ),
-      appBar: StudyHubAppBar(title: "Chat"),
+      appBar: StudyHubAppBar(
+        title: "Chat",
+        actions: [
+          IconButton(
+            onPressed: () => PushNotificationService.showTestNotification(),
+            icon: const Icon(Icons.notification_add, color: Colors.blue),
+            tooltip: "Test Notification",
+          ),
+        ],
+      ),
       body: BlocBuilder<GroupsCubit, GroupsState>(
         builder: (context, state) {
           if (state is GroupsLoading) {

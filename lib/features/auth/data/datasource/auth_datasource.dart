@@ -76,6 +76,25 @@ class AuthDatasource {
     }
   }
 
+  Future<void> updateFcmToken(String token) async {
+    try {
+      log("🔵 DATASOURCE: Sending FCM token to backend...");
+      final response = await _dio.post(
+        ApiEndpoints.fcmToken,
+        data: {"fcm_token": token},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log("🟢 DATASOURCE: FCM token updated successfully");
+      } else {
+        log("🔴 DATASOURCE ERROR: Failed with status ${response.statusCode}");
+      }
+    } catch (e) {
+      log("🔴 DATASOURCE ERROR: $e");
+      // Don't throw for FCM updates to avoid breaking the core app flow
+    }
+  }
+
   Future<UserModel> uploadAvatar(String filePath) async {
     try {
       final fileName = filePath.split('/').last;

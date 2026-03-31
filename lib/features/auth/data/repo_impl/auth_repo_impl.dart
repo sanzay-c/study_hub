@@ -5,7 +5,7 @@ import 'package:study_hub/features/auth/data/datasource/auth_datasource.dart';
 import 'package:study_hub/features/auth/data/datasource/auth_local_datasource.dart';
 import 'package:study_hub/features/auth/domain/entities/auth_response.dart';
 import 'package:study_hub/features/auth/domain/entities/signup_entity.dart';
-import 'package:study_hub/features/auth/domain/entities/user.dart'; 
+import 'package:study_hub/features/auth/domain/entities/user.dart';
 import 'package:study_hub/features/auth/domain/repo/auth_repo.dart';
 
 @LazySingleton(as: AuthRepo)
@@ -87,13 +87,18 @@ class AuthRepoImpl implements AuthRepo {
   Future<User> updateAvatar(String filePath) async {
     try {
       final updatedUserModel = await authDatasource.uploadAvatar(filePath);
-      
+
       // Update local cache
       await authLocalDataSource.cacheUser(updatedUserModel);
-      
+
       return updatedUserModel.toEntity();
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Future<void> updateFcmToken(String token) async {
+    await authDatasource.updateFcmToken(token);
   }
 }

@@ -9,6 +9,7 @@ class ApiEndpoints {
   static const String logout = "/api/auth/logout/";
   static const String refreshToken = "/api/auth/refresh/";
   static const String deleteAccount = "/api/auth/delete_account/";
+  static const String fcmToken = "/api/auth/fcm-token/";
 
   // Auth(forgot-password)
   static const String requestReset = "/api/auth/request_reset/";

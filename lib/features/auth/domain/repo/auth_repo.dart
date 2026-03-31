@@ -22,4 +22,6 @@ abstract class AuthRepo {
   Future<bool> isAuthenticated();
 
   Future<User> updateAvatar(String filePath);
+  
+  Future<void> updateFcmToken(String token);
 }

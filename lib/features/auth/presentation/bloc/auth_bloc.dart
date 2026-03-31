@@ -13,6 +13,7 @@ import 'package:study_hub/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:study_hub/features/auth/domain/usecase/signup_usecase.dart';
 
 import 'package:study_hub/features/auth/domain/repo/auth_repo.dart';
+import 'package:study_hub/core/notification/notification_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -44,6 +45,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (isAuthenticated) {
       final user = await authRepo.getCurrentUser();
       emit(state.copyWith(status: AuthStatus.success, user: user));
+      
+      // Sync FCM token on app start if already logged in
+      _updateDeviceToken();
     }
   }
 
@@ -176,6 +180,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         status: AuthStatus.success,
         user: authResponse.user,
       ));
+
+      // Sync FCM token on successful login
+      _updateDeviceToken();
     } catch (e) {
       log("LOGIN ERROR: $e");
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
@@ -203,4 +210,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  /// Silently update the FCM token on the backend
+  Future<void> _updateDeviceToken() async {
+    try {
+      final token = await PushNotificationService.getToken();
+      if (token != null) {
+        await authRepo.updateFcmToken(token);
+      }
+    } catch (e) {
+      log("🔴 BLOC: Failed to sync FCM token: $e");
+    }
+  }
 }
