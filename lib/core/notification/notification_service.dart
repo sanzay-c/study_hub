@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:study_hub/features/auth/domain/repo/auth_repo.dart';
+import 'package:study_hub/core/di/injection.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -12,6 +14,10 @@ class PushNotificationService {
   static final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
+
+  /// The ID of the chat currently being viewed by the user. 
+  /// Notifications for this chat will be silenced while the app is in foreground.
+  static String? currentChatId;
 
   static Future<void> initialize() async {
     // 1. Request Permissions
@@ -50,9 +56,25 @@ class PushNotificationService {
     );
 
     // 3. Foreground message listener
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print("🔔 DEBUG: Foreground message received: ${message.notification?.title}");
       print("📦 DEBUG: Message Data: ${message.data}");
+
+      final String? senderId = message.data['sender_id'];
+      final String? chatId = message.data['group_id'] ?? message.data['room_id'];
+
+      // 1. Skip if it's our own message (Self-Notification fix)
+      final currentUser = await getIt<AuthRepo>().getCurrentUser();
+      if (senderId != null && senderId == currentUser?.id) {
+        print("⏭️ DEBUG: Skipping self-notification");
+        return;
+      }
+
+      // 2. Skip if we are already viewing this chat
+      if (chatId != null && chatId == currentChatId) {
+        print("⏭️ DEBUG: Already in this chat, skipping notification");
+        return;
+      }
 
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;

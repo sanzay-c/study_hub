@@ -16,6 +16,7 @@ import 'package:intl/intl.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_state.dart';
+import 'package:study_hub/core/notification/notification_service.dart';
 
 // ---------------------------------------------------------------------------
 // System message types — extend as needed
@@ -59,6 +60,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   void initState() {
     super.initState();
+    PushNotificationService.currentChatId = widget.id;
     _loadChat();
   }
 
@@ -148,6 +150,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   void dispose() {
+    PushNotificationService.currentChatId = null;
     messageController.dispose();
     _scrollController.dispose();
     super.dispose();
