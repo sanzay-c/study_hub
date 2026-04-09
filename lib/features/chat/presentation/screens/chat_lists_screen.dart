@@ -25,7 +25,7 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<GroupsCubit>().getJoinedGroups();
+    context.read<GroupsCubit>().getUnifiedChatList();
   }
 
   String _formatTime(DateTime? time) {
@@ -123,12 +123,12 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
 
                 return InkWell(
                   onTap: () {
-                    context.read<GroupsCubit>().markAsRead(group.id);
+                    context.read<GroupsCubit>().markAsRead(group.id, isGroup: group.isGroup);
                     getIt<NavigationService>().pushNamed(
                       RouteName.messagesScreen,
                       extra: {
                         'id': group.id,
-                        'isGroup': true,
+                        'isGroup': group.isGroup,
                         'title': group.name,
                       },
                     );
@@ -145,7 +145,11 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
                               ? NetworkImage(group.imageUrl!)
                               : null,
                           child: group.imageUrl == null || group.imageUrl!.isEmpty
-                              ? Icon(Icons.group, size: 28.r, color: Colors.grey[600])
+                              ? Icon(
+                                  group.isGroup ? Icons.group : Icons.person,
+                                  size: 28.r,
+                                  color: Colors.grey[600],
+                                )
                               : null,
                         ),
                         12.horizontalSpace,

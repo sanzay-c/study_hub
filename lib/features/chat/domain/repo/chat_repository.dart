@@ -1,4 +1,5 @@
 import 'package:study_hub/features/chat/domain/entities/chat_message_entity.dart';
+import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 
 abstract class ChatRepository {
   // Real-time operations
@@ -10,5 +11,6 @@ abstract class ChatRepository {
   // History operations (HTTP)
   Future<List<ChatMessageEntity>> getDMHistory(String otherUserId, String currentUserId);
   Future<List<ChatMessageEntity>> getGroupHistory(String groupId, String currentUserId);
+  Future<List<GetGroupsEntity>> getRecentDMs();
   Future<void> markAsRead(String id, {required bool isGroup});
 }

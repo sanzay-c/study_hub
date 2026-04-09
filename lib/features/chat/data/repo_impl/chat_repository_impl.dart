@@ -1,8 +1,10 @@
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/features/chat/data/datasource/chat_remote_datasource.dart';
 import 'package:study_hub/features/chat/data/model/message_model.dart';
-import 'package:study_hub/features/chat/domain/entities/chat_message_entity.dart'; // Entity import
+import 'package:study_hub/features/chat/data/model/recent_dm_model.dart'; // New Import
+import 'package:study_hub/features/chat/domain/entities/chat_message_entity.dart';
 import 'package:study_hub/features/chat/domain/repo/chat_repository.dart';
+import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart'; // Entity Import
 
 @LazySingleton(as: ChatRepository)
 class ChatRepositoryImpl implements ChatRepository {
@@ -58,6 +60,16 @@ class ChatRepositoryImpl implements ChatRepository {
       return data.map((json) => 
         ChatMessageModel.fromJson(json).toEntity(currentUserId)
       ).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<GetGroupsEntity>> getRecentDMs() async {
+    try {
+      final List<dynamic> data = await remoteDataSource.getRecentDMs();
+      return data.map((json) => RecentDmModel.fromJson(json).toEntity()).toList();
     } catch (e) {
       rethrow;
     }

@@ -13,6 +13,8 @@ class GetGroupsEntity {
   DateTime? lastMessageTime;
   int unreadCount;
   String? lastMessageText;
+  bool isGroup;
+  String? otherUserId;
 
   GetGroupsEntity({
     required this.id,
@@ -29,6 +31,8 @@ class GetGroupsEntity {
     this.lastMessageTime,
     this.unreadCount = 0,
     this.lastMessageText,
+    this.isGroup = true,
+    this.otherUserId,
   });
 
   GetGroupsEntity copyWith({
@@ -46,6 +50,8 @@ class GetGroupsEntity {
     DateTime? lastMessageTime,
     int? unreadCount,
     String? lastMessageText,
+    bool? isGroup,
+    String? otherUserId,
   }) {
     return GetGroupsEntity(
       id: id ?? this.id,
@@ -62,6 +68,8 @@ class GetGroupsEntity {
       lastMessageTime: lastMessageTime ?? this.lastMessageTime,
       unreadCount: unreadCount ?? this.unreadCount,
       lastMessageText: lastMessageText ?? this.lastMessageText,
+      isGroup: isGroup ?? this.isGroup,
+      otherUserId: otherUserId ?? this.otherUserId,
     );
   }
 }

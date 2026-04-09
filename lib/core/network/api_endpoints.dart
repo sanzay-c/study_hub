@@ -133,7 +133,7 @@ class ApiEndpoints {
   //         "read": false
   //     }
   // ]
-  static String dmHistoryMessage(String otherUserID) => "/api/chat/dm/$otherUserID/ "; // GET method
+  static String dmHistoryMessage(String otherUserID) => "/api/chat/dm/$otherUserID/"; // GET method
 
   // get recent chat list 
   static String recentChatList = "/api/chat/recent/"; // GET method

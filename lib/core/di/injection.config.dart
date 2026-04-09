@@ -50,6 +50,8 @@ import 'package:study_hub/features/chat/domain/usecase/connect_chat_usecase.dart
     as _i685;
 import 'package:study_hub/features/chat/domain/usecase/get_chat_history_usecase.dart'
     as _i322;
+import 'package:study_hub/features/chat/domain/usecase/get_unified_chat_list_usecase.dart'
+    as _i961;
 import 'package:study_hub/features/chat/domain/usecase/mark_as_read_usecase.dart'
     as _i535;
 import 'package:study_hub/features/chat/domain/usecase/send_message_usecase.dart'
@@ -300,6 +302,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i188.SignupUsecase>(
       () => _i188.SignupUsecase(authRepo: gh<_i481.AuthRepo>()),
     );
+    gh.lazySingleton<_i961.GetUnifiedChatListUseCase>(
+      () => _i961.GetUnifiedChatListUseCase(
+        groupsRepository: gh<_i1011.GroupsRepository>(),
+        chatRepository: gh<_i707.ChatRepository>(),
+      ),
+    );
     gh.factory<_i760.UploadNoteCubit>(
       () => _i760.UploadNoteCubit(
         uploadNoteUseCase: gh<_i758.UploadNoteUseCase>(),
@@ -348,6 +356,7 @@ extension GetItInjectableX on _i174.GetIt {
         getGroupsUseCase: gh<_i809.GetGroupsUseCase>(),
         getAllGroupsUsecase: gh<_i111.GetAllGroupsUsecase>(),
         markAsReadUseCase: gh<_i535.MarkAsReadUseCase>(),
+        getUnifiedChatListUseCase: gh<_i961.GetUnifiedChatListUseCase>(),
       ),
     );
     gh.factory<_i566.UserStatsBloc>(

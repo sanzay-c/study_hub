@@ -16,6 +16,7 @@ abstract class ChatRemoteDataSource {
   // HTTP History Methods
   Future<List<dynamic>> getGroupHistory(String groupId);
   Future<List<dynamic>> getDMHistory(String otherUserId);
+  Future<List<dynamic>> getRecentDMs();
   Future<void> markAsRead(String id, {required bool isGroup});
 }
 
@@ -59,6 +60,12 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<List<dynamic>> getDMHistory(String otherUserId) async {
     final response = await dio.get(ApiEndpoints.dmHistoryMessage(otherUserId));
+    return response.data as List;
+  }
+
+  @override
+  Future<List<dynamic>> getRecentDMs() async {
+    final response = await dio.get(ApiEndpoints.recentChatList);
     return response.data as List;
   }
 

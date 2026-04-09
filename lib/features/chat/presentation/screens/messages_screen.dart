@@ -79,6 +79,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           isGroup: widget.isGroup,
           currentUserId: currentUserId,
           token: token,
+          otherUserId: widget.isGroup ? null : widget.id,
         ),
       );
     }

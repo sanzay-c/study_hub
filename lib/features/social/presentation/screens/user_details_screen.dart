@@ -13,6 +13,8 @@ import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/bloc/social_bloc.dart';
 import 'package:study_hub/features/social/presentation/cubit/user_stats_cubit.dart';
 import 'package:study_hub/features/social/presentation/widgets/customized_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:study_hub/core/routing/route_name.dart';
 
 class UserDetailsScreen extends StatelessWidget {
   final SocialEntity user;
@@ -256,7 +258,14 @@ class _ProfileCard extends StatelessWidget {
                             colorClass: AppColors.containerBorderColor,
                           ),
                           onTap: () {
-                            // TODO: navigate to chat
+                            context.pushNamed(
+                              RouteName.messagesScreen,
+                              extra: {
+                                'id': liveUser.userId,
+                                'isGroup': false,
+                                'title': liveUser.username,
+                              },
+                            );
                           },
                         ),
                       ),
