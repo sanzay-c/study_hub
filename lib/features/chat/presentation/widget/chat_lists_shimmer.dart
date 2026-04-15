@@ -12,11 +12,8 @@ class ChatListShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Theme anusar base ra highlight color set gareko
-    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
-    final Color baseColor = isDarkMode ? Colors.grey[800]! : Colors.grey[300]!;
-    final Color highlightColor = isDarkMode ? Colors.grey[700]! : Colors.grey[100]!;
+    final baseColor = Colors.grey[300]!;
+    final highlightColor = Colors.grey[100]!;
 
     return Shimmer.fromColors(
       baseColor: baseColor,
