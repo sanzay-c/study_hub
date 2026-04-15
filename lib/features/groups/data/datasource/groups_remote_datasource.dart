@@ -6,10 +6,11 @@ import 'package:study_hub/features/groups/data/model/create_new_group.dart';
 import 'package:study_hub/features/groups/data/model/get_groups_detail_model.dart';
 import 'package:study_hub/features/groups/data/model/get_groups_model.dart';
 import 'package:study_hub/features/groups/data/model/groups_model.dart';
+import 'package:study_hub/features/groups/data/model/paginated_groups_model.dart';
 
 abstract class GroupsRemoteDataSource {
   Future<List<GroupsModel>> getGroups();
-  Future<List<GetGroupsModel>> getAllGroups({String? tab});
+  Future<PaginatedGroupsModel> getAllGroups({String? tab, int page = 1, int limit = 50});
   Future<GetGroupsDetailModel> getGroupDetails(String groupId);
   Future<CreateNewGroup> createGroup(
     Map<String, dynamic> groupData, {
@@ -39,6 +40,9 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
     dynamic data;
     if (response.data is List) {
       data = response.data;
+    } else if (response.data is Map && response.data['results'] is List) {
+      // New paginated format
+      data = response.data['results'];
     } else if (response.data is Map && response.data['groups'] is List) {
       data = response.data['groups'];
     } else if (response.data is Map && response.data['data'] is List) {
@@ -51,24 +55,33 @@ class GroupsRemoteDataSourceImpl implements GroupsRemoteDataSource {
   }
 
   @override
-  Future<List<GetGroupsModel>> getAllGroups({String? tab}) async {
+  Future<PaginatedGroupsModel> getAllGroups({String? tab, int page = 1, int limit = 50}) async {
+    final Map<String, dynamic> queryParams = {'page': page, 'limit': limit};
+    if (tab != null) queryParams['tab'] = tab;
+
     final response = await dio.get(
       ApiEndpoints.getAllGroups,
-      queryParameters: tab != null ? {'tab': tab} : null,
+      queryParameters: queryParams,
     );
 
-    dynamic data;
-    if (response.data is List) {
-      data = response.data;
-    } else if (response.data is Map && response.data['groups'] is List) {
-      data = response.data['groups'];
-    } else if (response.data is Map && response.data['data'] is List) {
-      data = response.data['data'];
+    if (response.data is Map && response.data['results'] is List) {
+      return PaginatedGroupsModel.fromJson(response.data);
+    } else if (response.data is List) {
+      // Fallback for old direct list format
+      return PaginatedGroupsModel(
+        results: (response.data as List).map((e) => GetGroupsModel.fromJson(e)).toList(),
+        pagination: PaginationModel(
+          total: (response.data as List).length,
+          page: 1,
+          limit: limit,
+          totalPages: 1,
+          hasNext: false,
+          hasPrevious: false,
+        ),
+      );
     } else {
       throw Exception('Invalid groups response format');
     }
-
-    return (data as List).map((e) => GetGroupsModel.fromJson(e)).toList();
   }
 
   @override

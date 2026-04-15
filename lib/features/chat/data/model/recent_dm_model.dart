@@ -8,6 +8,7 @@ class RecentDmModel {
   final String? avatarPath;
   final bool isOnline;
   final RecentMessageModel? lastMessage;
+  final int unreadCount;
 
   RecentDmModel({
     required this.userId,
@@ -16,15 +17,19 @@ class RecentDmModel {
     this.avatarPath,
     required this.isOnline,
     this.lastMessage,
+    required this.unreadCount,
   });
 
   factory RecentDmModel.fromJson(Map<String, dynamic> json) {
+    final count = json['unread_count'] ?? 0;
+    print("DEBUG: RecentDmModel for ${json['username']} parsed unread_count: $count");
     return RecentDmModel(
       userId: json['user_id'] ?? '',
       username: json['username'] ?? '',
       fullname: json['fullname'] ?? '',
       avatarPath: json['avatar_path'],
       isOnline: json['is_online'] ?? false,
+      unreadCount: count,
       lastMessage: json['last_message'] != null
           ? RecentMessageModel.fromJson(json['last_message'])
           : null,
@@ -33,9 +38,9 @@ class RecentDmModel {
 
   GetGroupsEntity toEntity() {
     return GetGroupsEntity(
-      id: userId, // DMs use the target user's ID as the chat ID
+      id: userId,
       name: username,
-      description: fullname, // Showing fullname as description for DMs
+      description: fullname,
       createdBy: userId,
       members: [],
       isPublic: false,
@@ -44,7 +49,7 @@ class RecentDmModel {
       onlineCount: isOnline ? 1 : 0,
       lastMessageTime: lastMessage?.timestamp,
       lastMessageText: lastMessage?.content,
-      unreadCount: (lastMessage?.read == false) ? 1 : 0, // Simplified unread logic
+      unreadCount: unreadCount,
       isGroup: false,
       otherUserId: userId,
     );

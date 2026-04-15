@@ -80,8 +80,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     await dio.post(
       ApiEndpoints.markAsRead,
       data: {
-        'group_id': isGroup ? id : null,
-        'dm_id': isGroup ? null : id,
+        'group_id': id,
         'is_group': isGroup,
       },
     );

@@ -6,6 +6,7 @@ import 'package:study_hub/features/groups/domain/entities/create_new_group_entit
 import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/groups_entity.dart';
+import 'package:study_hub/features/groups/domain/entities/pagination_entity.dart';
 import 'package:study_hub/features/groups/domain/repo/groups_repository.dart';
 
 @LazySingleton(as: GroupsRepository)
@@ -21,9 +22,9 @@ class GroupsRepositoryImpl implements GroupsRepository {
   }
 
   @override
-  Future<List<GetGroupsEntity>> getAllGroups({String? tab}) async {
-    final models = await remoteDataSource.getAllGroups(tab: tab);
-    return models.map((e) => e.toEntity()).toList();
+  Future<PaginatedGroupsEntity> getAllGroups({String? tab, int page = 1, int limit = 50}) async {
+    final model = await remoteDataSource.getAllGroups(tab: tab, page: page, limit: limit);
+    return model.toEntity();
   }
 
   @override

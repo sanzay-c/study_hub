@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/features/chat/domain/usecase/get_unified_chat_list_usecase.dart';
 import 'package:study_hub/features/chat/domain/usecase/mark_as_read_usecase.dart';
+import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/domain/usecase/get_all_groups_usecase.dart';
 import 'package:study_hub/features/groups/domain/usecase/get_groups_usecase.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
@@ -30,40 +31,55 @@ class GroupsCubit extends Cubit<GroupsState> {
     }
   }
 
-  Future<void> getDiscoverGroups() async {
+  Future<void> _fetchGroups({
+    required String tab,
+    bool loadMore = false,
+    int limit = 10,
+  }) async {
     if (isClosed) return;
-    emit(GroupsLoading());
+
+    int pageToFetch = 1;
+    List<GetGroupsEntity> currentGroups = [];
+
+    if (loadMore && state is GroupsSuccess) {
+      final currentState = state as GroupsSuccess;
+      if (!currentState.hasNext) return;
+      pageToFetch = currentState.currentPage + 1;
+      currentGroups = currentState.getGroups ?? [];
+      emit(currentState.copyWith(isLoadMore: true));
+    } else {
+      emit(GroupsLoading());
+    }
+
     try {
-      final groups = await getAllGroupsUsecase(tab: 'discover');
-      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      if (!isClosed) emit(GroupsSuccess(getGroups: groups));
+      final result = await getAllGroupsUsecase(tab: tab, page: pageToFetch, limit: limit);
+      final List<GetGroupsEntity> newGroups = result.results;
+      
+      final allGroups = loadMore ? [...currentGroups, ...newGroups] : newGroups;
+      
+      if (!isClosed) {
+        emit(GroupsSuccess(
+          getGroups: allGroups,
+          hasNext: result.pagination.hasNext,
+          currentPage: result.pagination.page,
+          isLoadMore: false,
+        ));
+      }
     } catch (e) {
       if (!isClosed) emit(GroupsError(message: e.toString()));
     }
   }
 
-  Future<void> getJoinedGroups() async {
-    if (isClosed) return;
-    emit(GroupsLoading());
-    try {
-      final groups = await getAllGroupsUsecase(tab: 'joined');
-      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      if (!isClosed) emit(GroupsSuccess(getGroups: groups));
-    } catch (e) {
-      if (!isClosed) emit(GroupsError(message: e.toString()));
-    }
+  Future<void> getDiscoverGroups({bool loadMore = false, int limit = 10}) async {
+    await _fetchGroups(tab: 'discover', loadMore: loadMore, limit: limit);
   }
 
-  Future<void> getCreatedGroups() async {
-    if (isClosed) return;
-    emit(GroupsLoading());
-    try {
-      final groups = await getAllGroupsUsecase(tab: 'created');
-      groups.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      if (!isClosed) emit(GroupsSuccess(getGroups: groups));
-    } catch (e) {
-      if (!isClosed) emit(GroupsError(message: e.toString()));
-    }
+  Future<void> getJoinedGroups({bool loadMore = false, int limit = 10}) async {
+    await _fetchGroups(tab: 'joined', loadMore: loadMore, limit: limit);
+  }
+
+  Future<void> getCreatedGroups({bool loadMore = false, int limit = 10}) async {
+    await _fetchGroups(tab: 'created', loadMore: loadMore, limit: limit);
   }
 
   Future<void> getUnifiedChatList() async {
@@ -82,7 +98,6 @@ class GroupsCubit extends Cubit<GroupsState> {
       final currentState = state as GroupsSuccess;
       final currentGroups = currentState.getGroups ?? [];
       
-      // 1. Optimistic UI update — instantly clear badge before server responds
       final updatedGroups = currentGroups.map((group) {
         if (group.id == id) {
           return group.copyWith(unreadCount: 0);
@@ -90,16 +105,11 @@ class GroupsCubit extends Cubit<GroupsState> {
         return group;
       }).toList();
 
-      emit(GroupsSuccess(
-        groups: currentState.groups,
+      emit(currentState.copyWith(
         getGroups: updatedGroups,
       ));
 
-      // 2. Background — notify backend silently (no loading state)
-      markAsReadUseCase(id: id, isGroup: isGroup).catchError((_) {
-        // Silent fail: If backend call fails, the local state is already cleared.
-        // The count will re-sync on next refresh.
-      });
+      markAsReadUseCase(id: id, isGroup: isGroup).catchError((_) {});
     }
   }
 }

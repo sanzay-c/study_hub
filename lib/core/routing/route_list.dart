@@ -14,6 +14,7 @@ import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.
 import 'package:study_hub/core/di/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:study_hub/features/groups/presentation/widgets/empty_group.dart';
 import 'package:study_hub/features/social/domain/entities/social_entity.dart';
 import 'package:study_hub/features/social/presentation/screens/social_screen.dart';
 import 'package:study_hub/features/social/presentation/screens/user_details_screen.dart';
@@ -102,6 +103,8 @@ List<RouteBase> get screensRoute => [
       );
     },
   ),
+
+  customGoRoute(path: RouteName.emptyGroupScreen, child: const EmptyGroup())
 
 
   // customGoRoute(

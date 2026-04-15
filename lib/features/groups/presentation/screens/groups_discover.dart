@@ -11,6 +11,7 @@ import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
+import 'package:study_hub/features/groups/presentation/widgets/empty_group.dart';
 import 'package:study_hub/features/groups/presentation/widgets/groups_shimmer.dart';
 
 class GroupsDiscover extends StatefulWidget {
@@ -22,8 +23,29 @@ class GroupsDiscover extends StatefulWidget {
 
 class _GroupsDiscoverState extends State<GroupsDiscover>
     with AutomaticKeepAliveClientMixin {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.9) {
+      context.read<GroupsCubit>().getDiscoverGroups(loadMore: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +59,18 @@ class _GroupsDiscoverState extends State<GroupsDiscover>
         } else if (state is GroupsSuccess) {
           final groups = state.getGroups;
           if (groups == null || groups.isEmpty) {
-            return const Center(child: Text('No groups to discover.'));
+            return EmptyGroup();
           }
           return ListView.builder(
-            itemCount: groups.length,
+            controller: _scrollController,
+            itemCount: state.hasNext ? groups.length + 1 : groups.length,
             itemBuilder: (context, index) {
+              if (index >= groups.length) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
               final group = groups[index];
               return Padding(
                 padding: EdgeInsets.only(bottom: 24.h),

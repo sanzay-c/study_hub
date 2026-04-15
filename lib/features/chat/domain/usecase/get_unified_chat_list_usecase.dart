@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:study_hub/features/chat/domain/repo/chat_repository.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
+import 'package:study_hub/features/groups/domain/entities/pagination_entity.dart';
 import 'package:study_hub/features/groups/domain/repo/groups_repository.dart';
 
 @lazySingleton
@@ -21,8 +22,10 @@ class GetUnifiedChatListUseCase {
         chatRepository.getRecentDMs(),
       ]);
 
-      final List<GetGroupsEntity> groups = results[0];
-      final List<GetGroupsEntity> dms = results[1];
+      // results[0] is PaginatedGroupsEntity
+      // results[1] is List<GetGroupsEntity>
+      final List<GetGroupsEntity> groups = (results[0] as PaginatedGroupsEntity).results;
+      final List<GetGroupsEntity> dms = results[1] as List<GetGroupsEntity>;
 
       // Combine both lists
       final List<GetGroupsEntity> unifiedList = [...groups, ...dms];

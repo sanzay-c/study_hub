@@ -19,6 +19,8 @@ class RouteName {
 
   static const String userDetailsScreen = '/user-details-screen';
 
+  static const String emptyGroupScreen = '/empty-group-screen';
+
   // static const String getGroupsDetailScreen = '/groups-detail-screen/';
 }
   

@@ -1,0 +1,178 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:study_hub/common/widgets/text_widget.dart';
+import 'package:study_hub/core/constants/app_color.dart';
+
+class NotesEmpty extends StatelessWidget {
+  const NotesEmpty({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIllustration(context),
+            40.verticalSpace,
+            TextWidget(
+              text: 'No notes found',
+              fontSize: 26.sp,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
+            ),
+            12.verticalSpace,
+            TextWidget(
+              text: 'Your captured thoughts and study\nmaterials will appear here.',
+              fontSize: 16.sp,
+              textalign: TextAlign.center,
+              color: getColorByTheme(
+                context: context,
+                colorClass: AppColors.subTextColor,
+              ).withOpacity(0.7),
+            ),
+            60.verticalSpace,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIllustration(BuildContext context) {
+    // Standardizing Gradient Colors
+    final gradientColors = [
+      getColorByTheme(context: context, colorClass: AppColors.gr0XFF526DFF),
+      getColorByTheme(context: context, colorClass: AppColors.gr0XFF8B32FB),
+    ];
+
+    return SizedBox(
+      width: 200.w,
+      height: 180.h,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          // 1. Background soft glow
+          Container(
+            width: 140.w,
+            height: 140.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: gradientColors[0].withOpacity(0.04),
+            ),
+          ),
+
+          // 2. Random Floating Dots (The "Dots" you asked for)
+          _buildDot(top: 5, left: 40, size: 8, color: gradientColors[0]),
+          _buildDot(top: 45, right: 15, size: 12, color: gradientColors[1].withOpacity(0.4)),
+          _buildDot(bottom: 25, left: 20, size: 10, color: gradientColors[0].withOpacity(0.3)),
+          _buildDot(bottom: 10, right: 50, size: 7, color: gradientColors[1]),
+          _buildDot(top: 80, left: -5, size: 5, color: gradientColors[0].withOpacity(0.5)),
+
+          // 3. Document Icons Group (Notes Context)
+          // Smaller Back Document
+          Positioned(
+            right: 35.w,
+            top: 25.h,
+            child: _buildNoteIcon(
+              size: 55.w,
+              iconSize: 26,
+              colors: gradientColors,
+              opacity: 0.10,
+              rotation: 0.2, // Tilted slightly
+            ),
+          ),
+          
+          // Main Center Document
+          Positioned(
+            bottom: 35.h,
+            child: _buildNoteIcon(
+              size: 85.w,
+              iconSize: 40,
+              colors: gradientColors,
+              opacity: 0.15,
+              hasShadow: true,
+            ),
+          ),
+
+          // 4. "Add/Pen" Badge (Solid Gradient)
+          Positioned(
+            bottom: 25.h,
+            right: 40.w,
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: gradientColors[0].withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                gradient: LinearGradient(
+                  colors: gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Icon(Icons.edit_note_rounded, color: Colors.white, size: 22.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoteIcon({
+    required double size,
+    required double iconSize,
+    required List<Color> colors,
+    required double opacity,
+    double rotation = 0,
+    bool hasShadow = false,
+  }) {
+    return Transform.rotate(
+      angle: rotation,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r), // Rounded corner for paper look
+          color: colors[0].withOpacity(opacity),
+          border: Border.all(color: colors[0].withOpacity(0.2), width: 1.5.w),
+          boxShadow: hasShadow
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  )
+                ]
+              : null,
+        ),
+        child: Icon(
+          Icons.description_rounded,
+          size: iconSize.sp,
+          color: colors[0].withOpacity(0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDot({double? top, double? bottom, double? left, double? right, required double size, required Color color}) {
+    return Positioned(
+      top: top?.h,
+      bottom: bottom?.h,
+      left: left?.w,
+      right: right?.w,
+      child: Container(
+        width: size.w,
+        height: size.w,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      ),
+    );
+  }
+}

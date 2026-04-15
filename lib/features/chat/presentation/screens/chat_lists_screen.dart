@@ -9,9 +9,9 @@ import 'package:study_hub/core/routing/route_name.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:study_hub/features/chat/presentation/widget/chat_lists_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
-import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/core/notification/notification_service.dart';
 
 class ChatListsScreen extends StatefulWidget {
@@ -99,7 +99,7 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
       body: BlocBuilder<GroupsCubit, GroupsState>(
         builder: (context, state) {
           if (state is GroupsLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ChatListShimmer();
           } else if (state is GroupsError) {
             return Center(child: TextWidget(text: state.message));
           } else if (state is GroupsSuccess) {
@@ -122,9 +122,12 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
                 final group = groups[index];
 
                 return InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    // 1. Optimistic update
                     context.read<GroupsCubit>().markAsRead(group.id, isGroup: group.isGroup);
-                    getIt<NavigationService>().pushNamed(
+                    
+                    // 2. Navigate and wait for return
+                    await getIt<NavigationService>().pushNamed(
                       RouteName.messagesScreen,
                       extra: {
                         'id': group.id,
@@ -132,6 +135,11 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
                         'title': group.name,
                       },
                     );
+
+                    // 3. Refresh list when coming back
+                    if (context.mounted) {
+                      context.read<GroupsCubit>().getUnifiedChatList();
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 17.h),

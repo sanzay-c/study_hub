@@ -17,6 +17,8 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_state.dart';
 import 'package:study_hub/core/notification/notification_service.dart';
+import 'package:study_hub/features/chat/presentation/widget/messages_bubble_shimmer.dart';
+import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 
 // ---------------------------------------------------------------------------
 // System message types — extend as needed
@@ -58,10 +60,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  @override
   void initState() {
     super.initState();
     PushNotificationService.currentChatId = widget.id;
     _loadChat();
+    // Mark as read immediately when screen opens
+    context.read<GroupsCubit>().markAsRead(widget.id, isGroup: widget.isGroup);
   }
 
   void _loadChat() async {
@@ -210,7 +215,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               child: BlocBuilder<ChatBloc, ChatState>(
                 builder: (context, state) {
                   if (state.status == ChatStatus.loading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return MessagesBubbleShimmer();
                   } else if (state.status == ChatStatus.error) {
                     return Center(
                       child: TextWidget(

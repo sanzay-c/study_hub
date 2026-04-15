@@ -11,6 +11,7 @@ import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
+import 'package:study_hub/features/groups/presentation/widgets/empty_group.dart';
 import 'package:study_hub/features/groups/presentation/widgets/groups_shimmer.dart';
 
 class GroupsJoined extends StatefulWidget {
@@ -22,8 +23,29 @@ class GroupsJoined extends StatefulWidget {
 
 class _GroupsJoinedState extends State<GroupsJoined>
     with AutomaticKeepAliveClientMixin {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.9) {
+      context.read<GroupsCubit>().getJoinedGroups(loadMore: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +59,18 @@ class _GroupsJoinedState extends State<GroupsJoined>
         } else if (state is GroupsSuccess) {
           final groups = state.getGroups;
           if (groups == null || groups.isEmpty) {
-            return const Center(child: Text('No groups joined yet.'));
+            return EmptyGroup();
           }
           return ListView.builder(
-            itemCount: groups.length,
+            controller: _scrollController,
+            itemCount: state.hasNext ? groups.length + 1 : groups.length,
             itemBuilder: (context, index) {
+              if (index >= groups.length) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
               final group = groups[index];
               return Padding(
                 padding: EdgeInsets.only(bottom: 24.h),
@@ -101,7 +130,6 @@ class _GroupsJoinedState extends State<GroupsJoined>
                     )
                   : _buildPlaceholder(context),
             ),
-
             Padding(
               padding: EdgeInsets.all(16.w),
               child: Column(
@@ -114,7 +142,6 @@ class _GroupsJoinedState extends State<GroupsJoined>
                     letterSpacing: -0.6,
                   ),
                   8.verticalSpace,
-
                   TextWidget(
                     text: group.description ?? 'No description available.',
                     color: getColorByTheme(
@@ -122,9 +149,7 @@ class _GroupsJoinedState extends State<GroupsJoined>
                       colorClass: AppColors.subTextColor,
                     ),
                   ),
-
                   16.verticalSpace,
-
                   Row(
                     children: [
                       SvgImageRenderWidget(

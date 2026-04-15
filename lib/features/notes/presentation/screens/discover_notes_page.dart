@@ -5,6 +5,7 @@ import 'package:study_hub/common/widgets/custom_dots_refresh_indicator.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart';
 import 'package:study_hub/features/notes/presentation/bloc/notes_state.dart';
 import 'package:study_hub/features/notes/presentation/screens/notes_lists.dart';
+import 'package:study_hub/features/notes/presentation/screens/widgets/notes_empty.dart';
 import 'package:study_hub/features/notes/presentation/screens/widgets/notes_shimmer.dart';
 
 class DiscoverNotesPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _DiscoverNotesPageState extends State<DiscoverNotesPage> {
         }
 
         if (state.status == NotesStatus.success && state.discoverNotes.isEmpty) {
-          return const Center(child: Text('No notes found'));
+          return const NotesEmpty();
         }
 
         return CustomDotsRefreshIndicator(
