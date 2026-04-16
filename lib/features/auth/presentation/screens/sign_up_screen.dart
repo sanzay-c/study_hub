@@ -78,9 +78,7 @@ class SignUpScreen extends StatelessWidget {
                         fontSize: 32.sp,
                         fontWeight: FontWeight.w800,
                       ),
-
-                      16.verticalSpace,
-
+                      
                       TextWidget(
                         text: 'Join our community and start learning together',
                         color: const Color(0XFF4A5566),

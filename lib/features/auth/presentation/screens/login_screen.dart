@@ -13,7 +13,6 @@ import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:study_hub/features/auth/presentation/screens/request_reset_password_screen.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -39,8 +38,7 @@ class LoginScreen extends StatelessWidget {
               );
             }
           });
-        } else if (state.status == AuthStatus.error &&
-            state.submitError != null) {
+        } else if (state.status == AuthStatus.error && state.submitError != null) {
           CustomToast.show(
             context,
             message: state.submitError!,
@@ -49,9 +47,7 @@ class LoginScreen extends StatelessWidget {
         }
       },
       child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           backgroundColor: getColorByTheme(
             context: context,
@@ -62,20 +58,18 @@ class LoginScreen extends StatelessWidget {
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
                     child: IntrinsicHeight(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, state) {
                             return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const Spacer(flex: 1),
-
+                                
+                                // App Logo
                                 LogoContainer(
                                   gradienColor: const [
                                     Color(0XFF526DFF),
@@ -85,159 +79,101 @@ class LoginScreen extends StatelessWidget {
 
                                 30.verticalSpace,
 
+                                // Welcome Texts
                                 TextWidget(
                                   text: 'Welcome Back',
                                   fontSize: 32.sp,
                                   fontWeight: FontWeight.w800,
                                 ),
 
-                                16.verticalSpace,
 
                                 TextWidget(
-                                  text:
-                                      'Sign in to continue your learning journey',
+                                  text: 'Sign in to continue your learning journey',
                                   textalign: TextAlign.center,
                                   color: const Color(0XFF4A5566),
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
 
-                                24.verticalSpace,
+                                40.verticalSpace,
 
-                                const Row(
-                                  children: [
-                                    TextWidget(
-                                      text: "Username",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-
+                                // Username Field
+                                _buildFieldLabel("Username"),
                                 8.verticalSpace,
-
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomTextFormField(
-                                      onChanged: (value) {
-                                        context.read<AuthBloc>().add(
-                                          UsernameChanged(value),
-                                        );
-                                      },
-                                      initialValue: state.username,
-                                      hintText: "Enter your username",
-                                      svgIcon: SvgImageRenderWidget(
-                                        svgImagePath: AssetsSource
-                                            .authAssetsSource
-                                            .authPersonIcon,
-                                        height: 18.h,
-                                        width: 18.w,
-                                      ),
-                                    ),
-                                    if (state.usernameError != null) ...[
-                                      4.verticalSpace,
-                                      TextWidget(
-                                        text: state.usernameError!,
-                                        color: Colors.red,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ],
-                                  ],
+                                CustomTextFormField(
+                                  onChanged: (val) => context.read<AuthBloc>().add(UsernameChanged(val)),
+                                  initialValue: state.username,
+                                  hintText: "Enter your username",
+                                  svgIcon: SvgImageRenderWidget(
+                                    svgImagePath: AssetsSource.authAssetsSource.authPersonIcon,
+                                    height: 18.h,
+                                    width: 18.w,
+                                  ),
                                 ),
+                                if (state.usernameError != null) _buildErrorText(state.usernameError!),
 
-                                24.verticalSpace,
+                                20.verticalSpace,
 
-                                const Row(
-                                  children: [
-                                    TextWidget(
-                                      text: "Password",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-
+                                // Password Field
+                                _buildFieldLabel("Password"),
                                 8.verticalSpace,
+                                CustomTextFormField(
+                                  onChanged: (val) => context.read<AuthBloc>().add(PasswordChanged(val)),
+                                  initialValue: state.password,
+                                  isPassword: true,
+                                  hintText: "Enter your password",
+                                  svgIcon: SvgImageRenderWidget(
+                                    svgImagePath: AssetsSource.authAssetsSource.lockIcon,
+                                    height: 18.h,
+                                    width: 18.w,
+                                  ),
+                                ),
+                                if (state.passwordError != null) _buildErrorText(state.passwordError!),
 
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomTextFormField(
-                                      onChanged: (value) {
-                                        context.read<AuthBloc>().add(
-                                          PasswordChanged(value),
-                                        );
-                                      },
-                                      initialValue: state.password,
-                                      isPassword: true,
-                                      hintText: "Enter your password",
-                                      svgIcon: SvgImageRenderWidget(
-                                        svgImagePath: AssetsSource
-                                            .authAssetsSource
-                                            .lockIcon,
-                                        height: 18.h,
-                                        width: 18.w,
-                                      ),
+                                12.verticalSpace,
+
+                                // --- FORGOT PASSWORD (FIXED UI) ---
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      getIt<NavigationService>().pushNamed(RouteName.requestPasswordScreen);
+                                    },
+                                    child: TextWidget(
+                                      text: 'Forgot Password?',
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0XFF1569FC),
                                     ),
-                                    if (state.passwordError != null) ...[
-                                      4.verticalSpace,
-                                      TextWidget(
-                                        text: state.passwordError!,
-                                        color: Colors.red,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-
-                                24.verticalSpace,
-
-                                CommonButton(
-                                  text: state.status == AuthStatus.loading
-                                      ? "Signing in..."
-                                      : "Sign in",
-                                  onTap: state.status == AuthStatus.loading
-                                      ? () {}
-                                      : () {
-                                          context.read<AuthBloc>().add(
-                                            const LoginSubmitted(),
-                                          );
-                                        },
-                                  color: const [
-                                    Color(0XFF526DFF),
-                                    Color(0XFF8B32FB),
-                                  ],
-                                  isLoading: state.status == AuthStatus.loading,
-                                ),
-
-                                32.verticalSpace,
-
-                                GestureDetector(
-                                  onTap: () {
-                                    getIt<NavigationService>().pushNamed(RouteName.requestPasswordScreen);
-                                  },
-                                  child: TextWidget(
-                                    text: 'Forgot Password ?',
-                                    color: Color(0XFF1569FC),
                                   ),
                                 ),
 
                                 32.verticalSpace,
 
+                                // Login Button
+                                CommonButton(
+                                  text: state.status == AuthStatus.loading ? "Signing in..." : "Sign in",
+                                  onTap: state.status == AuthStatus.loading
+                                      ? () {}
+                                      : () => context.read<AuthBloc>().add(const LoginSubmitted()),
+                                  color: const [Color(0XFF526DFF), Color(0XFF8B32FB)],
+                                  isLoading: state.status == AuthStatus.loading,
+                                ),
+
+                                24.verticalSpace,
+
+                                // Sign Up Link
                                 TextWidget(
                                   text: 'Don\'t have an account ? Sign Up',
                                   color: const Color(0XFF4A5566),
-                                  fontSize: 16.sp,
+                                  fontSize: 15.sp,
                                   highlightText: 'Sign Up',
                                   highlightColor: const Color(0XFF1569FC),
-                                  highlightFontWeight: FontWeight.w500,
-                                  onHighlightTap: () =>
-                                      getIt<NavigationService>()
-                                          .pushReplacementNamed(
-                                            RouteName.signUpScreen,
-                                          ),
+                                  highlightFontWeight: FontWeight.bold,
+                                  onHighlightTap: () => getIt<NavigationService>().pushReplacementNamed(RouteName.signUpScreen),
                                 ),
 
-                                40.verticalSpace,
-                                const Spacer(flex: 1),
+                                const Spacer(flex: 2),
+                                20.verticalSpace,
                               ],
                             );
                           },
@@ -249,6 +185,31 @@ class LoginScreen extends StatelessWidget {
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TextWidget(
+        text: label,
+        fontWeight: FontWeight.w600,
+        fontSize: 14.sp,
+      ),
+    );
+  }
+
+  Widget _buildErrorText(String error) {
+    return Padding(
+      padding: EdgeInsets.only(top: 4.h),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: TextWidget(
+          text: error,
+          color: Colors.redAccent,
+          fontSize: 12.sp,
         ),
       ),
     );
