@@ -5,8 +5,12 @@ import 'package:study_hub/core/routing/custom_go_route.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/common/splash_screen/initial_splash_screen.dart';
 import 'package:study_hub/common/splash_screen/network_splash_screen.dart';
+import 'package:study_hub/features/auth/presentation/cubit/forgot_password_cubit.dart';
 import 'package:study_hub/features/auth/presentation/screens/login_screen.dart';
+import 'package:study_hub/features/auth/presentation/screens/request_reset_password_screen.dart';
+import 'package:study_hub/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:study_hub/features/auth/presentation/screens/sign_up_screen.dart';
+import 'package:study_hub/features/auth/presentation/screens/verify_otp_screen.dart';
 import 'package:study_hub/features/bottom_nav/presentation/screen/study_hub_bottom_nav.dart';
 import 'package:study_hub/features/chat/presentation/screens/messages_screen.dart';
 import 'package:study_hub/features/groups/presentation/screens/group_details_screen.dart';
@@ -104,7 +108,32 @@ List<RouteBase> get screensRoute => [
     },
   ),
 
-  customGoRoute(path: RouteName.emptyGroupScreen, child: const EmptyGroup())
+  customGoRoute(path: RouteName.emptyGroupScreen, child: const EmptyGroup()),
+
+  GoRoute(
+    path: RouteName.requestPasswordScreen,
+    name: RouteName.requestPasswordScreen,
+    builder: (context, state) => BlocProvider.value(
+      value: getIt<ForgotPasswordCubit>(),
+      child: const RequestResetPasswordScreen(),
+    ),
+  ),
+  GoRoute(
+    path: RouteName.verifyOTPScreen,
+    name: RouteName.verifyOTPScreen,
+    builder: (context, state) => BlocProvider.value(
+      value: getIt<ForgotPasswordCubit>(),
+      child: const VerifyOtpScreen(),
+    ),
+  ),
+  GoRoute(
+    path: RouteName.resetPasswordScreen,
+    name: RouteName.resetPasswordScreen,
+    builder: (context, state) => BlocProvider.value(
+      value: getIt<ForgotPasswordCubit>(),
+      child: const ResetPasswordScreen(),
+    ),
+  ),
 
 
   // customGoRoute(

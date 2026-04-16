@@ -13,6 +13,7 @@ import 'package:study_hub/core/di/injection.dart';
 import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:study_hub/features/auth/presentation/screens/request_reset_password_screen.dart';
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class LoginScreen extends StatelessWidget {
           );
 
           context.read<MainBottomNavBloc>().add(const NavReset());
-          
+
           Future.delayed(const Duration(milliseconds: 500), () {
             if (context.mounted) {
               getIt<NavigationService>().pushReplacementNamed(
@@ -74,24 +75,24 @@ class LoginScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const Spacer(flex: 1),
-                                
+
                                 LogoContainer(
                                   gradienColor: const [
                                     Color(0XFF526DFF),
                                     Color(0XFF8B32FB),
                                   ],
                                 ),
-                                
+
                                 30.verticalSpace,
-                                
+
                                 TextWidget(
                                   text: 'Welcome Back',
                                   fontSize: 32.sp,
                                   fontWeight: FontWeight.w800,
                                 ),
-                                
+
                                 16.verticalSpace,
-                                
+
                                 TextWidget(
                                   text:
                                       'Sign in to continue your learning journey',
@@ -99,9 +100,9 @@ class LoginScreen extends StatelessWidget {
                                   color: const Color(0XFF4A5566),
                                   fontWeight: FontWeight.w600,
                                 ),
-                                
+
                                 24.verticalSpace,
-                                
+
                                 const Row(
                                   children: [
                                     TextWidget(
@@ -110,23 +111,24 @@ class LoginScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                
+
                                 8.verticalSpace,
-                                
+
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CustomTextFormField(
                                       onChanged: (value) {
                                         context.read<AuthBloc>().add(
-                                              UsernameChanged(value),
-                                            );
+                                          UsernameChanged(value),
+                                        );
                                       },
                                       initialValue: state.username,
                                       hintText: "Enter your username",
                                       svgIcon: SvgImageRenderWidget(
                                         svgImagePath: AssetsSource
-                                            .authAssetsSource.authPersonIcon,
+                                            .authAssetsSource
+                                            .authPersonIcon,
                                         height: 18.h,
                                         width: 18.w,
                                       ),
@@ -141,9 +143,9 @@ class LoginScreen extends StatelessWidget {
                                     ],
                                   ],
                                 ),
-                                
+
                                 24.verticalSpace,
-                                
+
                                 const Row(
                                   children: [
                                     TextWidget(
@@ -152,24 +154,25 @@ class LoginScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                
+
                                 8.verticalSpace,
-                                
+
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CustomTextFormField(
                                       onChanged: (value) {
                                         context.read<AuthBloc>().add(
-                                              PasswordChanged(value),
-                                            );
+                                          PasswordChanged(value),
+                                        );
                                       },
                                       initialValue: state.password,
                                       isPassword: true,
                                       hintText: "Enter your password",
                                       svgIcon: SvgImageRenderWidget(
                                         svgImagePath: AssetsSource
-                                            .authAssetsSource.lockIcon,
+                                            .authAssetsSource
+                                            .lockIcon,
                                         height: 18.h,
                                         width: 18.w,
                                       ),
@@ -184,9 +187,9 @@ class LoginScreen extends StatelessWidget {
                                     ],
                                   ],
                                 ),
-                                
+
                                 24.verticalSpace,
-                                
+
                                 CommonButton(
                                   text: state.status == AuthStatus.loading
                                       ? "Signing in..."
@@ -195,8 +198,8 @@ class LoginScreen extends StatelessWidget {
                                       ? () {}
                                       : () {
                                           context.read<AuthBloc>().add(
-                                                const LoginSubmitted(),
-                                              );
+                                            const LoginSubmitted(),
+                                          );
                                         },
                                   color: const [
                                     Color(0XFF526DFF),
@@ -204,16 +207,21 @@ class LoginScreen extends StatelessWidget {
                                   ],
                                   isLoading: state.status == AuthStatus.loading,
                                 ),
-                                
+
                                 32.verticalSpace,
-                                
-                                const TextWidget(
-                                  text: 'Forgot Password ?',
-                                  color: Color(0XFF1569FC),
+
+                                GestureDetector(
+                                  onTap: () {
+                                    getIt<NavigationService>().pushNamed(RouteName.requestPasswordScreen);
+                                  },
+                                  child: TextWidget(
+                                    text: 'Forgot Password ?',
+                                    color: Color(0XFF1569FC),
+                                  ),
                                 ),
-                                
+
                                 32.verticalSpace,
-                                
+
                                 TextWidget(
                                   text: 'Don\'t have an account ? Sign Up',
                                   color: const Color(0XFF4A5566),
@@ -224,10 +232,10 @@ class LoginScreen extends StatelessWidget {
                                   onHighlightTap: () =>
                                       getIt<NavigationService>()
                                           .pushReplacementNamed(
-                                    RouteName.signUpScreen,
-                                  ),
+                                            RouteName.signUpScreen,
+                                          ),
                                 ),
-                                
+
                                 40.verticalSpace,
                                 const Spacer(flex: 1),
                               ],

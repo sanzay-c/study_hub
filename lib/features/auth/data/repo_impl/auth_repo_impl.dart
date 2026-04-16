@@ -101,4 +101,19 @@ class AuthRepoImpl implements AuthRepo {
   Future<void> updateFcmToken(String token) async {
     await authDatasource.updateFcmToken(token);
   }
+
+  @override
+  Future<void> requestReset(String email) async {
+    await authDatasource.requestReset(email);
+  }
+
+  @override
+  Future<void> verifyOTP(String email, String otp) async {
+    await authDatasource.verifyOTP(email, otp);
+  }
+
+  @override
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
+    await authDatasource.resetPassword(email, otp, newPassword);
+  }
 }

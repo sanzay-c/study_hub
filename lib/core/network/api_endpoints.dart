@@ -12,8 +12,26 @@ class ApiEndpoints {
   static const String fcmToken = "/api/auth/fcm-token/";
 
   // Auth(forgot-password)
+
+  // "/api/auth/request_reset/"
+  // Body: {
+  //   "email": "sanzay.369@gmail.com"
+  // }
   static const String requestReset = "/api/auth/request_reset/";
+
+  // "/api/auth/verify_otp/"
+  //  Body: {
+  //     "email": "sanzay.369@gmail.com",
+  //     "otp": "719940" 
+  // }
   static const String verifyOTP = "/api/auth/verify_otp/";
+
+  // "/api/auth/reset_password/"
+  // Body: {
+  //     "email": "sanzay.369@gmail.com",
+  //     "otp": "719940",
+  //     "new_password": "pass123"
+  // }
   static const String resetPassword = "/api/auth/reset_password/";
 
   // stats following, followers Groups summary

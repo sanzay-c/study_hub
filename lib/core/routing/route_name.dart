@@ -21,6 +21,12 @@ class RouteName {
 
   static const String emptyGroupScreen = '/empty-group-screen';
 
+  static const String requestPasswordScreen = '/request-password-screen';
+
+  static const String verifyOTPScreen = '/verify-otp-screen';
+  
+  static const String resetPasswordScreen = '/reset-password-screen';
+
   // static const String getGroupsDetailScreen = '/groups-detail-screen/';
 }
   

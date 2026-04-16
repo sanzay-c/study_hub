@@ -40,5 +40,18 @@ class NavigationService {
         extra: extra,
       );
 
+  void pushNamedAndRemoveUntil(String route, RoutePredicate predicate,
+      {dynamic arguments}) {
+    return ctx!.goNamed(route, extra: arguments);
+  }
+
+  void goBackUntil(String desiredRoute) {
+    return navigatorKey.currentState!.popUntil((
+      Route<dynamic> route,
+    ) {
+      return route.settings.name == desiredRoute;
+    });
+  }
+
   BuildContext getNavigationContext() => ctx!;
 }

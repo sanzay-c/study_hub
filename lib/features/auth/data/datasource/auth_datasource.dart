@@ -125,6 +125,55 @@ class AuthDatasource {
     }
   }
 
+  Future<void> requestReset(String email) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.requestReset,
+        data: {"email": email},
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed to request reset: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> verifyOTP(String email, String otp) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.verifyOTP,
+        data: {
+          "email": email,
+          "otp": otp,
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed to verify OTP: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.resetPassword,
+        data: {
+          "email": email,
+          "otp": otp,
+          "new_password": newPassword,
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed to reset password: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   Exception _handleError(dynamic error) {
     if (error is DioException) {
       final data = error.response?.data;

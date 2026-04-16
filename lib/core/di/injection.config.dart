@@ -32,10 +32,18 @@ import 'package:study_hub/features/auth/domain/usecase/login_usecasse.dart'
     as _i1006;
 import 'package:study_hub/features/auth/domain/usecase/logout_usecase.dart'
     as _i558;
+import 'package:study_hub/features/auth/domain/usecase/request_reset_usecase.dart'
+    as _i869;
+import 'package:study_hub/features/auth/domain/usecase/reset_password_usecase.dart'
+    as _i677;
 import 'package:study_hub/features/auth/domain/usecase/signup_usecase.dart'
     as _i188;
+import 'package:study_hub/features/auth/domain/usecase/verify_otp_usecase.dart'
+    as _i215;
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart'
     as _i553;
+import 'package:study_hub/features/auth/presentation/cubit/forgot_password_cubit.dart'
+    as _i872;
 import 'package:study_hub/features/bottom_nav/presentation/bloc/main_bottom_nav_bloc.dart'
     as _i73;
 import 'package:study_hub/features/chat/data/datasource/chat_remote_datasource.dart'
@@ -232,6 +240,22 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i558.LogoutUsecase>(
       () => _i558.LogoutUsecase(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i869.RequestResetUseCase>(
+      () => _i869.RequestResetUseCase(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i677.ResetPasswordUseCase>(
+      () => _i677.ResetPasswordUseCase(gh<_i481.AuthRepo>()),
+    );
+    gh.factory<_i215.VerifyOTPUseCase>(
+      () => _i215.VerifyOTPUseCase(gh<_i481.AuthRepo>()),
+    );
+    gh.lazySingleton<_i872.ForgotPasswordCubit>(
+      () => _i872.ForgotPasswordCubit(
+        gh<_i869.RequestResetUseCase>(),
+        gh<_i215.VerifyOTPUseCase>(),
+        gh<_i677.ResetPasswordUseCase>(),
+      ),
     );
     gh.factory<_i118.FollowUserUsecase>(
       () => _i118.FollowUserUsecase(repository: gh<_i430.SocialRepo>()),

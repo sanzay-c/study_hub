@@ -9,6 +9,7 @@ import 'package:study_hub/core/routing/route_name.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:study_hub/features/chat/presentation/widget/chat_empty_state.dart';
 import 'package:study_hub/features/chat/presentation/widget/chat_lists_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
@@ -106,7 +107,7 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
             final groups = state.getGroups ?? [];
 
             if (groups.isEmpty) {
-              return const Center(child: TextWidget(text: "No active chats"));
+              return const ChatEmptyState();
             }
 
             return ListView.separated(
