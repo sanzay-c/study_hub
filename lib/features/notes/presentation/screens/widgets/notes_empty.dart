@@ -30,7 +30,7 @@ class NotesEmpty extends StatelessWidget {
               color: getColorByTheme(
                 context: context,
                 colorClass: AppColors.subTextColor,
-              ).withOpacity(0.7),
+              ).withValues(alpha: 0.7),
             ),
             60.verticalSpace,
           ],
@@ -59,16 +59,16 @@ class NotesEmpty extends StatelessWidget {
             height: 140.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: gradientColors[0].withOpacity(0.04),
+              color: gradientColors[0].withValues(alpha: 0.04),
             ),
           ),
 
           // 2. Random Floating Dots (The "Dots" you asked for)
           _buildDot(top: 5, left: 40, size: 8, color: gradientColors[0]),
-          _buildDot(top: 45, right: 15, size: 12, color: gradientColors[1].withOpacity(0.4)),
-          _buildDot(bottom: 25, left: 20, size: 10, color: gradientColors[0].withOpacity(0.3)),
+          _buildDot(top: 45, right: 15, size: 12, color: gradientColors[1].withValues(alpha: 0.4)),
+          _buildDot(bottom: 25, left: 20, size: 10, color: gradientColors[0].withValues(alpha: 0.3)),
           _buildDot(bottom: 10, right: 50, size: 7, color: gradientColors[1]),
-          _buildDot(top: 80, left: -5, size: 5, color: gradientColors[0].withOpacity(0.5)),
+          _buildDot(top: 80, left: -5, size: 5, color: gradientColors[0].withValues(alpha: 0.5)),
 
           // 3. Document Icons Group (Notes Context)
           // Smaller Back Document
@@ -107,7 +107,7 @@ class NotesEmpty extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: gradientColors[0].withOpacity(0.3),
+                    color: gradientColors[0].withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -141,12 +141,12 @@ class NotesEmpty extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r), // Rounded corner for paper look
-          color: colors[0].withOpacity(opacity),
-          border: Border.all(color: colors[0].withOpacity(0.2), width: 1.5.w),
+          color: colors[0].withValues(alpha: opacity),
+          border: Border.all(color: colors[0].withValues(alpha: 0.2), width: 1.5.w),
           boxShadow: hasShadow
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   )
@@ -156,7 +156,7 @@ class NotesEmpty extends StatelessWidget {
         child: Icon(
           Icons.description_rounded,
           size: iconSize.sp,
-          color: colors[0].withOpacity(0.5),
+          color: colors[0].withValues(alpha: 0.5),
         ),
       ),
     );

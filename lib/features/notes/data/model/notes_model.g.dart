@@ -6,6 +6,7 @@ part of 'notes_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+// ignore: unused_element
 NotesModel _$NotesModelFromJson(Map<String, dynamic> json) => NotesModel(
   id: json['_id'] as String,
   groupId: json['group_id'] as String?,

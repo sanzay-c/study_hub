@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:study_hub/features/auth/domain/repo/auth_repo.dart';
@@ -7,6 +9,7 @@ import 'package:study_hub/core/di/injection.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   
   // Firebase initialize garnu bhanda pahile backgrounds ma message aunda yo run hunchha
+  // ignore: avoid_print
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -51,14 +54,14 @@ class PushNotificationService {
       initSettings,
       onDidReceiveNotificationResponse: (details) {
         // Notification click garda yaha logic halne
-        print("Local notification clicked!");
+        log("Local notification clicked!");
       },
     );
 
     // 3. Foreground message listener
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("🔔 DEBUG: Foreground message received: ${message.notification?.title}");
-      print("📦 DEBUG: Message Data: ${message.data}");
+      log("🔔 DEBUG: Foreground message received: ${message.notification?.title}");
+      log("📦 DEBUG: Message Data: ${message.data}");
 
       final String? senderId = message.data['sender_id'];
       final String? chatId = message.data['group_id'] ?? message.data['room_id'];
@@ -66,13 +69,13 @@ class PushNotificationService {
       // 1. Skip if it's our own message (Self-Notification fix)
       final currentUser = await getIt<AuthRepo>().getCurrentUser();
       if (senderId != null && senderId == currentUser?.id) {
-        print("⏭️ DEBUG: Skipping self-notification");
+        log("⏭️ DEBUG: Skipping self-notification");
         return;
       }
 
       // 2. Skip if we are already viewing this chat
       if (chatId != null && chatId == currentChatId) {
-        print("⏭️ DEBUG: Already in this chat, skipping notification");
+        log("⏭️ DEBUG: Already in this chat, skipping notification");
         return;
       }
 
@@ -96,19 +99,19 @@ class PushNotificationService {
           ),
         );
       } else {
-        print("⚠️ DEBUG: Received a 'Silent' data message (no notification block)");
+        log("⚠️ DEBUG: Received a 'Silent' data message (no notification block)");
       }
     });
 
     // 4. App background ma hunda notification click garda
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("Notification clicked and app opened from background!");
+      log("Notification clicked and app opened from background!");
     });
 
     // 5. App terminated hunda notification click garda
     RemoteMessage? initialMessage = await _fcm.getInitialMessage();
     if (initialMessage != null) {
-      print("App opened from terminated state via notification!");
+      log("App opened from terminated state via notification!");
     }
   }
 

@@ -30,7 +30,7 @@ class SocialEmpty extends StatelessWidget {
               color: getColorByTheme(
                 context: context,
                 colorClass: AppColors.subTextColor,
-              ).withOpacity(0.7),
+              ).withValues(alpha: 0.7),
             ),
             60.verticalSpace,
           ],
@@ -59,14 +59,14 @@ class SocialEmpty extends StatelessWidget {
             height: 150.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: gradientColors[0].withOpacity(0.04),
+              color: gradientColors[0].withValues(alpha: 0.04),
             ),
           ),
 
           // 2. Random Floating Dots (Static)
           _buildDot(top: 10, left: 30, size: 8, color: gradientColors[0]),
-          _buildDot(top: 50, right: 10, size: 12, color: gradientColors[1].withOpacity(0.4)),
-          _buildDot(bottom: 20, left: 10, size: 10, color: gradientColors[0].withOpacity(0.3)),
+          _buildDot(top: 50, right: 10, size: 12, color: gradientColors[1].withValues(alpha: 0.4)),
+          _buildDot(bottom: 20, left: 10, size: 10, color: gradientColors[0].withValues(alpha: 0.3)),
           _buildDot(bottom: 40, right: 40, size: 6, color: gradientColors[1]),
 
           // 3. Avatar Group (Static)
@@ -105,7 +105,7 @@ class SocialEmpty extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: gradientColors[0].withOpacity(0.3),
+                    color: gradientColors[0].withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -136,12 +136,12 @@ class SocialEmpty extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: colors[0].withOpacity(opacity),
-        border: Border.all(color: colors[0].withOpacity(0.2), width: 1.5.w),
+        color: colors[0].withValues(alpha: opacity),
+        border: Border.all(color: colors[0].withValues(alpha: 0.2), width: 1.5.w),
         boxShadow: hasShadow
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 )
@@ -151,7 +151,7 @@ class SocialEmpty extends StatelessWidget {
       child: Icon(
         Icons.person_rounded,
         size: iconSize.sp,
-        color: colors[0].withOpacity(0.5),
+        color: colors[0].withValues(alpha: 0.5),
       ),
     );
   }

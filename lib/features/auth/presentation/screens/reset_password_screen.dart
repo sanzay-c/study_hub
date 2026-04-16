@@ -163,7 +163,7 @@ class ResetPasswordScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF526DFF).withOpacity(0.3),
+            color: const Color(0xFF526DFF).withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -208,7 +208,7 @@ class ResetPasswordScreen extends StatelessWidget {
                     margin: EdgeInsets.only(right: i < 3 ? 6.w : 0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
-                      color: isFilled ? color : Colors.grey.withOpacity(0.2),
+                      color: isFilled ? color : Colors.grey.withValues(alpha: 0.2),
                     ),
                   ),
                 );
@@ -278,9 +278,9 @@ class ResetPasswordScreen extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: Colors.grey.withOpacity(0.1)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

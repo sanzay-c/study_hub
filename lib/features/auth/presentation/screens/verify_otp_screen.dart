@@ -108,7 +108,7 @@ class OtpForm extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: "0",
                     hintStyle: TextStyle(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withValues(alpha: 0.5),
                       fontSize: 20.sp,
                     ),
                     counterText: "",

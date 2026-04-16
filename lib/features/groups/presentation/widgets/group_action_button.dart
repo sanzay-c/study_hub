@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/svg_image_render_widget.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
-import 'package:study_hub/core/constants/assets_source.dart';
 
 class GroupActionButton extends StatelessWidget {
   final String label;

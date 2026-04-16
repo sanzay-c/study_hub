@@ -29,7 +29,7 @@ class EmptyGroup extends StatelessWidget {
               color: getColorByTheme(
                 context: context,
                 colorClass: AppColors.subTextColor,
-              ).withOpacity(0.8),
+              ).withValues(alpha: 0.8),
             ),
             60.verticalSpace,
           ],
@@ -51,7 +51,7 @@ class EmptyGroup extends StatelessWidget {
             height: 200.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF526DFF).withOpacity(0.06),
+              color: const Color(0xFF526DFF).withValues(alpha: 0.06),
             ),
           ),
 
@@ -61,7 +61,7 @@ class EmptyGroup extends StatelessWidget {
             height: 150.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF526DFF).withOpacity(0.10),
+              color: const Color(0xFF526DFF).withValues(alpha: 0.10),
             ),
           ),
 
@@ -73,7 +73,7 @@ class EmptyGroup extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF526DFF).withOpacity(0.3),
+                  color: const Color(0xFF526DFF).withValues(alpha: 0.3),
                   blurRadius: 25,
                   spreadRadius: 2,
                   offset: const Offset(0, 10),
@@ -111,7 +111,7 @@ class EmptyGroup extends StatelessWidget {
             top: 50.h,
             right: 35.w,
             size: 12,
-            color: const Color(0xFF8B32FB).withOpacity(0.4),
+            color: const Color(0xFF8B32FB).withValues(alpha: 0.4),
           ),
 
           // Bottom Left Medium Dot
@@ -119,7 +119,7 @@ class EmptyGroup extends StatelessWidget {
             bottom: 45.h,
             left: 35.w,
             size: 10,
-            color: const Color(0xFF526DFF).withOpacity(0.5),
+            color: const Color(0xFF526DFF).withValues(alpha: 0.5),
           ),
 
           // Bottom Right Small Dot
@@ -127,7 +127,7 @@ class EmptyGroup extends StatelessWidget {
             bottom: 30.h,
             right: 45.w,
             size: 8,
-            color: const Color(0xFF8B32FB).withOpacity(0.6),
+            color: const Color(0xFF8B32FB).withValues(alpha: 0.6),
           ),
 
           // Extra tiny dot for detail
@@ -135,7 +135,7 @@ class EmptyGroup extends StatelessWidget {
             top: 100.h,
             right: 15.w,
             size: 6,
-            color: const Color(0xFF526DFF).withOpacity(0.3),
+            color: const Color(0xFF526DFF).withValues(alpha: 0.3),
           ),
         ],
       ),

@@ -69,6 +69,7 @@ class ApiEndpoints {
   // '?tab=created' => shows the groups that a user have created  
   static const String getAllGroups = '/api/groups/';
 
+  // ignore: strict_top_level_inference
   static get baseUrl => null;
 
   // get groups detail api

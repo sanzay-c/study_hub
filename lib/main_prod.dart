@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:study_hub/core/notification/notification_service.dart';
 // Note: You must run `flutterfire configure` to generate this file!
@@ -45,8 +44,11 @@ void main() async {
   
   // Print token for debugging
   String? token = await PushNotificationService.getToken();
+  // ignore: avoid_print
   print("---------- FCM TOKEN ----------");
+  // ignore: avoid_print
   print(token);
+  // ignore: avoid_print
   print("-------------------------------");
 
   runApp(const MyApp());

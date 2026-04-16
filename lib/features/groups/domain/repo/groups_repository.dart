@@ -1,7 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:study_hub/features/groups/domain/entities/create_new_group_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
-import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/groups_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/pagination_entity.dart';
 

@@ -55,7 +55,7 @@ class ViewAllBottomSheet<T> extends StatelessWidget {
             child: ListView.separated(
               padding: EdgeInsets.all(20.w),
               itemCount: data.length,
-              separatorBuilder: (_, __) => 12.verticalSpace,
+              separatorBuilder: (_, _) => 12.verticalSpace,
               itemBuilder: (_, index) => itemBuilder(data[index]),
             ),
           ),

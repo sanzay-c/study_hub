@@ -98,7 +98,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(dialogContext);
-                                    cubit.deleteGroup(data!.id);
+                                    cubit.deleteGroup(data.id);
                                   },
                                   child: const TextWidget(
                                     text: "Delete",
@@ -261,7 +261,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           title: "All Members",
                           data: data!.membersPreview,
                           itemBuilder: (item) {
-                            final member = item as MembersPreviewEntity;
+                            final member = item;
                             return MemberTile(
                               name: member.fullname,
                               status: member.isOnline ? "Online" : "Offline",
@@ -459,7 +459,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: previewNoteCount,
-                          separatorBuilder: (_, __) => 12.verticalSpace,
+                          separatorBuilder: (_, _) => 12.verticalSpace,
                           itemBuilder: (context, index) {
                             final note = data!.notesPreview[index];
                             return NoteTile(
@@ -513,7 +513,7 @@ class _OnlineCountBadge extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Colors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: TextWidget(

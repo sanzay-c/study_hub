@@ -6,6 +6,7 @@ part of 'get_groups_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+// ignore: unused_element
 GetGroupsModel _$GetGroupsModelFromJson(Map<String, dynamic> json) =>
     GetGroupsModel(
       id: json['_id'] as String,

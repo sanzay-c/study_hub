@@ -16,6 +16,7 @@ PaginationModel _$PaginationModelFromJson(Map<String, dynamic> json) =>
       hasPrevious: json['has_previous'] as bool,
     );
 
+// ignore: unused_element
 Map<String, dynamic> _$PaginationModelToJson(PaginationModel instance) =>
     <String, dynamic>{
       'total': instance.total,
@@ -37,6 +38,7 @@ PaginatedGroupsModel _$PaginatedGroupsModelFromJson(
   ),
 );
 
+// ignore: unused_element
 Map<String, dynamic> _$PaginatedGroupsModelToJson(
   PaginatedGroupsModel instance,
 ) => <String, dynamic>{

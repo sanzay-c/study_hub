@@ -4,7 +4,6 @@ import 'package:study_hub/features/groups/data/datasource/groups_remote_datasour
 import 'package:study_hub/features/groups/data/model/create_new_group.dart';
 import 'package:study_hub/features/groups/domain/entities/create_new_group_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_detail_entity.dart';
-import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/groups_entity.dart';
 import 'package:study_hub/features/groups/domain/entities/pagination_entity.dart';
 import 'package:study_hub/features/groups/domain/repo/groups_repository.dart';

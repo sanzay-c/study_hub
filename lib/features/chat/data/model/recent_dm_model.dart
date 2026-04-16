@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:study_hub/core/config/env_config.dart';
 import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart';
 
@@ -22,7 +24,7 @@ class RecentDmModel {
 
   factory RecentDmModel.fromJson(Map<String, dynamic> json) {
     final count = json['unread_count'] ?? 0;
-    print("DEBUG: RecentDmModel for ${json['username']} parsed unread_count: $count");
+    log("DEBUG: RecentDmModel for ${json['username']} parsed unread_count: $count");
     return RecentDmModel(
       userId: json['user_id'] ?? '',
       username: json['username'] ?? '',

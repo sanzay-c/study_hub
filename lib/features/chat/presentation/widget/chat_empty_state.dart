@@ -35,7 +35,7 @@ class ChatEmptyState extends StatelessWidget {
               color: getColorByTheme(
                 context: context,
                 colorClass: AppColors.subTextColor,
-              ).withOpacity(0.7),
+              ).withValues(alpha: 0.7),
             ),
           ],
         ),
@@ -62,7 +62,7 @@ class ChatEmptyState extends StatelessWidget {
             height: 150.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: gradientColors[0].withOpacity(0.04),
+              color: gradientColors[0].withValues(alpha: 0.04),
             ),
           ),
 
@@ -72,13 +72,13 @@ class ChatEmptyState extends StatelessWidget {
             top: 50,
             right: 20,
             size: 12,
-            color: gradientColors[1].withOpacity(0.4),
+            color: gradientColors[1].withValues(alpha: 0.4),
           ),
           _buildDot(
             bottom: 30,
             left: 30,
             size: 10,
-            color: gradientColors[0].withOpacity(0.3),
+            color: gradientColors[0].withValues(alpha: 0.3),
           ),
           _buildDot(bottom: 15, right: 60, size: 7, color: gradientColors[1]),
 
@@ -121,7 +121,7 @@ class ChatEmptyState extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: gradientColors[0].withOpacity(0.3),
+                    color: gradientColors[0].withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -165,12 +165,12 @@ class ChatEmptyState extends StatelessWidget {
             bottomLeft: Radius.circular(20.r),
             bottomRight: Radius.circular(4.r), // Chat bubble "tail" look
           ),
-          color: colors[0].withOpacity(opacity),
-          border: Border.all(color: colors[0].withOpacity(0.2), width: 1.5.w),
+          color: colors[0].withValues(alpha: opacity),
+          border: Border.all(color: colors[0].withValues(alpha: 0.2), width: 1.5.w),
           boxShadow: hasShadow
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -180,7 +180,7 @@ class ChatEmptyState extends StatelessWidget {
         child: Icon(
           icon,
           size: (width * 0.4).sp,
-          color: colors[0].withOpacity(0.5),
+          color: colors[0].withValues(alpha: 0.5),
         ),
       ),
     );

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:study_hub/common/widgets/study_hub_app_bar.dart';
@@ -440,7 +438,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
             decoration: BoxDecoration(
               color: isToday
-                  ? const Color(0xFF526DFF).withOpacity(0.10)
+                  ? const Color(0xFF526DFF).withValues(alpha: 0.10)
                   : getColorByTheme(
                       context: context,
                       colorClass: AppColors.containerColor,
@@ -448,7 +446,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: isToday
-                    ? const Color(0xFF526DFF).withOpacity(0.35)
+                    ? const Color(0xFF526DFF).withValues(alpha: 0.35)
                     : getColorByTheme(
                         context: context,
                         colorClass: AppColors.dividerColor,
@@ -578,6 +576,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }) {
     final displayName = (senderName != null && senderName.isNotEmpty)
         ? senderName
+        // ignore: unnecessary_string_interpolations
         : '${senderId.length >= 4 ? senderId.substring(0, 4) : senderId}';
 
     final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';

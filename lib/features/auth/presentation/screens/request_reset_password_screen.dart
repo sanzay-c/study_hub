@@ -49,7 +49,7 @@ class RequestResetPasswordScreen extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0XFF526DFF).withOpacity(0.3),
+                              color: const Color(0XFF526DFF).withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),

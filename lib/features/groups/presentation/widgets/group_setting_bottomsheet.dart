@@ -100,6 +100,7 @@ class GroupSettingsBottomSheet extends StatelessWidget {
     required VoidCallback onTap,
     bool isDanger = false,
   }) {
+    // ignore: unused_local_variable
     final color = isDanger ? Colors.red : AppColors.appIconColor;
     
     return InkWell(
