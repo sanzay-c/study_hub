@@ -10,7 +10,11 @@ import 'package:study_hub/features/profile/presentation/screens/widgets/account_
 import 'package:study_hub/features/profile/presentation/screens/widgets/account_item_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/account_sub_item_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/delete_account_dialog.dart';
+import 'package:study_hub/features/profile/presentation/screens/widgets/edit_profile_dialog.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/notification_toggle_item_widget.dart';
+import 'package:study_hub/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:study_hub/features/profile/presentation/cubit/profile_state.dart';
+import 'package:study_hub/core/di/injection.dart';
 
 class AccountCardWidget extends StatefulWidget {
   final String label;
@@ -28,99 +32,136 @@ class _AccountCardWidgetState extends State<AccountCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: getColorByTheme(
-          context: context,
-          colorClass: AppColors.containerColor,
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: getColorByTheme(
-            context: context,
-            colorClass: AppColors.containerBorderColor,
-          ),
-          width: 1.w,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-            child: TextWidget(
-              text: widget.label,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
+    return BlocProvider(
+      create: (context) => getIt<ProfileCubit>(),
+      child: BlocListener<ProfileCubit, ProfileState>(
+        listener: (context, state) {
+          if (state.status == ProfileStatus.success) {
+            CustomToast.show(
+              context,
+              message: 'Profile updated successfully!',
+              type: ToastType.success,
+            );
+            // Refresh AuthBloc to update the user object globally
+            context.read<AuthBloc>().add(const AuthCheckRequested());
+          } else if (state.status == ProfileStatus.error) {
+            CustomToast.show(
+              context,
+              message: state.errorMessage ?? 'Update failed',
+              type: ToastType.error,
+            );
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: getColorByTheme(
+              context: context,
+              colorClass: AppColors.containerColor,
+            ),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: getColorByTheme(
+                context: context,
+                colorClass: AppColors.containerBorderColor,
+              ),
+              width: 1.w,
             ),
           ),
-
-          AccountItemWidget(
-            onTap: () {},
-            svgImagePath: AssetsSource.appIcons.userPersonIcon,
-            title: 'Edit Profile',
-          ),
-
-          AccountExpandableItemWidget(
-            svgImagePath: AssetsSource.appIcons.notificationIcon,
-            title: 'Notification',
-            isExpanded: _isNotificationExpanded,
-            onExpansionChanged: (expanded) {
-              setState(() {
-                _isNotificationExpanded = expanded;
-              });
-            },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              NotificationToggleItemWidget(
-                icon: Icons.notifications_outlined,
-                title: 'Push Notifications',
-                subtitle: 'Receive alerts on your device',
-                value: _isPushNotificationEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _isPushNotificationEnabled = value;
-                  });
-                },
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                child: TextWidget(
+                  text: widget.label,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ],
-          ),
 
-          AccountExpandableItemWidget(
-            svgImagePath: AssetsSource.appIcons.privacyIcon,
-            title: 'Privacy & Security',
-            isExpanded: _isPrivacyExpanded,
-            onExpansionChanged: (expanded) {
-              setState(() {
-                _isPrivacyExpanded = expanded;
-              });
-            },
-            children: [
-              AccountSubItemWidget(
-                onTap: () {
-                  final authState = context.read<AuthBloc>().state;
-                  final username = authState.user?.username ?? '';
-                  DeleteAccountDialog.show(
-                    context,
-                    currentUsername: username,
-                    onConfirmDelete: (password) {
-                      context.read<AuthBloc>().add(
-                        DeleteAccountRequested(password),
-                      );
-                      CustomToast.show(
+              Builder(
+                builder: (context) {
+                  return AccountItemWidget(
+                    onTap: () {
+                      final authState = context.read<AuthBloc>().state;
+                      final currentFullName = authState.user?.fullname ?? '';
+
+                      EditProfileDialog.show(
                         context,
-                        message: 'Account deletion requested.',
-                        type: ToastType.success,
+                        currentFullName: currentFullName,
+                        onConfirm: (newName) {
+                          context.read<ProfileCubit>().updateFullName(newName);
+                        },
                       );
                     },
+                    svgImagePath: AssetsSource.appIcons.userPersonIcon,
+                    title: 'Edit Profile',
                   );
                 },
-                title: 'Delete Account',
-                icon: Icons.delete,
-                isDestructive: true,
+              ),
+
+              AccountExpandableItemWidget(
+                svgImagePath: AssetsSource.appIcons.notificationIcon,
+                title: 'Notification',
+                isExpanded: _isNotificationExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _isNotificationExpanded = expanded;
+                  });
+                },
+                children: [
+                  NotificationToggleItemWidget(
+                    icon: Icons.notifications_outlined,
+                    title: 'Push Notifications',
+                    subtitle: 'Receive alerts on your device',
+                    value: _isPushNotificationEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _isPushNotificationEnabled = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+
+              AccountExpandableItemWidget(
+                svgImagePath: AssetsSource.appIcons.privacyIcon,
+                title: 'Privacy & Security',
+                isExpanded: _isPrivacyExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _isPrivacyExpanded = expanded;
+                  });
+                },
+                children: [
+                  AccountSubItemWidget(
+                    onTap: () {
+                      final authState = context.read<AuthBloc>().state;
+                      final username = authState.user?.username ?? '';
+                      DeleteAccountDialog.show(
+                        context,
+                        currentUsername: username,
+                        onConfirmDelete: (password) {
+                          context.read<AuthBloc>().add(
+                            DeleteAccountRequested(password),
+                          );
+                          CustomToast.show(
+                            context,
+                            message: 'Account deletion requested.',
+                            type: ToastType.success,
+                          );
+                        },
+                      );
+                    },
+                    title: 'Delete Account',
+                    icon: Icons.delete,
+                    isDestructive: true,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

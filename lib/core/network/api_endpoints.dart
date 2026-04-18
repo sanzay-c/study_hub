@@ -11,6 +11,9 @@ class ApiEndpoints {
   static const String deleteAccount = "/api/auth/delete_account/";
   static const String fcmToken = "/api/auth/fcm-token/";
   static const String deleteUserAccount = "/api/auth/delete_account/";
+  
+  // update user full-name
+  static const String updateUserFullName = "/api/auth/update-profile/";
 
   // Auth(forgot-password)
 

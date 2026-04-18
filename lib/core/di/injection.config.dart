@@ -113,6 +113,16 @@ import 'package:study_hub/features/notes/presentation/bloc/notes_bloc.dart'
     as _i348;
 import 'package:study_hub/features/notes/presentation/cubit-upload-note/upload_note_cubit.dart'
     as _i760;
+import 'package:study_hub/features/profile/data/datasource/profile_datasource.dart'
+    as _i867;
+import 'package:study_hub/features/profile/data/repo_impl/profile_repo_impl.dart'
+    as _i229;
+import 'package:study_hub/features/profile/domain/repo/profile_repo.dart'
+    as _i6;
+import 'package:study_hub/features/profile/domain/usecase/update_full_name_usecase.dart'
+    as _i236;
+import 'package:study_hub/features/profile/presentation/cubit/profile_cubit.dart'
+    as _i1046;
 import 'package:study_hub/features/social/data/datasource/social_remote_datasource.dart'
     as _i615;
 import 'package:study_hub/features/social/data/repo_impl/social_repo_impl.dart'
@@ -182,6 +192,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i230.AuthDatasource>(
       () => _i230.AuthDatasource(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i867.ProfileDatasource>(
+      () => _i867.ProfileDatasource(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i170.GroupsRemoteDataSource>(
       () => _i170.GroupsRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
@@ -275,6 +288,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i399.CreateGroupCubit(
         gh<_i1011.GroupsRepository>(),
         gh<_i571.UpdateGroupUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i6.ProfileRepo>(
+      () => _i229.ProfileRepoImpl(
+        gh<_i867.ProfileDatasource>(),
+        gh<_i394.AuthLocalDataSource>(),
       ),
     );
     gh.factory<_i74.GroupDetailCubit>(
@@ -371,6 +390,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i608.CloseChatConnectionUseCase>(),
       ),
     );
+    gh.lazySingleton<_i236.UpdateFullNameUseCase>(
+      () => _i236.UpdateFullNameUseCase(gh<_i6.ProfileRepo>()),
+    );
     gh.factory<_i348.NotesBloc>(
       () => _i348.NotesBloc(
         gh<_i1000.GetDiscoverNotesUsecase>(),
@@ -391,6 +413,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i566.UserStatsBloc>(
       () => _i566.UserStatsBloc(gh<_i1067.GetUserStatsUseCase>()),
+    );
+    gh.factory<_i1046.ProfileCubit>(
+      () => _i1046.ProfileCubit(gh<_i236.UpdateFullNameUseCase>()),
     );
     return this;
   }
