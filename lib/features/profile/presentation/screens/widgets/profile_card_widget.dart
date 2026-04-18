@@ -78,8 +78,8 @@ class ProfileCardWidget extends StatelessWidget {
               fontSize: 14.sp,
               letterSpacing: 0.5,
             ),
-            16.verticalSpace,
-            _buildEditProfileButton(context),
+            // 16.verticalSpace,
+            // _buildEditProfileButton(context),
             24.verticalSpace,
             Divider(
               color: getColorByTheme(
@@ -168,20 +168,20 @@ class ProfileCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEditProfileButton(BuildContext context) {
-    return GestureDetector(
-      onTap: onEditProfile,
-      child: Container(
-        height: 43.h,
-        width: 150.w,
-        decoration: BoxDecoration(
-          color: getColorByTheme(context: context, colorClass: AppColors.containerButton),
-          borderRadius: BorderRadius.circular(50.r),
-        ),
-        child: Center(child: TextWidget(text: 'Edit Profile')),
-      ),
-    );
-  }
+  // Widget _buildEditProfileButton(BuildContext context) {
+  //   return GestureDetector(
+  //     onTap: onEditProfile,
+  //     child: Container(
+  //       height: 43.h,
+  //       width: 150.w,
+  //       decoration: BoxDecoration(
+  //         color: getColorByTheme(context: context, colorClass: AppColors.containerButton),
+  //         borderRadius: BorderRadius.circular(50.r),
+  //       ),
+  //       child: Center(child: TextWidget(text: 'Edit Profile')),
+  //     ),
+  //   );
+  // }
 
   Widget _buildStatsRow(BuildContext context) {
     return Row(

@@ -11,6 +11,7 @@ import 'package:study_hub/core/routing/navigation_service.dart';
 import 'package:study_hub/core/routing/route_name.dart';
 import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/about_card_widget.dart';
+import 'package:study_hub/features/profile/presentation/screens/widgets/about_screen.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/account_card_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/appearance_card_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/logout_card_widget.dart';
@@ -34,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      builder: (bottomSheetContext) => SelectImgBottomSheet()
+      builder: (bottomSheetContext) => SelectImgBottomSheet(),
     );
   }
 
@@ -139,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                           return ProfileCardWidget(
                             username: user?.username ?? 'Guest',
                             fullname: user?.fullname ?? 'Study Hub User',
-                            bio: 'Student | lifelong learner',
+                            bio: 'Study Hub User',
                             avatarUrl: avatarUrl,
                             followers: stats?.followers ?? 0,
                             following: stats?.following ?? 0,
@@ -172,7 +173,18 @@ class ProfileScreen extends StatelessWidget {
                   16.verticalSpace,
                   const AccountCardWidget(label: "Account"),
                   16.verticalSpace,
-                  const AboutCardWidget(label: 'About'),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) {
+                            return AboutScreen();
+                          },
+                        ),
+                      );
+                    },
+                    child: AboutCardWidget(label: 'About'),
+                  ),
                   16.verticalSpace,
                   LogoutCardWidget(
                     label: 'Logout',
