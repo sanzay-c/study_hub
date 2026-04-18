@@ -692,12 +692,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
       child: SafeArea(
         child: Row(
           children: [
-            SvgImageRenderWidget(
-              svgImagePath: AssetsSource.appIcons.paperClip,
-              svgColor: AppColors.appIconColor,
-              height: 20.h,
-              width: 20.w,
-            ),
+            // SvgImageRenderWidget(
+            //   svgImagePath: AssetsSource.appIcons.paperClip,
+            //   svgColor: AppColors.appIconColor,
+            //   height: 20.h,
+            //   width: 20.w,
+            // ),
             8.horizontalSpace,
             Expanded(
               child: Container(
