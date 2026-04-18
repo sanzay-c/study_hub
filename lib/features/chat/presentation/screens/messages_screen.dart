@@ -15,6 +15,7 @@ import 'package:study_hub/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:study_hub/features/chat/presentation/bloc/chat_state.dart';
 import 'package:study_hub/core/notification/notification_service.dart';
+import 'package:study_hub/features/chat/presentation/widget/empty_message_state.dart';
 import 'package:study_hub/features/chat/presentation/widget/messages_bubble_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 
@@ -185,8 +186,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
       ),
       appBar: StudyHubAppBar(
         title: widget.title,
-        fontWeight: FontWeight.w400,
-        fontSize: 20.sp,
+        fontWeight: FontWeight.w700,
+        fontSize: 24.sp,
         actions: [
           IconButton(
             icon: Icon(
@@ -226,7 +227,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
                   if (messages.isEmpty) {
                     return const Center(
-                      child: TextWidget(text: "No messages yet"),
+                      child: EmptyMessageState(),
                     );
                   }
 
