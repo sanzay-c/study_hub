@@ -28,4 +28,6 @@ abstract class AuthRepo {
   Future<void> requestReset(String email);
   Future<void> verifyOTP(String email, String otp);
   Future<void> resetPassword(String email, String otp, String newPassword);
+  
+  Future<void> deleteAccount(String password);
 }

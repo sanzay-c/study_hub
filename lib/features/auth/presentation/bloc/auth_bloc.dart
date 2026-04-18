@@ -11,6 +11,7 @@ import 'package:study_hub/features/auth/domain/entities/user.dart';
 import 'package:study_hub/features/auth/domain/usecase/login_usecasse.dart';
 import 'package:study_hub/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:study_hub/features/auth/domain/usecase/signup_usecase.dart';
+import 'package:study_hub/features/auth/domain/usecase/delete_account_usecase.dart';
 
 import 'package:study_hub/features/auth/domain/repo/auth_repo.dart';
 import 'package:study_hub/core/notification/notification_service.dart';
@@ -23,9 +24,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignupUsecase signupUsecase;
   final LoginUsecase loginUsecase;
   final LogoutUsecase logoutUsecase;
+  final DeleteAccountUseCase deleteAccountUseCase;
   final AuthRepo authRepo;
 
-  AuthBloc(this.signupUsecase, this.loginUsecase, this.authRepo, this.logoutUsecase)
+  AuthBloc(this.signupUsecase, this.loginUsecase, this.authRepo, this.logoutUsecase, this.deleteAccountUseCase)
     : super(const AuthState()) {
     on<UsernameChanged>(_onUsernameChanged);
     on<FullnameChanged>(_onFullnameChanged);
@@ -35,6 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginSubmitted>(_onLoginSubmitted);
     on<LogoutRequested>(_onLogoutRequested);
     on<AuthCheckRequested>(_onAuthCheckRequested);
+    on<DeleteAccountRequested>(_onDeleteAccountRequested);
   }
 
   Future<void> _onAuthCheckRequested(
@@ -206,6 +209,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(
         status: AuthStatus.error,
         submitError: errorMessage.isNotEmpty ? errorMessage : 'Logout failed',
+      ));
+    }
+  }
+
+  FutureOr<void> _onDeleteAccountRequested(DeleteAccountRequested event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(status: AuthStatus.loading));
+
+    try {
+      await deleteAccountUseCase(event.password);
+      // after successful deletion, the UI should reflect unauthenticated state 
+      // (same as logout)
+      emit(const AuthState());
+    } catch (e) {
+      final errorMessage = e.toString().replaceFirst('Exception: ', '');
+      emit(state.copyWith(
+        status: AuthStatus.error,
+        submitError: errorMessage.isNotEmpty ? errorMessage : 'Account deletion failed',
       ));
     }
   }

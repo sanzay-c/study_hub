@@ -5,7 +5,7 @@ import 'package:study_hub/core/constants/app_color.dart';
 
 class DeleteAccountDialog extends StatefulWidget {
   final String currentUsername;
-  final VoidCallback onConfirmDelete;
+  final Function(String password) onConfirmDelete;
 
   const DeleteAccountDialog({
     super.key,
@@ -16,7 +16,7 @@ class DeleteAccountDialog extends StatefulWidget {
   static void show(
     BuildContext context, {
     required String currentUsername,
-    required VoidCallback onConfirmDelete,
+    required Function(String password) onConfirmDelete,
   }) {
     showDialog(
       context: context,
@@ -67,16 +67,17 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
           ),
           16.verticalSpace,
           TextWidget(
-            text: 'Type your "${widget.currentUsername}" account password to confirm:',
+            text: 'Type your account password to confirm:',
             fontSize: 14.sp,
             fontWeight: FontWeight.w600,
           ),
           8.verticalSpace,
           TextField(
             controller: _controller,
+            obscureText: true,
             onChanged: (value) {
               setState(() {
-                _isButtonEnabled = value == widget.currentUsername;
+                _isButtonEnabled = value.isNotEmpty;
               });
             },
             decoration: InputDecoration(
@@ -115,7 +116,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
           onPressed: _isButtonEnabled
               ? () {
                   Navigator.pop(context);
-                  widget.onConfirmDelete();
+                  widget.onConfirmDelete(_controller.text);
                 }
               : null,
           style: ElevatedButton.styleFrom(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:study_hub/common/widgets/custom_toast.dart';
 import 'package:study_hub/common/widgets/text_widget.dart';
 import 'package:study_hub/core/constants/app_color.dart';
 import 'package:study_hub/core/constants/assets_source.dart';
@@ -10,7 +11,6 @@ import 'package:study_hub/features/profile/presentation/screens/widgets/account_
 import 'package:study_hub/features/profile/presentation/screens/widgets/account_sub_item_widget.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/delete_account_dialog.dart';
 import 'package:study_hub/features/profile/presentation/screens/widgets/notification_toggle_item_widget.dart';
-
 
 class AccountCardWidget extends StatefulWidget {
   final String label;
@@ -62,7 +62,7 @@ class _AccountCardWidgetState extends State<AccountCardWidget> {
           ),
 
           AccountExpandableItemWidget(
-            svgImagePath: AssetsSource.appIcons.privacyIcon,
+            svgImagePath: AssetsSource.appIcons.notificationIcon,
             title: 'Notification',
             isExpanded: _isNotificationExpanded,
             onExpansionChanged: (expanded) {
@@ -102,12 +102,14 @@ class _AccountCardWidgetState extends State<AccountCardWidget> {
                   DeleteAccountDialog.show(
                     context,
                     currentUsername: username,
-                    onConfirmDelete: () {
-                      // TODO: Dispatch delete account event to AuthBloc
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Account deletion requested.'),
-                        ),
+                    onConfirmDelete: (password) {
+                      context.read<AuthBloc>().add(
+                        DeleteAccountRequested(password),
+                      );
+                      CustomToast.show(
+                        context,
+                        message: 'Account deletion requested.',
+                        type: ToastType.success,
                       );
                     },
                   );

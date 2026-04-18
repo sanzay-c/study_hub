@@ -28,6 +28,8 @@ import 'package:study_hub/features/auth/data/datasource/auth_local_datasource.da
 import 'package:study_hub/features/auth/data/repo_impl/auth_repo_impl.dart'
     as _i658;
 import 'package:study_hub/features/auth/domain/repo/auth_repo.dart' as _i481;
+import 'package:study_hub/features/auth/domain/usecase/delete_account_usecase.dart'
+    as _i235;
 import 'package:study_hub/features/auth/domain/usecase/login_usecasse.dart'
     as _i1006;
 import 'package:study_hub/features/auth/domain/usecase/logout_usecase.dart'
@@ -250,6 +252,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i215.VerifyOTPUseCase>(
       () => _i215.VerifyOTPUseCase(gh<_i481.AuthRepo>()),
     );
+    gh.lazySingleton<_i235.DeleteAccountUseCase>(
+      () => _i235.DeleteAccountUseCase(gh<_i481.AuthRepo>()),
+    );
     gh.lazySingleton<_i872.ForgotPasswordCubit>(
       () => _i872.ForgotPasswordCubit(
         gh<_i869.RequestResetUseCase>(),
@@ -346,6 +351,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1006.LoginUsecase>(),
         gh<_i481.AuthRepo>(),
         gh<_i558.LogoutUsecase>(),
+        gh<_i235.DeleteAccountUseCase>(),
       ),
     );
     gh.factory<_i847.SocialBloc>(

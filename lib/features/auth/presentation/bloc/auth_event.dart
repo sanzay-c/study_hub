@@ -68,3 +68,11 @@ class LogoutRequested extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
+
+class DeleteAccountRequested extends AuthEvent {
+  final String password;
+  const DeleteAccountRequested(this.password);
+
+  @override
+  List<Object?> get props => [password];
+}

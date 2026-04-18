@@ -174,6 +174,22 @@ class AuthDatasource {
     }
   }
 
+  Future<void> deleteAccount(String password) async {
+    try {
+      final response = await _dio.delete(
+        ApiEndpoints.deleteUserAccount,
+        data: {
+          "password": password,
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception("Failed to delete account: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   Exception _handleError(dynamic error) {
     if (error is DioException) {
       final data = error.response?.data;

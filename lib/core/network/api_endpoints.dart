@@ -10,6 +10,7 @@ class ApiEndpoints {
   static const String refreshToken = "/api/auth/refresh/";
   static const String deleteAccount = "/api/auth/delete_account/";
   static const String fcmToken = "/api/auth/fcm-token/";
+  static const String deleteUserAccount = "/api/auth/delete_account/";
 
   // Auth(forgot-password)
 

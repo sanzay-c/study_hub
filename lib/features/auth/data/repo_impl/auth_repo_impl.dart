@@ -116,4 +116,10 @@ class AuthRepoImpl implements AuthRepo {
   Future<void> resetPassword(String email, String otp, String newPassword) async {
     await authDatasource.resetPassword(email, otp, newPassword);
   }
+
+  @override
+  Future<void> deleteAccount(String password) async {
+    await authDatasource.deleteAccount(password);
+    await authLocalDataSource.clearCache(); // clear UI cache when account is deleted
+  }
 }
