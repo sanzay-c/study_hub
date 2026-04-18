@@ -12,6 +12,7 @@ import 'package:study_hub/features/groups/domain/entities/get_groups_entity.dart
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
 import 'package:study_hub/features/groups/presentation/widgets/empty_group.dart';
+import 'package:study_hub/features/groups/presentation/widgets/group_placeholder_widget.dart';
 import 'package:study_hub/features/groups/presentation/widgets/groups_shimmer.dart';
 
 class GroupsJoined extends StatefulWidget {
@@ -123,12 +124,12 @@ class _GroupsJoinedState extends State<GroupsJoined>
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
-                        return _buildPlaceholder(context);
+                        return GroupPlaceholderWidget();
                       },
                       errorBuilder: (context, error, stackTrace) =>
-                          _buildPlaceholder(context),
+                          GroupPlaceholderWidget(),
                     )
-                  : _buildPlaceholder(context),
+                  : GroupPlaceholderWidget(),
             ),
             Padding(
               padding: EdgeInsets.all(16.w),
@@ -213,39 +214,6 @@ class _GroupsJoinedState extends State<GroupsJoined>
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder(BuildContext context) {
-    return Container(
-      height: 140.h,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: getColorByTheme(
-          context: context,
-          colorClass: AppColors.containerColor,
-        ),
-      ),
-      child: Center(
-        child: ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (Rect bounds) => LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              getColorByTheme(
-                context: context,
-                colorClass: AppColors.gr0XFF526DFF,
-              ),
-              getColorByTheme(
-                context: context,
-                colorClass: AppColors.gr0XFF8B32FB,
-              ),
-            ],
-          ).createShader(bounds),
-          child: Icon(Icons.groups_rounded, size: 60.sp),
         ),
       ),
     );
