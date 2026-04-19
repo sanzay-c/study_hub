@@ -13,7 +13,6 @@ import 'package:study_hub/features/chat/presentation/widget/chat_empty_state.dar
 import 'package:study_hub/features/chat/presentation/widget/chat_lists_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_cubit.dart';
 import 'package:study_hub/features/groups/presentation/cubit/groups_state.dart';
-import 'package:study_hub/core/notification/notification_service.dart';
 
 class ChatListsScreen extends StatefulWidget {
   const ChatListsScreen({super.key});
@@ -90,11 +89,11 @@ class _ChatListsScreenState extends State<ChatListsScreen> {
       appBar: StudyHubAppBar(
         title: "Chat",
         actions: [
-          IconButton(
-            onPressed: () => PushNotificationService.showTestNotification(),
-            icon: const Icon(Icons.notification_add, color: Colors.blue),
-            tooltip: "Test Notification",
-          ),
+          // IconButton(
+          //   onPressed: () => PushNotificationService.showTestNotification(), // sample test notification.
+          //   icon: const Icon(Icons.notification_add, color: Colors.blue),
+          //   tooltip: "Test Notification",
+          // ),
         ],
       ),
       body: BlocBuilder<GroupsCubit, GroupsState>(
