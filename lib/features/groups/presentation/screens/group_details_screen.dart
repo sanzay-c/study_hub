@@ -15,6 +15,7 @@ import 'package:study_hub/features/groups/presentation/cubit/group_detail_cubit.
 import 'package:study_hub/features/groups/presentation/cubit/group_detail_state.dart';
 import 'package:study_hub/features/groups/presentation/screens/create_group_bottom_sheet.dart';
 import 'package:study_hub/features/groups/presentation/widgets/group_main_info_card.dart';
+import 'package:study_hub/features/groups/presentation/widgets/group_placeholder_widget.dart';
 import 'package:study_hub/features/groups/presentation/widgets/group_setting_bottomsheet.dart';
 import 'package:study_hub/features/groups/presentation/widgets/groups_detail_shimmer.dart';
 import 'package:study_hub/features/groups/presentation/widgets/member_tile.dart';
@@ -191,12 +192,12 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
                         height: 150.h,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => _buildPlaceholder(),
+                        placeholder: (context, url) => GroupPlaceholderWidget(),
                         errorWidget: (context, url, error) =>
-                            _buildPlaceholder(),
+                            GroupPlaceholderWidget(),
                       )
                     else
-                      _buildPlaceholder(),
+                      GroupPlaceholderWidget(),
                     Transform.translate(
                       offset: Offset(0, -40.h),
                       child: GroupMainInfoCard(
@@ -491,15 +492,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsScreen> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      height: 150.h,
-      width: double.infinity,
-      color: Colors.grey[300],
-      child: Icon(Icons.group, size: 50.sp, color: Colors.grey[600]),
     );
   }
 }
