@@ -101,6 +101,11 @@ class _OnlineAvatarStack extends StatelessWidget {
           foregroundImage: resolvedUrl != null 
               ? CachedNetworkImageProvider(resolvedUrl)
               : null,
+          onForegroundImageError: resolvedUrl != null
+              ? (exception, stackTrace) {
+                  debugPrint("❌ Error loading member avatar: $exception");
+                }
+              : null,
           child: Icon(
             Icons.person, 
             size: 24.sp, 

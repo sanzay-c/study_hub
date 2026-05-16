@@ -196,7 +196,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
     }
-  }
+  }  
 
   FutureOr<void> _onLogoutRequested(LogoutRequested event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));

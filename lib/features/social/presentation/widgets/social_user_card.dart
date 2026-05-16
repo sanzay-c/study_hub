@@ -116,6 +116,11 @@ class _UserAvatar extends StatelessWidget {
       ).withOpacity(0.1),
       backgroundImage:
           avatarPath != null ? NetworkImage(avatarPath!) : null,
+      onBackgroundImageError: avatarPath != null
+          ? (exception, stackTrace) {
+              debugPrint("❌ Error loading social user avatar: $exception");
+            }
+          : null,
       child: avatarPath == null
           ? SvgPicture.asset(
               AssetsSource.appIcons.userPersonIcon,

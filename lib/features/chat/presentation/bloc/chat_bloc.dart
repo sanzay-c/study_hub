@@ -20,7 +20,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChatHistoryUseCase _getHistory;
   final ConnectChatUseCase _connectChat;
   final SendChatMessageUseCase _sendMessage;
-final CloseChatConnectionUseCase _closeChatConnection;
+  final CloseChatConnectionUseCase _closeChatConnection;
 
   StreamSubscription? _chatSubscription;
 

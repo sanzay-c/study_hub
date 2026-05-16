@@ -594,6 +594,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
               backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
                   ? NetworkImage(avatarUrl)
                   : null,
+              onBackgroundImageError: (avatarUrl != null && avatarUrl.isNotEmpty)
+                  ? (exception, stackTrace) {
+                      debugPrint("❌ Error loading message avatar: $exception");
+                    }
+                  : null,
               child: (avatarUrl == null || avatarUrl.isEmpty)
                   ? Text(
                       initial,

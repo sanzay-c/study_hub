@@ -131,7 +131,6 @@ class LoginScreen extends StatelessWidget {
 
                                 12.verticalSpace,
 
-                                // --- FORGOT PASSWORD (FIXED UI) ---
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(

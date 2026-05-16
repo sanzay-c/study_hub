@@ -41,19 +41,15 @@ List<RouteBase> get splashScreenRoutes => [
 List<RouteBase> get authScreenRoutes => [
   customGoRoute(
     path: RouteName.loginScreen,
+    // builder: (context, state) =>
+    //     BlocProvider(create: (context) => getIt<AuthBloc>()),
     child: LoginScreen(),
   ),
-  customGoRoute(
-    path: RouteName.signUpScreen,
-    child: SignUpScreen(),
-  ),
+  customGoRoute(path: RouteName.signUpScreen, child: SignUpScreen()),
 ];
 
 List<RouteBase> get bottomNavRoute => [
-  customGoRoute(
-    path: RouteName.bottomNavScreen,
-    child: StudyHubBottomNav(),
-  ),
+  customGoRoute(path: RouteName.bottomNavScreen, child: StudyHubBottomNav()),
 ];
 
 List<RouteBase> get screensRoute => [
@@ -68,11 +64,7 @@ List<RouteBase> get screensRoute => [
 
       return BlocProvider(
         create: (context) => getIt<ChatBloc>(),
-        child: MessagesScreen(
-          id: id,
-          isGroup: isGroup,
-          title: title,
-        ),
+        child: MessagesScreen(id: id, isGroup: isGroup, title: title),
       );
     },
   ),
@@ -83,16 +75,14 @@ List<RouteBase> get screensRoute => [
     builder: (context, state) {
       final groupId = state.extra?.toString() ?? '';
       return BlocProvider(
-        create: (context) => getIt<GroupDetailCubit>()..getGroupDetails(groupId),
+        create: (context) =>
+            getIt<GroupDetailCubit>()..getGroupDetails(groupId),
         child: GroupDetailsScreen(groupId: groupId),
       );
     },
   ),
 
-  customGoRoute(
-    path: RouteName.socialScreen,
-    child: SocialScreen(),
-  ),
+  customGoRoute(path: RouteName.socialScreen, child: SocialScreen()),
 
   GoRoute(
     path: RouteName.userDetailsScreen,
@@ -135,10 +125,8 @@ List<RouteBase> get screensRoute => [
     ),
   ),
 
-
   // customGoRoute(
   //   path: RouteName.groupDetailsScreen,
   //   child: GroupDetailsScreen(),
   // ),
 ];
-

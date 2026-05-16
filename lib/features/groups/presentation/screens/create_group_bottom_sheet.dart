@@ -20,7 +20,12 @@ class CreateGroupBottomSheet extends StatelessWidget {
 
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 80,
+    );
     if (image != null && context.mounted) {
       context.read<CreateGroupCubit>().onImagePicked(image);
     }

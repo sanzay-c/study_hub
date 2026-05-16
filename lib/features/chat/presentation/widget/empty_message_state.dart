@@ -11,12 +11,14 @@ class EmptyMessageState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 40.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            20.verticalSpace,
             _buildIllustration(context),
             40.verticalSpace,
             TextWidget(
@@ -27,7 +29,8 @@ class EmptyMessageState extends StatelessWidget {
             ),
             12.verticalSpace,
             TextWidget(
-              text:'Your conversations\nwill show up here, Say something to start\nthe conversation!',
+              text:
+                  'Your conversations\nwill show up here, Say something to start\nthe conversation!',
               fontSize: 16.sp,
               textalign: TextAlign.center,
               color: getColorByTheme(

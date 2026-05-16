@@ -6,6 +6,7 @@ class CreateGroupState extends Equatable {
   final String name;
   final String description;
   final XFile? image;
+  final String? imageUrl;
   final bool isPublic;
   final bool isLoading;
   final String? error;
@@ -16,6 +17,7 @@ class CreateGroupState extends Equatable {
     this.name = '',
     this.description = '',
     this.image,
+    this.imageUrl,
     this.isPublic = true,
     this.isLoading = false,
     this.error,
@@ -27,6 +29,7 @@ class CreateGroupState extends Equatable {
     String? name,
     String? description,
     XFile? image,
+    String? imageUrl,
     bool? isPublic,
     bool? isLoading,
     String? error,
@@ -37,6 +40,7 @@ class CreateGroupState extends Equatable {
       name: name ?? this.name,
       description: description ?? this.description,
       image: image ?? this.image,
+      imageUrl: imageUrl ?? this.imageUrl,
       isPublic: isPublic ?? this.isPublic,
       isLoading: isLoading ?? this.isLoading,
       error: error,
@@ -45,5 +49,6 @@ class CreateGroupState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [groupId, name, description, isPublic, isLoading, error, isSuccess];
+  List<Object?> get props =>
+      [groupId, name, description, image, imageUrl, isPublic, isLoading, error, isSuccess];
 }
